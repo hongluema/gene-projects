@@ -35,6 +35,17 @@
 </template>
 
 <script setup lang="ts">
+import { onLoad } from '@dcloudio/uni-app'
+
+onLoad(async () => {
+  const res = await uni.request({
+    url: 'http://localhost:8080/user',
+    method: 'POST',
+    data: {},
+    header: { 'Content-Type': 'application/json' }
+  })
+  console.log('>>>>res', res)
+})
 const viewDetail = () => {
   uni.showToast({
     title: '查看详情',

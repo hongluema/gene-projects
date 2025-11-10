@@ -5,9 +5,18 @@
 			"style": {
 				"navigationBarTitleText": "首页",
 				"usingComponents": {
-					"van-button": "/wxcomponents/vant/button/index"
-				}
-			}
+					"van-button": "/wxcomponents/vant/button/index",
+					"van-dialog": "/wxcomponents/vant/dialog/index",
+					"van-field": "/wxcomponents/vant/field/index"
+		}
+	,
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^van-(.*)": "/wxcomponents/vant/$1/index"
+		}
+	}
+}
 		},
 		{
 			"path": "pages/mine/mine",

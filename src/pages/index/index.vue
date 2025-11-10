@@ -12,10 +12,19 @@
         <text class="username">{{ nickName || '未授权用户' }}</text>
         <text class="userid">ID：{{ openId || '未绑定' }}</text>
       </view>
-      <view class="user-actions">
-        <van-button v-if="!isAuthorized" size="small" type="primary" @click="handleGetUserProfile">授权登录</van-button>
+      <view class="user-actions" v-if="!isAuthorized">
+        <button class="mini-btn primary" @click="openAuthDialog">完善资料</button>
       </view>
     </view>
+
+    <!-- 复用组件：用户资料弹窗 -->
+    <UserAuthDialog
+      :show="showAuthDialog"
+      :avatar-url="avatarUrl"
+      :nick-name="nickName"
+      @update:show="v => (showAuthDialog = v)"
+      @confirm="onAuthConfirm"
+    />
     <!-- #endif -->
 
     <view class="report-card">
@@ -56,71 +65,23 @@
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import UserAuthDialog from '@/components/UserAuthDialog.vue'
+import { useWxAuth } from '@/composables/useWxAuth'
 
-const isAuthorized = ref(false)
-const avatarUrl = ref('')
-const nickName = ref('')
-const openId = ref('')
-const loginCode = ref('')
-
-const STORAGE_KEY_PROFILE = 'WX_USER_PROFILE'
-const STORAGE_KEY_OPENID = 'WX_OPEN_ID'
-
-// #ifdef MP-WEIXIN
-const loginWeixin = () => {
-  uni.login({
-    provider: 'weixin',
-    success: (res) => {
-      loginCode.value = res.code || ''
-      try {
-        const cachedOpenId = uni.getStorageSync(STORAGE_KEY_OPENID)
-        if (cachedOpenId) {
-          openId.value = cachedOpenId
-        }
-      } catch (e) {}
-    },
-    fail: (err) => {
-      console.warn('微信登录失败', err)
-    }
-  })
-}
-
-const restoreProfile = () => {
-  try {
-    const cached = uni.getStorageSync(STORAGE_KEY_PROFILE)
-    if (cached) {
-      isAuthorized.value = true
-      avatarUrl.value = cached.avatarUrl || ''
-      nickName.value = cached.nickName || ''
-    }
-  } catch (e) {}
-}
-
-const handleGetUserProfile = () => {
-  uni.getUserProfile({
-    desc: '用于完善会员资料',
-    success: (res) => {
-      console.log('>>>>res', res);
-      const info = res.userInfo || {}
-      isAuthorized.value = true
-      avatarUrl.value = info.avatarUrl || ''
-      nickName.value = info.nickName || ''
-      try {
-        uni.setStorageSync(STORAGE_KEY_PROFILE, { avatarUrl: avatarUrl.value, nickName: nickName.value })
-      } catch (e) {}
-
-      // 若已拿到 code，可在此一并发给后端换取 openId，再缓存 openId
-      // if (loginCode.value) { uni.request({ url: 'YOUR_BACKEND_URL', data: { code: loginCode.value }, success: r => { openId.value = r.data.openId; uni.setStorageSync(STORAGE_KEY_OPENID, openId.value) } }) }
-    },
-    fail: (err) => {
-      console.warn('用户拒绝授权', err)
-    }
-  })
-}
+const {
+  isAuthorized,
+  avatarUrl,
+  nickName,
+  openId,
+  loginCode,
+  showAuthDialog,
+  initWxAuth,
+  openAuthDialog,
+  onAuthConfirm,
+} = useWxAuth()
 
 onLoad(async () => {
-  loginWeixin()
-  restoreProfile()
+  initWxAuth()
   // 你原有的请求逻辑（可按需保留）
   try {
     const res = await uni.request({
@@ -132,7 +93,6 @@ onLoad(async () => {
     console.log('>>>>res', res)
   } catch (e) {}
 })
-// #endif
 const viewDetail = () => {
   uni.showToast({
     title: '查看详情',
@@ -197,6 +157,85 @@ const viewDetail = () => {
 
 .user-card .user-actions {
   margin-left: 12rpx;
+}
+
+.auth-modal {
+  width: 640rpx;
+  max-width: 680rpx;
+  padding: 32rpx 28rpx 28rpx;
+  box-sizing: border-box;
+}
+
+.auth-title {
+  text-align: center;
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 600;
+}
+
+.auth-desc {
+  margin-top: 12rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #888;
+}
+
+.auth-avatar {
+  margin-top: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.avatar-large {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 64rpx;
+  background: #f6f7f9;
+}
+
+.auth-nickname {
+  margin-top: 20rpx;
+}
+
+.auth-actions {
+  margin-top: 24rpx;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16rpx;
+}
+
+.user-fill {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 16rpx;
+  margin: 16rpx 0 24rpx;
+}
+
+.nickname-input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 16rpx;
+  background: #f6f7f9;
+  border-radius: 12rpx;
+}
+
+.mini-btn {
+  height: 72rpx;
+  line-height: 72rpx;
+  padding: 0 24rpx;
+  border-radius: 12rpx;
+  background: #f0f0f0;
+  color: #333;
+}
+
+.mini-btn.primary {
+  background: #4A90E2;
+  color: #fff;
 }
 
 .report-card {

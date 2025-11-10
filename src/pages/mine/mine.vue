@@ -2,12 +2,17 @@
   <view class="container">
     <view class="header">
       <view class="avatar">
-        <image class="avatar-img" src="/static/avatar.png" mode="aspectFill" />
+        <image class="avatar-img" :src="avatarUrl || '/static/avatar.png'" mode="aspectFill" />
       </view>
       <view class="user-info">
-        <text class="username">用户名</text>
-        <text class="user-id">ID: 123456789</text>
+        <text class="username">{{ nickName || '未授权用户' }}</text>
+        <text class="user-id">ID: {{ openId || '未绑定' }}</text>
       </view>
+      <!-- #ifdef MP-WEIXIN -->
+      <view class="header-action" v-if="!isAuthorized">
+        <van-button size="small" type="primary" @click="openAuthDialog">完善资料</van-button>
+      </view>
+      <!-- #endif -->
     </view>
 
     <view class="menu-list">
@@ -25,9 +30,36 @@
       </view>
     </view>
   </view>
-</template>
+    <!-- #ifdef MP-WEIXIN -->
+    <UserAuthDialog
+      :show="showAuthDialog"
+      :avatar-url="avatarUrl"
+      :nick-name="nickName"
+      @update:show="v => (showAuthDialog = v)"
+      @confirm="onAuthConfirm"
+    />
+    <!-- #endif -->
+  </template>
 
 <script setup lang="ts">
+import { onLoad } from '@dcloudio/uni-app'
+import UserAuthDialog from '@/components/UserAuthDialog.vue'
+import { useWxAuth } from '@/composables/useWxAuth'
+
+const {
+  isAuthorized,
+  avatarUrl,
+  nickName,
+  openId,
+  showAuthDialog,
+  initWxAuth,
+  openAuthDialog,
+  onAuthConfirm,
+} = useWxAuth()
+
+onLoad(() => {
+  initWxAuth()
+})
 </script>
 
 <style scoped>
@@ -42,6 +74,8 @@
   display: flex;
   align-items: center;
 }
+
+.header-action { margin-left: auto; }
 
 .avatar {
   width: 120rpx;

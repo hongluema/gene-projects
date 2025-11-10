@@ -4,8 +4,8 @@
       <text class="header-title">基因检测报告</text>
     </view>
 
-    <view class="content">
-      <view class="report-card">
+  <view class="content">
+    <view class="report-card">
         <view class="card-header">
           <image class="icon" src="/static/dna-icon.png" mode="aspectFit" />
           <text class="card-title">基因检测报告</text>
@@ -27,8 +27,14 @@
         </view>
 
         <view class="btn-container">
-          <button class="detail-btn" @click="viewDetail">查看详情</button>
+          <button class="detail-btn" @click="viewDetail">查看详情1</button>
         </view>
+
+        <!-- #ifdef MP -->
+        <view class="btn-container" style="margin-top: 20rpx;">
+          <van-button type="primary" block @click="viewDetail">Vant 按钮（小程序）</van-button>
+        </view>
+        <!-- #s -->
       </view>
     </view>
   </view>

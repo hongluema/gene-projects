@@ -5,6 +5,19 @@
     </view>
 
   <view class="content">
+    <!-- #ifdef MP-WEIXIN -->
+    <view class="user-card">
+      <image class="avatar" :src="avatarUrl || '/static/avatar.png'" mode="aspectFill" />
+      <view class="user-brief">
+        <text class="username">{{ nickName || '未授权用户' }}</text>
+        <text class="userid">ID：{{ openId || '未绑定' }}</text>
+      </view>
+      <view class="user-actions">
+        <van-button v-if="!isAuthorized" size="small" type="primary" @click="handleGetUserProfile">授权登录</van-button>
+      </view>
+    </view>
+    <!-- #endif -->
+
     <view class="report-card">
         <view class="card-header">
           <image class="icon" src="/static/dna-icon.png" mode="aspectFit" />
@@ -34,7 +47,7 @@
         <view class="btn-container" style="margin-top: 20rpx;">
           <van-button type="primary" block @click="viewDetail">Vant 按钮（小程序）</van-button>
         </view>
-        <!-- #s -->
+        <!-- #endif -->
       </view>
     </view>
   </view>
@@ -42,16 +55,84 @@
 
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+
+const isAuthorized = ref(false)
+const avatarUrl = ref('')
+const nickName = ref('')
+const openId = ref('')
+const loginCode = ref('')
+
+const STORAGE_KEY_PROFILE = 'WX_USER_PROFILE'
+const STORAGE_KEY_OPENID = 'WX_OPEN_ID'
+
+// #ifdef MP-WEIXIN
+const loginWeixin = () => {
+  uni.login({
+    provider: 'weixin',
+    success: (res) => {
+      loginCode.value = res.code || ''
+      try {
+        const cachedOpenId = uni.getStorageSync(STORAGE_KEY_OPENID)
+        if (cachedOpenId) {
+          openId.value = cachedOpenId
+        }
+      } catch (e) {}
+    },
+    fail: (err) => {
+      console.warn('微信登录失败', err)
+    }
+  })
+}
+
+const restoreProfile = () => {
+  try {
+    const cached = uni.getStorageSync(STORAGE_KEY_PROFILE)
+    if (cached) {
+      isAuthorized.value = true
+      avatarUrl.value = cached.avatarUrl || ''
+      nickName.value = cached.nickName || ''
+    }
+  } catch (e) {}
+}
+
+const handleGetUserProfile = () => {
+  uni.getUserProfile({
+    desc: '用于完善会员资料',
+    success: (res) => {
+      console.log('>>>>res', res);
+      const info = res.userInfo || {}
+      isAuthorized.value = true
+      avatarUrl.value = info.avatarUrl || ''
+      nickName.value = info.nickName || ''
+      try {
+        uni.setStorageSync(STORAGE_KEY_PROFILE, { avatarUrl: avatarUrl.value, nickName: nickName.value })
+      } catch (e) {}
+
+      // 若已拿到 code，可在此一并发给后端换取 openId，再缓存 openId
+      // if (loginCode.value) { uni.request({ url: 'YOUR_BACKEND_URL', data: { code: loginCode.value }, success: r => { openId.value = r.data.openId; uni.setStorageSync(STORAGE_KEY_OPENID, openId.value) } }) }
+    },
+    fail: (err) => {
+      console.warn('用户拒绝授权', err)
+    }
+  })
+}
 
 onLoad(async () => {
-  const res = await uni.request({
-    url: 'http://localhost:8080/user',
-    method: 'POST',
-    data: {},
-    header: { 'Content-Type': 'application/json' }
-  })
-  console.log('>>>>res', res)
+  loginWeixin()
+  restoreProfile()
+  // 你原有的请求逻辑（可按需保留）
+  try {
+    const res = await uni.request({
+      url: 'http://localhost:8080/user',
+      method: 'POST',
+      data: {},
+      header: { 'Content-Type': 'application/json' }
+    })
+    console.log('>>>>res', res)
+  } catch (e) {}
 })
+// #endif
 const viewDetail = () => {
   uni.showToast({
     title: '查看详情',
@@ -79,6 +160,43 @@ const viewDetail = () => {
 
 .content {
   padding: 0 30rpx;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.user-card .avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  margin-right: 20rpx;
+}
+
+.user-card .user-brief {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-card .username {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 6rpx;
+}
+
+.user-card .userid {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.user-card .user-actions {
+  margin-left: 12rpx;
 }
 
 .report-card {

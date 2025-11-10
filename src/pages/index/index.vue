@@ -27,7 +27,7 @@
         </view>
 
         <view class="btn-container">
-          <button class="detail-btn" @click="viewDetail">查看详情1</button>
+          <button class="detail-btn" @click="viewDetail">查看详情</button>
         </view>
 
         <!-- #ifdef MP -->

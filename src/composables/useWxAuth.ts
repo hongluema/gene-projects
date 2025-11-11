@@ -74,6 +74,21 @@ export function useWxAuth() {
       console.log('[WxAuth] re-login in openAuthDialog')
       loginWeixin()
     }
+    // 主动尝试拉取用户头像昵称（需用户同意）
+    if (typeof uni.getUserProfile === 'function') {
+      uni.getUserProfile({
+        desc: '用于完善会员资料',
+        success: (res: any) => {
+          const info = res?.userInfo || {}
+          if (info.avatarUrl) avatarUrl.value = info.avatarUrl
+          if (info.nickName) nickName.value = info.nickName
+          console.log('[WxAuth] getUserProfile ok', info)
+        },
+        fail: (err: any) => {
+          console.warn('[WxAuth] getUserProfile fail', err)
+        }
+      })
+    }
     // #endif
     showAuthDialog.value = true
   }

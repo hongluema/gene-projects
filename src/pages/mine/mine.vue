@@ -9,8 +9,9 @@
         <text class="user-id">ID: {{ openId || '未绑定' }}</text>
       </view>
       <!-- #ifdef MP-WEIXIN -->
-      <view class="header-action" v-if="!isAuthorized">
-        <van-button size="small" type="primary" @click="openAuthDialog">完善资料</van-button>
+      <view class="header-action">
+        <van-button v-if="!isAuthorized" size="small" type="primary" @click="openAuthDialog">完善资料</van-button>
+        <van-button v-else size="small" type="danger" plain @click="onClearProfile">清除资料</van-button>
       </view>
       <!-- #endif -->
     </view>
@@ -55,6 +56,7 @@ const {
   initWxAuth,
   openAuthDialog,
   onAuthConfirm,
+  clearProfile,
 } = useWxAuth()
 
 onLoad(() => {
@@ -63,6 +65,10 @@ onLoad(() => {
 
 const onUpdateAuthShow = (v: boolean) => {
   showAuthDialog.value = v
+}
+
+const onClearProfile = () => {
+  clearProfile()
 }
 </script>
 

@@ -12,8 +12,9 @@
         <text class="username">{{ nickName || '未授权用户' }}</text>
         <text class="userid">ID：{{ openId || '未绑定' }}</text>
       </view>
-      <view class="user-actions" v-if="!isAuthorized">
-        <button class="mini-btn primary" @click="openAuthDialog">完善资料</button>
+      <view class="user-actions">
+        <button v-if="!isAuthorized" class="mini-btn primary" @click="openAuthDialog">完善资料</button>
+        <van-button v-else size="small" type="danger" plain @click="onClearProfile">清除资料</van-button>
       </view>
     </view>
 
@@ -78,10 +79,15 @@ const {
   initWxAuth,
   openAuthDialog,
   onAuthConfirm,
+  clearProfile,
 } = useWxAuth()
 
 const onUpdateAuthShow = (v: boolean) => {
   showAuthDialog.value = v
+}
+
+const onClearProfile = () => {
+  clearProfile()
 }
 
 onLoad(async () => {

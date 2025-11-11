@@ -36,7 +36,7 @@ export function useWxAuth() {
         // 交换 openId（需要后端实现 /api/getOpenid, 返回 { openId } 或 { openid }）
         if (loginCode.value) {
           uni.request({
-            url: '/api/wxapp/login',
+            url: '/api/wx/login',
             method: 'POST',
             data: { code: loginCode.value },
             header: { 'Content-Type': 'application/json' },

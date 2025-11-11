@@ -22,7 +22,7 @@
       :show="showAuthDialog"
       :avatar-url="avatarUrl"
       :nick-name="nickName"
-      @update:show="v => (showAuthDialog = v)"
+      @update:show="onUpdateAuthShow"
       @confirm="onAuthConfirm"
     />
     <!-- #endif -->
@@ -80,14 +80,22 @@ const {
   onAuthConfirm,
 } = useWxAuth()
 
+const onUpdateAuthShow = (v: boolean) => {
+  showAuthDialog.value = v
+}
+
 onLoad(async () => {
   initWxAuth()
   // 你原有的请求逻辑（可按需保留）
   try {
     const res = await uni.request({
-      url: 'http://localhost:8080/user',
+      url: 'http://localhost:8000/users',
       method: 'POST',
-      data: {},
+      data: {
+        nickname: 'walry',
+        mobile: '12345678910',
+        avatar: 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTI9icicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicic/132'
+      },
       header: { 'Content-Type': 'application/json' }
     })
     console.log('>>>>res', res)

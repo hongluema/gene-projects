@@ -36,16 +36,19 @@ export function useWxAuth() {
         // 交换 openId（需要后端实现 /api/getOpenid, 返回 { openId } 或 { openid }）
         if (loginCode.value) {
           uni.request({
-            url: '/api/getOpenid',
+            url: '/api/wxapp/login',
             method: 'POST',
             data: { code: loginCode.value },
             header: { 'Content-Type': 'application/json' },
-            success: (r) => {
-              const oid = (r.data && (r.data.openId || r.data.openid)) || ''
-              if (oid) {
-                openId.value = oid
-                try { uni.setStorageSync(STORAGE_KEY_OPENID, oid) } catch {}
-              }
+            success: (r: any) => {
+              // 后端返回处理结果
+              console.log('登录成功:', r.data);
+              // 假设后端返回 { openId: 'xxx' }
+              openId.value = r.data.openId || ''
+              try {
+                uni.setStorageSync(STORAGE_KEY_OPENID, openId.value);
+                uni.setStorageSync('user_token', r.data.token);
+              } catch { }
             },
             fail: (err) => {
               console.warn('交换 openId 失败', err)

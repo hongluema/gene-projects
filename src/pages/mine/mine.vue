@@ -35,7 +35,7 @@
       :show="showAuthDialog"
       :avatar-url="avatarUrl"
       :nick-name="nickName"
-      @update:show="v => (showAuthDialog = v)"
+      @update:show="onUpdateAuthShow"
       @confirm="onAuthConfirm"
     />
     <!-- #endif -->
@@ -60,6 +60,10 @@ const {
 onLoad(() => {
   initWxAuth()
 })
+
+const onUpdateAuthShow = (v: boolean) => {
+  showAuthDialog.value = v
+}
 </script>
 
 <style scoped>

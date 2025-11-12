@@ -1,6 +1,6 @@
 {
     "name" : "",
-    "appid" : "wx2c0cc3d42e2f2046",
+    "appid" : "wx357bbb5f4b26e2ed",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -50,7 +50,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx2c0cc3d42e2f2046",
+        "appid" : "wx357bbb5f4b26e2ed",
         "setting" : {
             "urlCheck" : false
         },

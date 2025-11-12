@@ -16,7 +16,10 @@
         <button class="mini-btn" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">选择头像</button>
       </view>
       <view class="auth-nickname">
-        <van-field :value="localNick" placeholder="请输入昵称" @change="onFieldChange" clearable></van-field>
+        <view v-if="!localNick" class="auth-nickname-input">
+          <van-field :value="localNick" placeholder="请输入昵称" @change="onFieldChange" clearable></van-field>
+        </view>
+        <view v-else class="auth-nickname-text">使用微信昵称：{{ localNick }}</view>
       </view>
     </view>
   </van-dialog>
@@ -94,6 +97,12 @@ const confirm = () => {
   margin-top: 20rpx;
 }
 
+.auth-nickname-text {
+  text-align: center;
+  font-size: 28rpx;
+  color: #333;
+}
+
 .mini-btn {
   height: 72rpx;
   line-height: 72rpx;
@@ -103,4 +112,3 @@ const confirm = () => {
   color: #333;
 }
 </style>
-

@@ -8,20 +8,38 @@
 					"van-button": "/wxcomponents/vant/button/index",
 					"van-dialog": "/wxcomponents/vant/dialog/index",
 					"van-field": "/wxcomponents/vant/field/index"
-		}
-	,
-	"easycom": {
-		"autoscan": true,
-		"custom": {
-			"^van-(.*)": "/wxcomponents/vant/$1/index"
-		}
-	}
-}
+          }
+        ,
+        "easycom": {
+          "autoscan": true,
+          "custom": {
+            "^van-(.*)": "/wxcomponents/vant/$1/index"
+          }
+        }
+      }
 		},
 		{
 			"path": "pages/mine/mine",
 			"style": {
 				"navigationBarTitleText": "我的"
+			}
+		},
+    {
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "个人信息",
+        "usingComponents": {
+					"van-button": "/wxcomponents/vant/button/index",
+					"van-dialog": "/wxcomponents/vant/dialog/index",
+					"van-field": "/wxcomponents/vant/field/index",
+          "van-cell-group": "/wxcomponents/vant/cell-group/index",
+          "van-icon": "/wxcomponents/vant/icon/index",
+          "van-popup": "/wxcomponents/vant/popup/index",
+          "van-picker": "/wxcomponents/vant/picker/index",
+          "van-search": "/wxcomponents/vant/search/index",
+          "van-submit-bar": "/wxcomponents/vant/submit-bar/index",
+          "van-toast": "/wxcomponents/vant/toast/index"
+          }
 			}
 		}
 	],
@@ -48,7 +66,13 @@
 				"iconPath": "static/tab-mine.png",
 				"selectedIconPath": "static/tab-mine-active.png",
 				"text": "我的"
-			}
+			},
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "static/tab-mine.png",
+				"selectedIconPath": "static/tab-mine-active.png",
+        "text": "个人信息"
+      }
 		]
 	}
 }

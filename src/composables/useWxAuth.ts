@@ -1,4 +1,6 @@
 import { ref } from 'vue'
+import { USE_MOCK, API } from '@/config'
+import { mockWxLogin, mockSaveUser } from '@/mock/api'
 
 export function useWxAuth() {
   const isAuthorized = ref(false)
@@ -37,26 +39,34 @@ export function useWxAuth() {
           if (cachedOpenId) openId.value = cachedOpenId
         } catch {}
 
-        // 交换 openId（需要后端实现 /api/getOpenid, 返回 { openId } 或 { openid }）
+        // 交换 openId（后端或 Mock）
         if (loginCode.value) {
-          console.log('[WxAuth] request /api/wx/login')
-          uni.request({
-            url: 'http://localhost:8000/api/wx/login',
-            method: 'POST',
-            data: { code: loginCode.value },
-            header: { 'Content-Type': 'application/json' },
-            success: (r: any) => {
-              const oid = (r.data && (r.data.openId || r.data.openid)) || ''
-              if (oid) {
-                openId.value = oid
-                try { uni.setStorageSync(STORAGE_KEY_OPENID, openId.value) } catch {}
-                console.log('[WxAuth] get openId success:', oid)
+          if (USE_MOCK) {
+            mockWxLogin(loginCode.value).then(({ openId: oid }) => {
+              openId.value = oid
+              try { uni.setStorageSync(STORAGE_KEY_OPENID, openId.value) } catch {}
+              console.log('[WxAuth][MOCK] get openId success:', oid)
+            })
+          } else {
+            console.log('[WxAuth] request /api/wx/login')
+            uni.request({
+              url: API.wxLogin,
+              method: 'POST',
+              data: { code: loginCode.value },
+              header: { 'Content-Type': 'application/json' },
+              success: (r: any) => {
+                const oid = (r.data && (r.data.openId || r.data.openid)) || ''
+                if (oid) {
+                  openId.value = oid
+                  try { uni.setStorageSync(STORAGE_KEY_OPENID, openId.value) } catch {}
+                  console.log('[WxAuth] get openId success:', oid)
+                }
+              },
+              fail: (err) => {
+                console.warn('[WxAuth] get openId fail', err)
               }
-            },
-            fail: (err) => {
-              console.warn('[WxAuth] get openId fail', err)
-            }
-          })
+            })
+          }
         }
       },
       fail: (err) => {
@@ -79,7 +89,7 @@ export function useWxAuth() {
   }
   const closeAuthDialog = () => { showAuthDialog.value = false }
 
-  const onAuthConfirm = (payload: { avatarUrl: string; nickName: string }) => {
+  const onAuthConfirm = async (payload: { avatarUrl: string; nickName: string }) => {
     console.log('[WxAuth] onAuthConfirm payload', payload)
     avatarUrl.value = payload.avatarUrl
     nickName.value = payload.nickName
@@ -97,6 +107,32 @@ export function useWxAuth() {
     isAuthorized.value = true
     showAuthDialog.value = false
     uni.showToast({ title: '已保存', icon: 'success' })
+
+    // 同步到后端（或 Mock）
+    try {
+      if (!openId.value) {
+        console.warn('[WxAuth] skip server sync, missing openId')
+        return
+      }
+      if (USE_MOCK) {
+        await mockSaveUser({ openId: openId.value, nickname: nickName.value, avatar: avatarUrl.value })
+        console.log('[WxAuth][MOCK] synced profile to server with openId:', openId.value)
+      } else {
+        await uni.request({
+          url: API.saveUser,
+          method: 'POST',
+          data: {
+            openId: openId.value,
+            nickname: nickName.value,
+            avatar: avatarUrl.value,
+          },
+          header: { 'Content-Type': 'application/json' },
+        })
+        console.log('[WxAuth] synced profile to server with openId:', openId.value)
+      }
+    } catch (err) {
+      console.warn('[WxAuth] sync profile fail', err)
+    }
   }
 
   const initWxAuth = () => {
@@ -104,7 +140,7 @@ export function useWxAuth() {
     console.log('[WxAuth] initWxAuth')
     loginWeixin()
     restoreProfile()
-    if (!isAuthorized.value) showAuthDialog.value = true
+    // 默认不自动弹出授权弹窗
     // #endif
   }
 

@@ -16,10 +16,12 @@
     </view>
 
     <view class="menu-list">
-      <view class="menu-item">
-        <text class="menu-text">个人信息</text>
-        <text class="arrow">></text>
-      </view>
+      <navigator url="/pages/profile/profile" open-type="navigate">
+        <view class="menu-item">
+          <text class="menu-text">个人信息</text>
+          <text class="arrow">></text>
+        </view>
+      </navigator>
       <view class="menu-item">
         <text class="menu-text">检测历史</text>
         <text class="arrow">></text>
@@ -69,6 +71,8 @@ const onUpdateAuthShow = (v: boolean) => {
 const onClearProfile = () => {
   clearProfile()
 }
+
+// navigator 直接处理跳转，无需方法
 </script>
 
 <style scoped>

@@ -16,10 +16,8 @@
         <button class="mini-btn" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">选择头像</button>
       </view>
       <view class="auth-nickname">
-        <view v-if="!localNick" class="auth-nickname-input">
-          <van-field :value="localNick" placeholder="请输入昵称" @change="onFieldChange" clearable></van-field>
-        </view>
-        <view v-else class="auth-nickname-text">使用微信昵称：{{ localNick }}</view>
+        <input class="nickname-input" type="nickname" :value="localNick" placeholder="请输入昵称"
+               @input="onNickInput" />
       </view>
     </view>
   </van-dialog>
@@ -53,8 +51,9 @@ const onChooseAvatar = (e: any) => {
   localAvatar.value = url
 }
 
-const onFieldChange = (e: any) => {
-  localNick.value = e?.detail || e?.detail?.value || e?.target?.value || ''
+const onNickInput = (e: any) => {
+  const value = e?.detail?.value ?? e?.detail ?? e?.target?.value ?? ''
+  localNick.value = value
 }
 
 const close = () => emit('update:show', false)
@@ -97,10 +96,13 @@ const confirm = () => {
   margin-top: 20rpx;
 }
 
-.auth-nickname-text {
-  text-align: center;
-  font-size: 28rpx;
-  color: #333;
+.nickname-input {
+  width: 100%;
+  height: 72rpx;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+  background: #f6f7f9;
+  border-radius: 12rpx;
 }
 
 .mini-btn {

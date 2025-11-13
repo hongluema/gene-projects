@@ -49,19 +49,17 @@
   </view>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { reactive, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { USE_MOCK, API } from '@/config'
 import { mockUpdateUser } from '@/mock/api'
 import { useWxAuth } from '@/composables/useWxAuth'
 
-type Gender = 'male' | 'female' | ''
-
 const form = reactive({
   idCard: '',
   name: '',
-  gender: '' as Gender,
+  gender: '',
   age: '',
   mobile: ''
 })
@@ -78,20 +76,20 @@ const genderLabel = computed(() => {
   return g ? g.label : '请选择性别'
 })
 
-const onGenderChange = (e: any) => {
+const onGenderChange = (e) => {
   const idx = Number(e?.detail?.value ?? -1)
   if (idx >= 0 && idx < genderOptions.length) {
-    form.gender = genderOptions[idx].value as Gender
+    form.gender = genderOptions[idx].value
   }
 }
 
-const onChange = (key: keyof typeof form, e: any) => {
+const onChange = (key, e) => {
   const v = e?.detail?.value ?? e?.detail ?? e?.target?.value ?? ''
-  ;(form as any)[key] = v
+  form[key] = v
 }
 
-const isMobile = (s: string) => /^1[3-9]\d{9}$/.test(String(s).trim())
-const isIdCard = (s: string) => /^(\d{15}|\d{17}[\dXx])$/.test(String(s).trim())
+const isMobile = (s) => /^1[3-9]\d{9}$/.test(String(s).trim())
+const isIdCard = (s) => /^(\d{15}|\d{17}[\dXx])$/.test(String(s).trim())
 
 const onSubmit = async () => {
   if (!form.idCard) return uni.showToast({ title: '请输入身份证号', icon: 'none' })
@@ -123,11 +121,11 @@ const onSubmit = async () => {
 
 onLoad(() => {
   try {
-    const cache: any = uni.getStorageSync('USER_PROFILE_FORM')
+    const cache = uni.getStorageSync('USER_PROFILE_FORM')
     if (cache) {
       form.idCard = cache.idCard || ''
       form.name = cache.name || ''
-      form.gender = (cache.gender || '') as Gender
+      form.gender = cache.gender || ''
       form.age = cache.age || ''
       form.mobile = cache.mobile || ''
     }

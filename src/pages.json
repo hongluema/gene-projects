@@ -41,6 +41,52 @@
           "van-toast": "/wxcomponents/vant/toast/index"
           }
 			}
+		},
+		{
+			"path": "pages/sample-entry/index",
+			"style": {
+				"navigationBarTitleText": "样本录入",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/sample-success/index",
+			"style": {
+				"navigationBarTitleText": "提交成功",
+				"navigationBarBackgroundColor": "#52c41a",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/report-query/index",
+			"style": {
+				"navigationBarTitleText": "报告查询",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/report-list/index",
+			"style": {
+				"navigationBarTitleText": "我的报告",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/report-detail/index",
+			"style": {
+				"navigationBarTitleText": "报告详情",
+				"navigationBarBackgroundColor": "#667eea",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/about/index",
+			"style": {
+				"navigationBarTitleText": "关于我们"
+			}
 		}
 	],
 	"globalStyle": {
@@ -51,7 +97,7 @@
 	},
 	"tabBar": {
 		"color": "#7A7E83",
-		"selectedColor": "#007AFF",
+		"selectedColor": "#667eea",
 		"borderStyle": "black",
 		"backgroundColor": "#FFFFFF",
 		"list": [
@@ -66,13 +112,7 @@
 				"iconPath": "static/tab-mine.png",
 				"selectedIconPath": "static/tab-mine-active.png",
 				"text": "我的"
-			},
-      {
-        "pagePath": "pages/profile/profile",
-        "iconPath": "static/tab-mine.png",
-				"selectedIconPath": "static/tab-mine-active.png",
-        "text": "个人信息"
-      }
+			}
 		]
 	}
 }

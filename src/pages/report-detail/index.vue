@@ -1,0 +1,407 @@
+<template>
+  <view class="report-detail-page">
+    <!-- 顶部导航 -->
+    <view class="page-header">
+      <text class="page-title">检测报告</text>
+    </view>
+
+    <view class="detail-container">
+      <!-- 报告基本信息 -->
+      <view class="info-card">
+        <view class="card-title">
+          <text class="title-icon">📄</text>
+          <text>报告信息</text>
+        </view>
+        <view class="info-list">
+          <view class="info-item">
+            <text class="item-label">报告编号</text>
+            <text class="item-value">{{ reportId }}</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">样本编号</text>
+            <text class="item-value">SAMPLE_20240315_A1B2</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">项目名称</text>
+            <text class="item-value">MTHFR基因检测</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">检测机构</text>
+            <text class="item-value">XX医学检验所</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">报告日期</text>
+            <text class="item-value">2024-03-20 14:20:00</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- PDF预览区域 -->
+      <view class="pdf-card">
+        <view class="card-title">
+          <text class="title-icon">📋</text>
+          <text>报告详情</text>
+        </view>
+        
+        <view class="pdf-preview">
+          <!-- 小程序中预览PDF较为复杂，这里提供下载按钮 -->
+          <view class="preview-placeholder">
+            <text class="placeholder-icon">📑</text>
+            <text class="placeholder-text">点击下载查看完整报告</text>
+          </view>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="pdf-actions">
+          <button class="action-btn preview-btn" @click="previewPdf">
+            <text class="btn-icon">👁️</text>
+            <text>预览报告</text>
+          </button>
+          <button class="action-btn download-btn" @click="downloadPdf">
+            <text class="btn-icon">⬇️</text>
+            <text>下载报告</text>
+          </button>
+        </view>
+      </view>
+
+      <!-- 温馨提示 -->
+      <view class="tips-card">
+        <view class="tips-title">
+          <text class="tips-icon">💡</text>
+          <text>温馨提示</text>
+        </view>
+        <view class="tips-content">
+          <text class="tip-item">• 本报告仅对本次送检样本负责</text>
+          <text class="tip-item">• 请妥善保存报告，如有疑问请咨询专业医师</text>
+          <text class="tip-item">• 报告解读需结合临床检查和医生诊断</text>
+        </view>
+      </view>
+
+      <!-- 联系客服 -->
+      <view class="contact-card">
+        <button class="contact-btn" @click="contactService">
+          <text class="contact-icon">📞</text>
+          <text>联系客服</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { USE_MOCK, API } from '@/config'
+import { mockGetReportPdf } from '@/mock/api'
+import { downloadFile } from '@/utils/request'
+
+const reportId = ref('')
+const pdfUrl = ref('')
+const downloading = ref(false)
+
+onLoad((options) => {
+  reportId.value = options.reportId || ''
+  loadReportPdf()
+})
+
+// 加载PDF链接
+const loadReportPdf = async () => {
+  try {
+    let result
+    if (USE_MOCK) {
+      result = await mockGetReportPdf(reportId.value)
+    } else {
+      const res = await uni.request({
+        url: `${API.getReportPdf}/${reportId.value}`,
+        method: 'GET'
+      })
+      result = res.data
+    }
+
+    if (result.success) {
+      pdfUrl.value = result.pdfUrl
+    }
+  } catch (err) {
+    console.error('[ReportDetail] Load PDF fail:', err)
+  }
+}
+
+// 预览PDF
+const previewPdf = () => {
+  if (!pdfUrl.value) {
+    uni.showToast({ title: 'PDF地址获取失败', icon: 'none' })
+    return
+  }
+
+  // 在小程序中，可以下载后用文件管理器打开
+  uni.showLoading({ title: '准备中...' })
+  
+  downloadFile(pdfUrl.value).then(filePath => {
+    uni.hideLoading()
+    
+    // 打开文档
+    uni.openDocument({
+      filePath: filePath,
+      fileType: 'pdf',
+      success: () => {
+        console.log('[ReportDetail] Open PDF success')
+      },
+      fail: (err) => {
+        console.error('[ReportDetail] Open PDF fail:', err)
+        uni.showToast({ title: '打开失败', icon: 'none' })
+      }
+    })
+  }).catch(err => {
+    uni.hideLoading()
+    console.error('[ReportDetail] Download fail:', err)
+    uni.showToast({ title: '下载失败', icon: 'none' })
+  })
+}
+
+// 下载PDF
+const downloadPdf = () => {
+  if (!pdfUrl.value) {
+    uni.showToast({ title: 'PDF地址获取失败', icon: 'none' })
+    return
+  }
+
+  if (downloading.value) return
+  
+  downloading.value = true
+  uni.showLoading({ title: '下载中...' })
+
+  downloadFile(pdfUrl.value).then(filePath => {
+    downloading.value = false
+    uni.hideLoading()
+    
+    uni.showModal({
+      title: '下载成功',
+      content: '报告已保存到本地，是否立即打开？',
+      success: (res) => {
+        if (res.confirm) {
+          uni.openDocument({
+            filePath: filePath,
+            fileType: 'pdf',
+            fail: (err) => {
+              console.error('[ReportDetail] Open PDF fail:', err)
+            }
+          })
+        }
+      }
+    })
+  }).catch(err => {
+    downloading.value = false
+    uni.hideLoading()
+    console.error('[ReportDetail] Download fail:', err)
+    uni.showToast({ title: '下载失败', icon: 'none' })
+  })
+}
+
+// 联系客服
+const contactService = () => {
+  uni.showModal({
+    title: '联系客服',
+    content: '客服电话：400-888-8888\n工作时间：周一至周五 9:00-18:00',
+    showCancel: true,
+    cancelText: '取消',
+    confirmText: '拨打电话',
+    success: (res) => {
+      if (res.confirm) {
+        uni.makePhoneCall({
+          phoneNumber: '4008888888'
+        })
+      }
+    }
+  })
+}
+</script>
+
+<style scoped>
+.report-detail-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 60rpx 40rpx 40rpx;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.detail-container {
+  padding: 30rpx;
+}
+
+.info-card,
+.pdf-card,
+.tips-card,
+.contact-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.title-icon {
+  font-size: 36rpx;
+  margin-right: 12rpx;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.item-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.item-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  text-align: right;
+  max-width: 400rpx;
+  word-break: break-all;
+}
+
+.pdf-preview {
+  margin-bottom: 24rpx;
+}
+
+.preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+  background: #f5f7fa;
+  border-radius: 16rpx;
+  border: 2rpx dashed #d9d9d9;
+}
+
+.placeholder-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.placeholder-text {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.pdf-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  border-radius: 50rpx;
+  border: none;
+}
+
+.preview-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-weight: bold;
+}
+
+.download-btn {
+  background: #f5f7fa;
+  color: #667eea;
+  border: 2rpx solid #667eea;
+}
+
+.btn-icon {
+  font-size: 32rpx;
+}
+
+.tips-card {
+  background: #fffbe6;
+  border: 2rpx solid #ffe58f;
+}
+
+.tips-title {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #faad14;
+  margin-bottom: 16rpx;
+}
+
+.tips-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+.tips-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.tip-item {
+  font-size: 26rpx;
+  color: #8c8c8c;
+  line-height: 1.6;
+}
+
+.contact-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 28rpx;
+  background: #fff;
+  color: #667eea;
+  font-size: 30rpx;
+  font-weight: bold;
+  border: 2rpx solid #667eea;
+  border-radius: 50rpx;
+}
+
+.contact-icon {
+  font-size: 36rpx;
+}
+</style>
+

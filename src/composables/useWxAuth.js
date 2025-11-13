@@ -9,19 +9,25 @@ export function useWxAuth() {
   const openId = ref('')
   const loginCode = ref('')
   const showAuthDialog = ref(false)
+  const phoneNumber = ref('')
 
   const STORAGE_KEY_PROFILE = 'WX_USER_PROFILE'
   const STORAGE_KEY_OPENID = 'WX_OPEN_ID'
+  const STORAGE_KEY_PHONE = 'WX_PHONE'
 
   const restoreProfile = () => {
     console.log('[WxAuth] restoreProfile start')
     try {
-      const cached: any = uni.getStorageSync(STORAGE_KEY_PROFILE)
+      const cached = uni.getStorageSync(STORAGE_KEY_PROFILE)
       if (cached) {
         isAuthorized.value = true
         avatarUrl.value = cached.avatarUrl || ''
         nickName.value = cached.nickName || ''
         console.log('[WxAuth] restoreProfile done', cached)
+      }
+      const cachedPhone = uni.getStorageSync(STORAGE_KEY_PHONE)
+      if (cachedPhone) {
+        phoneNumber.value = cachedPhone
       }
     } catch {}
   }
@@ -54,7 +60,7 @@ export function useWxAuth() {
               method: 'POST',
               data: { code: loginCode.value },
               header: { 'Content-Type': 'application/json' },
-              success: (r: any) => {
+              success: (r) => {
                 const oid = (r.data && (r.data.openId || r.data.openid)) || ''
                 if (oid) {
                   openId.value = oid
@@ -78,7 +84,6 @@ export function useWxAuth() {
 
   const openAuthDialog = () => {
     console.log('[WxAuth] openAuthDialog click')
-    // 确保点击时也进行一次登录尝试，避免某些场景 onLoad 未触发或登录未完成
     // #ifdef MP-WEIXIN
     if (!loginCode.value || !openId.value) {
       console.log('[WxAuth] re-login in openAuthDialog')
@@ -87,9 +92,12 @@ export function useWxAuth() {
     // #endif
     showAuthDialog.value = true
   }
-  const closeAuthDialog = () => { showAuthDialog.value = false }
 
-  const onAuthConfirm = async (payload: { avatarUrl: string; nickName: string }) => {
+  const closeAuthDialog = () => { 
+    showAuthDialog.value = false 
+  }
+
+  const onAuthConfirm = async (payload) => {
     console.log('[WxAuth] onAuthConfirm payload', payload)
     avatarUrl.value = payload.avatarUrl
     nickName.value = payload.nickName
@@ -102,7 +110,10 @@ export function useWxAuth() {
       return
     }
     try {
-      uni.setStorageSync(STORAGE_KEY_PROFILE, { avatarUrl: avatarUrl.value, nickName: nickName.value })
+      uni.setStorageSync(STORAGE_KEY_PROFILE, { 
+        avatarUrl: avatarUrl.value, 
+        nickName: nickName.value 
+      })
     } catch {}
     isAuthorized.value = true
     showAuthDialog.value = false
@@ -115,7 +126,11 @@ export function useWxAuth() {
         return
       }
       if (USE_MOCK) {
-        await mockSaveUser({ openId: openId.value, nickname: nickName.value, avatar: avatarUrl.value })
+        await mockSaveUser({ 
+          openId: openId.value, 
+          nickname: nickName.value, 
+          avatar: avatarUrl.value 
+        })
         console.log('[WxAuth][MOCK] synced profile to server with openId:', openId.value)
       } else {
         await uni.request({
@@ -135,12 +150,19 @@ export function useWxAuth() {
     }
   }
 
+  const bindPhone = (phone) => {
+    phoneNumber.value = phone
+    try {
+      uni.setStorageSync(STORAGE_KEY_PHONE, phone)
+    } catch {}
+    uni.showToast({ title: '绑定成功', icon: 'success' })
+  }
+
   const initWxAuth = () => {
     // #ifdef MP-WEIXIN
     console.log('[WxAuth] initWxAuth')
     loginWeixin()
     restoreProfile()
-    // 默认不自动弹出授权弹窗
     // #endif
   }
 
@@ -149,12 +171,14 @@ export function useWxAuth() {
     try {
       uni.removeStorageSync(STORAGE_KEY_PROFILE)
       uni.removeStorageSync(STORAGE_KEY_OPENID)
+      uni.removeStorageSync(STORAGE_KEY_PHONE)
     } catch {}
     isAuthorized.value = false
     avatarUrl.value = ''
     nickName.value = ''
     openId.value = ''
     loginCode.value = ''
+    phoneNumber.value = ''
     uni.showToast({ title: '已清除', icon: 'success' })
   }
 
@@ -166,12 +190,15 @@ export function useWxAuth() {
     openId,
     loginCode,
     showAuthDialog,
+    phoneNumber,
     // actions
     initWxAuth,
     loginWeixin,
     openAuthDialog,
     closeAuthDialog,
     onAuthConfirm,
+    bindPhone,
     clearProfile,
   }
 }
+

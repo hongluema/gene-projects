@@ -1,327 +1,318 @@
 <template>
-  <view class="container">
-    <view class="header">
-      <text class="header-title">基因检测报告</text>
-    </view>
-
-  <view class="content">
-    <!-- #ifdef MP-WEIXIN -->
-    <view class="user-card">
-      <image class="avatar" :src="avatarUrl || '/static/avatar.png'" mode="aspectFill" />
-      <view class="user-brief">
-        <text class="username">{{ nickName || '未授权用户' }}</text>
-        <text class="userid">ID：{{ openId || '未绑定' }}</text>
-      </view>
-      <view class="user-actions">
-        <button v-if="!isAuthorized" class="mini-btn primary" @click="openAuthDialog">完善资料</button>
-        <van-button v-else size="small" type="danger" plain @click="onClearProfile">清除资料</van-button>
+  <view class="home-page">
+    <!-- 顶部Banner -->
+    <view class="banner-section">
+      <view class="banner-content">
+        <text class="banner-title">采样检测查询平台</text>
+        <text class="banner-desc">便捷、专业、安全的检测服务</text>
       </view>
     </view>
 
-    <!-- 复用组件：用户资料弹窗 -->
-    <UserAuthDialog
-      :show="showAuthDialog"
-      :avatar-url="avatarUrl"
-      :nick-name="nickName"
-      @update:show="onUpdateAuthShow"
-      @confirm="onAuthConfirm"
-    />
-    <!-- #endif -->
-
-    <view class="report-card">
-        <view class="card-header">
-          <image class="icon" src="/static/dna-icon.png" mode="aspectFit" />
-          <text class="card-title">基因检测报告</text>
-        </view>
-
-        <view class="info-list">
-          <view class="info-item">
-            <text class="info-label">检测项目：</text>
-            <text class="info-value">MTHFR基因检测</text>
+    <!-- 快速入口 -->
+    <view class="quick-entry-section">
+      <view class="section-title">
+        <text class="title-text">快速入口</text>
+      </view>
+      
+      <view class="entry-grid">
+        <!-- 扫码录入 -->
+        <view class="entry-item primary" @click="goToSampleEntry">
+          <view class="item-icon-wrap">
+            <text class="item-icon">📝</text>
           </view>
-          <view class="info-item">
-            <text class="info-label">检测时间：</text>
-            <text class="info-value">2024年3月15日</text>
-          </view>
-          <view class="info-item">
-            <text class="info-label">检测机构：</text>
-            <text class="info-value">XX医学检验所</text>
-          </view>
+          <text class="item-name">扫码录入</text>
+          <text class="item-desc">扫描二维码录入样本</text>
         </view>
 
-        <view class="btn-container">
-          <button class="detail-btn" @click="viewDetail">查看详情</button>
+        <!-- 报告查询 -->
+        <view class="entry-item success" @click="goToReportQuery">
+          <view class="item-icon-wrap">
+            <text class="item-icon">🔍</text>
+          </view>
+          <text class="item-name">报告查询</text>
+          <text class="item-desc">查看检测报告</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 功能模块 -->
+    <view class="features-section">
+      <view class="section-title">
+        <text class="title-text">更多功能</text>
+      </view>
+
+      <view class="feature-list">
+        <!-- 我的报告 -->
+        <view class="feature-item" @click="goToMyReports">
+          <view class="feature-left">
+            <text class="feature-icon">📊</text>
+            <view class="feature-info">
+              <text class="feature-name">我的报告</text>
+              <text class="feature-desc">查看历史检测报告</text>
+            </view>
+          </view>
+          <text class="feature-arrow">→</text>
         </view>
 
-        <!-- #ifdef MP -->
-        <view class="btn-container" style="margin-top: 20rpx;">
-          <van-button type="primary" block @click="viewDetail">Vant 按钮（小程序）</van-button>
+        <!-- 关于我们 -->
+        <view class="feature-item" @click="goToAbout">
+          <view class="feature-left">
+            <text class="feature-icon">ℹ️</text>
+            <view class="feature-info">
+              <text class="feature-name">关于我们</text>
+              <text class="feature-desc">了解平台信息</text>
+            </view>
+          </view>
+          <text class="feature-arrow">→</text>
         </view>
-        <!-- #endif -->
+
+        <!-- 联系客服 -->
+        <view class="feature-item" @click="contactService">
+          <view class="feature-left">
+            <text class="feature-icon">📞</text>
+            <view class="feature-info">
+              <text class="feature-name">联系客服</text>
+              <text class="feature-desc">客服热线：400-888-8888</text>
+            </view>
+          </view>
+          <text class="feature-arrow">→</text>
+        </view>
       </view>
     </view>
   </view>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
-import UserAuthDialog from '@/components/UserAuthDialog.vue'
 import { useWxAuth } from '@/composables/useWxAuth'
 
 const {
-  isAuthorized,
-  avatarUrl,
-  nickName,
-  openId,
-  loginCode,
-  showAuthDialog,
   initWxAuth,
-  openAuthDialog,
-  onAuthConfirm,
-  clearProfile,
 } = useWxAuth()
 
-const onUpdateAuthShow = (v: boolean) => {
-  showAuthDialog.value = v
-}
-
-const onClearProfile = () => {
-  clearProfile()
-}
-
-onLoad(async () => {
+onLoad(() => {
+  // #ifdef MP-WEIXIN
   initWxAuth()
-  // 你原有的请求逻辑（可按需保留）
-  try {
-    const res = await uni.request({
-      url: 'http://localhost:8000/users',
-      method: 'POST',
-      data: {
-        nickname: 'walry',
-        mobile: '12345678910',
-        avatar: 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTI9icicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicic/132'
-      },
-      header: { 'Content-Type': 'application/json' }
-    })
-    console.log('>>>>res', res)
-  } catch (e) {}
+  // #endif
 })
-const viewDetail = () => {
-  uni.showToast({
-    title: '查看详情',
-    icon: 'none'
+
+// 跳转到样本录入（扫码）
+const goToSampleEntry = async () => {
+  uni.navigateTo({
+    url: '/pages/sample-entry/index'
+  })
+}
+
+// 跳转到报告查询
+const goToReportQuery = () => {
+  uni.navigateTo({
+    url: '/pages/report-query/index'
+  })
+}
+
+// 跳转到我的报告
+const goToMyReports = () => {
+  uni.navigateTo({
+    url: '/pages/report-query/index'
+  })
+}
+
+// 跳转到关于我们
+const goToAbout = () => {
+  uni.navigateTo({
+    url: '/pages/about/index'
+  })
+}
+
+// 跳转到个人中心
+const goToMine = () => {
+  uni.switchTab({
+    url: '/pages/mine/mine'
+  })
+}
+
+// 联系客服
+const contactService = () => {
+  uni.makePhoneCall({
+    phoneNumber: '4008888888'
   })
 }
 </script>
 
 <style scoped>
-.container {
+.home-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #E8F4FF 0%, #F5F5F5 100%);
+  background: #f5f7fa;
+  padding-bottom: 40rpx;
 }
 
-.header {
-  padding: 40rpx 30rpx;
-  background-color: transparent;
+.banner-section {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 60rpx 40rpx 80rpx;
+  overflow: hidden;
 }
 
-.header-title {
-  font-size: 44rpx;
+.banner-content {
+  position: relative;
+  z-index: 2;
+}
+
+.banner-title {
+  display: block;
+  font-size: 48rpx;
   font-weight: bold;
-  color: #333333;
+  color: #fff;
+  margin-bottom: 16rpx;
 }
 
-.content {
+.banner-desc {
+  display: block;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.banner-bg {
+  position: absolute;
+  right: 40rpx;
+  bottom: 20rpx;
+  width: 200rpx;
+  height: 200rpx;
+  opacity: 0.2;
+  z-index: 1;
+}
+
+.quick-entry-section {
+  margin-top: -40rpx;
   padding: 0 30rpx;
+  position: relative;
+  z-index: 3;
 }
 
-.user-card {
+.section-title {
+  padding: 0 10rpx 20rpx;
+}
+
+.title-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.entry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.entry-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx 20rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.entry-item.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.entry-item.success {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+}
+
+.item-icon-wrap {
+  width: 100rpx;
+  height: 100rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  background-color: #ffffff;
-  border-radius: 20rpx;
-  padding: 24rpx;
+  justify-content: center;
   margin-bottom: 20rpx;
 }
 
-.user-card .avatar {
-  width: 96rpx;
-  height: 96rpx;
-  border-radius: 48rpx;
-  margin-right: 20rpx;
+.item-icon {
+  font-size: 56rpx;
 }
 
-.user-card .user-brief {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.user-card .username {
+.item-name {
   font-size: 32rpx;
-  color: #333;
-  margin-bottom: 6rpx;
-}
-
-.user-card .userid {
-  font-size: 26rpx;
-  color: #999;
-}
-
-.user-card .user-actions {
-  margin-left: 12rpx;
-}
-
-.auth-modal {
-  width: 640rpx;
-  max-width: 680rpx;
-  padding: 32rpx 28rpx 28rpx;
-  box-sizing: border-box;
-}
-
-.auth-title {
-  text-align: center;
-  font-size: 32rpx;
-  color: #333;
-  font-weight: 600;
-}
-
-.auth-desc {
-  margin-top: 12rpx;
-  text-align: center;
-  font-size: 26rpx;
-  color: #888;
-}
-
-.auth-avatar {
-  margin-top: 24rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16rpx;
-}
-
-.avatar-large {
-  width: 128rpx;
-  height: 128rpx;
-  border-radius: 64rpx;
-  background: #f6f7f9;
-}
-
-.auth-nickname {
-  margin-top: 20rpx;
-}
-
-.auth-actions {
-  margin-top: 24rpx;
-  display: flex;
-  justify-content: flex-end;
-  gap: 16rpx;
-}
-
-.user-fill {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 16rpx;
-  margin: 16rpx 0 24rpx;
-}
-
-.nickname-input {
-  flex: 1;
-  height: 72rpx;
-  padding: 0 16rpx;
-  background: #f6f7f9;
-  border-radius: 12rpx;
-}
-
-.mini-btn {
-  height: 72rpx;
-  line-height: 72rpx;
-  padding: 0 24rpx;
-  border-radius: 12rpx;
-  background: #f0f0f0;
-  color: #333;
-}
-
-.mini-btn.primary {
-  background: #4A90E2;
-  color: #fff;
-}
-
-.report-card {
-  background-color: #ffffff;
-  border-radius: 24rpx;
-  padding: 40rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 40rpx;
-}
-
-.icon {
-  width: 48rpx;
-  height: 48rpx;
-  margin-right: 16rpx;
-}
-
-.card-title {
-  font-size: 36rpx;
   font-weight: bold;
-  color: #333333;
+  color: #fff;
+  margin-bottom: 8rpx;
 }
 
-.info-list {
-  margin-bottom: 40rpx;
+.item-desc {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.info-item {
+.features-section {
+  margin-top: 40rpx;
+  padding: 0 30rpx;
+}
+
+.feature-list {
+  background: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.feature-item {
   display: flex;
-  padding: 24rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 30rpx;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.info-item:last-child {
+.feature-item:last-child {
   border-bottom: none;
 }
 
-.info-label {
-  font-size: 30rpx;
-  color: #666666;
-  min-width: 180rpx;
-}
-
-.info-value {
-  font-size: 30rpx;
-  color: #333333;
-  flex: 1;
-}
-
-.btn-container {
+.feature-left {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 20rpx;
 }
 
-.detail-btn {
-  width: 100%;
-  height: 88rpx;
-  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-  color: #ffffff;
-  font-size: 32rpx;
-  border-radius: 44rpx;
-  border: none;
+.feature-icon {
+  font-size: 44rpx;
+  width: 80rpx;
+  height: 80rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #f5f7fa;
+  border-radius: 50%;
 }
 
-.detail-btn::after {
-  border: none;
+.feature-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.feature-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.feature-desc {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.feature-arrow {
+  font-size: 36rpx;
+  color: #ccc;
 }
 </style>

@@ -24,14 +24,16 @@
   <!-- #endif -->
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, watch } from 'vue'
 
-const props = defineProps<{ show: boolean; avatarUrl?: string; nickName?: string }>()
-const emit = defineEmits<{
-  (e: 'update:show', v: boolean): void
-  (e: 'confirm', payload: { avatarUrl: string; nickName: string }): void
-}>()
+const props = defineProps({
+  show: { type: Boolean, default: false },
+  avatarUrl: { type: String, default: '' },
+  nickName: { type: String, default: '' }
+})
+
+const emit = defineEmits(['update:show', 'confirm'])
 
 const localAvatar = ref(props.avatarUrl || '')
 const localNick = ref(props.nickName || '')
@@ -46,12 +48,12 @@ watch(
   }
 )
 
-const onChooseAvatar = (e: any) => {
+const onChooseAvatar = (e) => {
   const url = e?.detail?.avatarUrl || ''
   localAvatar.value = url
 }
 
-const onNickInput = (e: any) => {
+const onNickInput = (e) => {
   const value = e?.detail?.value ?? e?.detail ?? e?.target?.value ?? ''
   localNick.value = value
 }

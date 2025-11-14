@@ -54,7 +54,7 @@ import { reactive, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { USE_MOCK, API } from '@/config'
 import { mockUpdateUser } from '@/mock/api'
-import { useWxAuth } from '@/composables/useWxAuth'
+import { useAuth } from '@/composables/useAuth'
 
 const form = reactive({
   idCard: '',
@@ -64,7 +64,7 @@ const form = reactive({
   mobile: ''
 })
 
-const { openId } = useWxAuth()
+const { userId, token, phone, markProfileComplete, getAuthHeader } = useAuth()
 
 const genderOptions = [
   { label: '男', value: 'male' },
@@ -94,32 +94,44 @@ const isIdCard = (s) => /^(\d{15}|\d{17}[\dXx])$/.test(String(s).trim())
 const onSubmit = async () => {
   if (!form.idCard) return uni.showToast({ title: '请输入身份证号', icon: 'none' })
   if (!isIdCard(form.idCard)) return uni.showToast({ title: '身份证号格式不正确', icon: 'none' })
+  if (!form.name) return uni.showToast({ title: '请输入姓名', icon: 'none' })
+  if (!form.gender) return uni.showToast({ title: '请选择性别', icon: 'none' })
   if (form.age && !/^\d{1,3}$/.test(String(form.age))) return uni.showToast({ title: '年龄需为数字', icon: 'none' })
   if (form.mobile && !isMobile(form.mobile)) return uni.showToast({ title: '手机号格式不正确', icon: 'none' })
-  if (!openId.value) return uni.showToast({ title: '缺少openId，请返回“我的”页授权', icon: 'none' })
+  if (!userId.value) return uni.showToast({ title: '缺少userId，请重新登录', icon: 'none' })
 
   try {
     if (USE_MOCK) {
-      await mockUpdateUser({ openId: openId.value, ...form })
+      await mockUpdateUser({ userId: userId.value, ...form })
     } else {
       await uni.request({
         url: API.updateUser,
         method: 'POST',
-        data: { openId: openId.value, ...form },
-        header: { 'Content-Type': 'application/json' }
+        data: { userId: userId.value, ...form },
+        header: getAuthHeader()
       })
     }
+    
+    // 保存到本地缓存
     try { uni.setStorageSync('USER_PROFILE_FORM', { ...form }) } catch {}
+    
+    // 标记信息已完善
+    markProfileComplete()
+    
     uni.showToast({ title: '保存成功', icon: 'success' })
+    
+    // 跳转到首页
     setTimeout(() => {
-      uni.navigateBack()
-    }, 300)
+      uni.switchTab({ url: '/pages/index/index' })
+    }, 500)
   } catch (e) {
+    console.error('[Profile] submit error:', e)
     uni.showToast({ title: '保存失败', icon: 'none' })
   }
 }
 
 onLoad(() => {
+  // 加载缓存的表单数据
   try {
     const cache = uni.getStorageSync('USER_PROFILE_FORM')
     if (cache) {
@@ -130,6 +142,12 @@ onLoad(() => {
       form.mobile = cache.mobile || ''
     }
   } catch {}
+  
+  // 如果手机号为空，自动填充登录时的手机号
+  if (!form.mobile && phone.value) {
+    form.mobile = phone.value
+    console.log('[Profile] 自动填充登录手机号:', phone.value)
+  }
 })
 </script>
 
@@ -139,7 +157,6 @@ onLoad(() => {
   background-color: #f5f5f5;
 }
 .form {
-  margin: 20rpx;
   background: #fff;
   border-radius: 16rpx;
   overflow: hidden;

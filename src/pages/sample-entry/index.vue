@@ -206,6 +206,10 @@ import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/util
 import { USE_MOCK, API } from '@/config'
 import { mockGetProject, mockGetInstitution, mockSubmitSample, mockOcrIdCard } from '@/mock/api'
 import { post } from '@/utils/request'
+import { useAuth } from '@/composables/useAuth'
+
+// 登录检查
+const { checkAuth } = useAuth()
 
 // 项目信息
 const projectInfo = ref({
@@ -235,6 +239,12 @@ const manualSampleId = ref('')
 // 页面加载时检查是否有二维码参数
 onLoad((options) => {
   console.log('[SampleEntry] onLoad options:', options)
+  
+  // 登录检查（会自动初始化）
+  if (!checkAuth()) {
+    return
+  }
+  
   if (options.qrCode) {
     // 从二维码进入
     const qrData = decodeURIComponent(options.qrCode)

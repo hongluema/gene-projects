@@ -3,16 +3,14 @@
     <!-- 用户信息头部 -->
     <view class="user-header">
       <view class="user-info-card">
-        <image class="user-avatar" :src="avatarUrl || '/static/avatar.png'" mode="aspectFill" />
+        <image class="user-avatar" src="/static/avatar.png" mode="aspectFill" />
         <view class="user-details">
-          <text class="user-name">{{ nickName || '未登录' }}</text>
-          <text class="user-id">{{ openId || '未绑定账号' }}</text>
+          <text class="user-name">{{ phone ? phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : '未登录' }}</text>
+          <text class="user-id">{{ userId || '未绑定账号' }}</text>
         </view>
-        <!-- #ifdef MP-WEIXIN -->
-        <view v-if="!isAuthorized" class="auth-btn" @click="openAuthDialog">
+        <view v-if="!isLogin" class="auth-btn" @click="goToLogin">
           <text class="auth-text">登录</text>
         </view>
-        <!-- #endif -->
       </view>
     </view>
 
@@ -37,13 +35,13 @@
     <!-- 功能菜单 -->
     <view class="menu-section">
       <view class="menu-group">
-        <view class="menu-item" @click="handleBindPhone">
+        <view class="menu-item" @click="goToProfile">
           <view class="menu-left">
-            <text class="menu-icon">📱</text>
-            <text class="menu-text">手机号绑定</text>
+            <text class="menu-icon">👤</text>
+            <text class="menu-text">个人信息</text>
           </view>
           <view class="menu-right">
-            <text class="menu-value">{{ phoneNumber || '未绑定' }}</text>
+            <text class="menu-value">{{ isProfileComplete ? '已完善' : '未完善' }}</text>
             <text class="menu-arrow">→</text>
           </view>
         </view>
@@ -94,176 +92,74 @@
         </view>
       </view>
 
-      <!-- #ifdef MP-WEIXIN -->
-      <view v-if="isAuthorized" class="menu-group">
-        <view class="menu-item danger" @click="handleClearProfile">
+      <view v-if="isLogin" class="menu-group">
+        <view class="menu-item danger" @click="handleLogout">
           <view class="menu-left">
             <text class="menu-icon">🚪</text>
             <text class="menu-text">退出登录</text>
           </view>
         </view>
       </view>
-      <!-- #endif -->
     </view>
 
-    <!-- 手机号绑定弹窗 -->
-    <view v-if="showPhoneDialog" class="dialog-mask" @click="showPhoneDialog = false">
-      <view class="dialog-content" @click.stop="">
-        <view class="dialog-header">
-          <text class="dialog-title">绑定手机号</text>
-          <text class="dialog-close" @click="showPhoneDialog = false">×</text>
-        </view>
-        <view class="dialog-body">
-          <view class="input-group">
-            <text class="input-label">手机号</text>
-            <input 
-              class="input-field" 
-              v-model="phoneInput"
-              type="number"
-              maxlength="11"
-              placeholder="请输入手机号"
-            />
-          </view>
-          <view class="input-group">
-            <text class="input-label">验证码</text>
-            <view class="code-group">
-              <input 
-                class="input-field code-field" 
-                v-model="codeInput"
-                type="number"
-                maxlength="6"
-                placeholder="请输入验证码"
-              />
-              <button 
-                class="send-code-btn" 
-                :disabled="codeCountdown > 0"
-                @click="sendVerifyCode"
-              >
-                {{ codeCountdown > 0 ? `${codeCountdown}秒` : '获取验证码' }}
-              </button>
-            </view>
-          </view>
-        </view>
-        <view class="dialog-footer">
-          <button class="dialog-btn cancel" @click="showPhoneDialog = false">取消</button>
-          <button class="dialog-btn confirm" @click="confirmBindPhone">确定</button>
-        </view>
-      </view>
-    </view>
   </view>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import UserAuthDialog from '@/components/UserAuthDialog.vue'
-import { useWxAuth } from '@/composables/useWxAuth'
-import { validatePhone, validateCode } from '@/utils/validator'
-import { scanQRCode } from '@/utils/scan'
+import { useAuth } from '@/composables/useAuth'
 
 const {
-  isAuthorized,
-  avatarUrl,
-  nickName,
-  openId,
-  phoneNumber,
-  showAuthDialog,
-  initWxAuth,
-  openAuthDialog,
-  onAuthConfirm,
-  bindPhone,
-  clearProfile,
-} = useWxAuth()
-
-const showPhoneDialog = ref(false)
-const phoneInput = ref('')
-const codeInput = ref('')
-const codeCountdown = ref(0)
+  userId,
+  phone,
+  isLogin,
+  isProfileComplete,
+  initAuth,
+  logout
+} = useAuth()
 
 onLoad(() => {
-  // #ifdef MP-WEIXIN
-  initWxAuth()
-  // #endif
+  initAuth()
 })
 
 onShow(() => {
-  // 每次显示时刷新手机号
+  // 每次显示时刷新状态
+  initAuth()
 })
 
-const onUpdateAuthShow = (v) => {
-  showAuthDialog.value = v
+// 跳转到登录页
+const goToLogin = () => {
+  uni.navigateTo({
+    url: '/pages/login/login'
+  })
 }
 
-// 绑定手机号
-const handleBindPhone = () => {
-  if (phoneNumber.value) {
-    uni.showModal({
-      title: '提示',
-      content: `当前已绑定手机号：${phoneNumber.value}，是否重新绑定？`,
-      success: (res) => {
-        if (res.confirm) {
-          showPhoneDialog.value = true
-          phoneInput.value = ''
-          codeInput.value = ''
-        }
-      }
+// 跳转到个人信息页
+const goToProfile = () => {
+  if (!isLogin.value) {
+    uni.showToast({
+      title: '请先登录',
+      icon: 'none'
     })
-  } else {
-    showPhoneDialog.value = true
-    phoneInput.value = ''
-    codeInput.value = ''
-  }
-}
-
-// 发送验证码
-const sendVerifyCode = async () => {
-  if (!validatePhone(phoneInput.value)) {
-    uni.showToast({ title: '请输入正确的手机号', icon: 'none' })
+    setTimeout(() => {
+      goToLogin()
+    }, 500)
     return
   }
-
-  // 模拟发送验证码
-  uni.showLoading({ title: '发送中...' })
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  uni.hideLoading()
-  
-  uni.showToast({ title: '验证码已发送', icon: 'success' })
-  
-  // 倒计时
-  codeCountdown.value = 60
-  const timer = setInterval(() => {
-    codeCountdown.value--
-    if (codeCountdown.value <= 0) {
-      clearInterval(timer)
-    }
-  }, 1000)
+  uni.navigateTo({
+    url: '/pages/profile/profile'
+  })
 }
 
-// 确认绑定
-const confirmBindPhone = () => {
-  if (!validatePhone(phoneInput.value)) {
-    uni.showToast({ title: '请输入正确的手机号', icon: 'none' })
-    return
-  }
-
-  if (!validateCode(codeInput.value)) {
-    uni.showToast({ title: '请输入正确的验证码', icon: 'none' })
-    return
-  }
-
-  // 执行绑定
-  bindPhone(phoneInput.value)
-  showPhoneDialog.value = false
-}
-
-// 清除资料
-const handleClearProfile = () => {
+// 退出登录
+const handleLogout = () => {
   uni.showModal({
     title: '确认退出',
     content: '退出后将清除本地登录信息，确定要退出吗？',
     success: (res) => {
       if (res.confirm) {
-        clearProfile()
+        logout()
       }
     }
   })
@@ -277,10 +173,10 @@ const goToReportQuery = () => {
 }
 
 // 跳转到样本录入
-const goToSampleEntry = async () => {
+const goToSampleEntry = () => {
   uni.navigateTo({
-    url: `/pages/sample-entry/index?qrCode=${encodeURIComponent(result)}`
-  })  
+    url: '/pages/sample-entry/index'
+  })
 }
 
 // 跳转到关于我们
@@ -453,119 +349,4 @@ const contactService = () => {
   color: #ccc;
 }
 
-/* 手机号绑定弹窗 */
-.dialog-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.dialog-content {
-  width: 600rpx;
-  background: #fff;
-  border-radius: 20rpx;
-  overflow: hidden;
-}
-
-.dialog-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 30rpx;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.dialog-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-}
-
-.dialog-close {
-  font-size: 48rpx;
-  color: #999;
-  line-height: 1;
-}
-
-.dialog-body {
-  padding: 30rpx;
-}
-
-.input-group {
-  margin-bottom: 30rpx;
-}
-
-.input-group:last-child {
-  margin-bottom: 0;
-}
-
-.input-label {
-  display: block;
-  font-size: 28rpx;
-  color: #333;
-  margin-bottom: 16rpx;
-}
-
-.input-field {
-  width: 100%;
-  padding: 24rpx 20rpx;
-  background: #f5f7fa;
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  box-sizing: border-box;
-}
-
-.code-group {
-  display: flex;
-  gap: 16rpx;
-}
-
-.code-field {
-  flex: 1;
-}
-
-.send-code-btn {
-  width: 180rpx;
-  padding: 24rpx 20rpx;
-  background: #667eea;
-  color: #fff;
-  font-size: 24rpx;
-  border-radius: 12rpx;
-  border: none;
-}
-
-.send-code-btn[disabled] {
-  background: #d9d9d9;
-  color: #999;
-}
-
-.dialog-footer {
-  display: flex;
-  border-top: 1px solid #f0f0f0;
-}
-
-.dialog-btn {
-  flex: 1;
-  padding: 28rpx;
-  font-size: 30rpx;
-  border: none;
-  background: transparent;
-}
-
-.dialog-btn.cancel {
-  color: #999;
-  border-right: 1px solid #f0f0f0;
-}
-
-.dialog-btn.confirm {
-  color: #667eea;
-  font-weight: bold;
-}
 </style>

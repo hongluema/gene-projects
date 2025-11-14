@@ -84,16 +84,13 @@
 
 <script setup>
 import { onLoad } from '@dcloudio/uni-app'
-import { useWxAuth } from '@/composables/useWxAuth'
+import { useAuth } from '@/composables/useAuth'
 
-const {
-  initWxAuth,
-} = useWxAuth()
+const { initAuth } = useAuth()
 
 onLoad(() => {
-  // #ifdef MP-WEIXIN
-  initWxAuth()
-  // #endif
+  // 初始化登录状态
+  initAuth()
 })
 
 // 跳转到样本录入（扫码）

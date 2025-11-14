@@ -84,10 +84,19 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { useAuth } from '@/composables/useAuth'
+
+// 登录检查
+const { checkAuth } = useAuth()
 
 const reportList = ref([])
 
 onLoad((options) => {
+  // 登录检查（会自动初始化）
+  if (!checkAuth()) {
+    return
+  }
+  
   if (options.data) {
     try {
       reportList.value = JSON.parse(decodeURIComponent(options.data))

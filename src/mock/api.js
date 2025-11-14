@@ -1,5 +1,57 @@
 // Lightweight mock API for local development
 
+// ========== 认证相关 ==========
+
+/**
+ * 发送短信验证码
+ */
+export function mockSendSmsCode(phone) {
+  console.log('[MOCK] sendSmsCode', phone)
+  return new Promise((resolve) => {
+    setTimeout(() => resolve({
+      success: true,
+      message: '验证码已发送（Mock：验证码为 123456）'
+    }), 500)
+  })
+}
+
+/**
+ * 手机验证码登录
+ */
+export function mockLoginByPhone(phone, code) {
+  console.log('[MOCK] loginByPhone', phone, code)
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // Mock 验证码校验（任何验证码都通过，实际环境需要后端校验）
+      if (!code || code.length !== 6) {
+        reject(new Error('验证码格式错误'))
+        return
+      }
+
+      // 模拟返回用户信息
+      const userId = `USER_${Date.now()}_${Math.random().toString(36).slice(2, 6).toUpperCase()}`
+      const token = `TOKEN_${Math.random().toString(36).slice(2)}`
+      
+      // 模拟：首次登录未完善信息，再次登录已完善
+      const isFirstLogin = !uni.getStorageSync(`LOGIN_HISTORY_${phone}`)
+      if (isFirstLogin) {
+        uni.setStorageSync(`LOGIN_HISTORY_${phone}`, true)
+      }
+
+      resolve({
+        success: true,
+        userId,
+        token,
+        phone,
+        isProfileComplete: !isFirstLogin, // 首次登录为 false，再次登录为 true
+        message: '登录成功'
+      })
+    }, 800)
+  })
+}
+
+// ========== 微信相关（保留） ==========
+
 export function mockWxLogin(code) {
   const openId = `mock_openid_${code || Math.random().toString(36).slice(2, 10)}`
   return new Promise((resolve) => setTimeout(() => resolve({ openId }), 200))

@@ -10,9 +10,9 @@
 
     <!-- 快速入口 -->
     <view class="quick-entry-section">
-      <view class="section-title">
+      <!-- <view class="section-title">
         <text class="title-text">快速入口</text>
-      </view>
+      </view> -->
       
       <view class="entry-grid">
         <!-- 扫码录入 -->

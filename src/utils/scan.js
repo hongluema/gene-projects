@@ -65,6 +65,7 @@ export function scanAnyCode() {
  * @returns {Object} { projectId, institutionId }
  */
 export function parseProjectQRCode(qrCodeData) {
+  console.log('>>>>qrCodeData', qrCodeData);
   try {
     // 假设二维码格式为 JSON: {"projectId":"xxx","institutionId":"yyy"}
     // 或者是 URL 格式: https://xxx.com?projectId=xxx&institutionId=yyy
@@ -73,15 +74,15 @@ export function parseProjectQRCode(qrCodeData) {
       // JSON 格式
       const data = JSON.parse(qrCodeData)
       return {
-        projectId: data.projectId || '',
-        institutionId: data.institutionId || ''
+        projectId: data.program_id || '',
+        institutionId: data.org_id || ''
       }
     } else if (qrCodeData.includes('?')) {
       // URL 格式
       const url = new URL(qrCodeData)
       return {
-        projectId: url.searchParams.get('projectId') || '',
-        institutionId: url.searchParams.get('institutionId') || ''
+        projectId: url.searchParams.get('program_id') || '',
+        institutionId: url.searchParams.get('org_id') || ''
       }
     } else {
       // 简单格式: projectId_institutionId

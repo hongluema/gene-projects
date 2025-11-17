@@ -268,12 +268,13 @@ const handleScanProject = async () => {
 
 // 从二维码加载项目信息
 const loadProjectFromQRCode = async (qrData) => {
-  const { projectId, institutionId } = parseProjectQRCode(qrData)
-  if (!projectId) {
+  const data = await parseProjectQRCode(qrData)
+  console.log('>>>program_id', data);
+  if (!data.projectId) {
     uni.showToast({ title: '无效的项目二维码', icon: 'none' })
     return
   }
-  await loadProject(projectId, institutionId)
+  await loadProject(data.projectId, data.institutionId)
 }
 
 // 手动输入项目ID并加载

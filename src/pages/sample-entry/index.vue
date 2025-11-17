@@ -369,7 +369,19 @@ const loadProjectManually = async () => {
     uni.showToast({ title: '请选择项目', icon: 'none' })
     return
   }
-  await loadProject(manualProjectId.value, manualInstitutionId.value)
+
+  // 直接使用用户选择的数据
+  const selectedProject = projectOptions.value[selectedProjectIndex.value]
+  const selectedInstitution = institutionOptions.value[selectedInstitutionIndex.value]
+
+  projectInfo.value.projectId = manualProjectId.value
+  projectInfo.value.projectName = selectedProject?.label || ''
+  projectInfo.value.institutionId = manualInstitutionId.value
+  projectInfo.value.institutionName = selectedInstitution?.label || ''
+  projectInfo.value.description = '' // 手动选择时没有描述信息
+
+  showProjectInput.value = false
+  uni.showToast({ title: '项目信息已加载', icon: 'success' })
 }
 
 // 加载项目信息

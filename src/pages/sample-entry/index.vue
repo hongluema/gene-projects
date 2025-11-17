@@ -208,7 +208,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { scanQRCode, scanBarCode, parseProjectQRCode } from '@/utils/scan'
 import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/utils/validator'
 import { USE_MOCK, API } from '@/config'
-import { mockGetProject, mockGetInstitution, mockSubmitSample, mockOcrIdCard } from '@/mock/api'
+import { mockSubmitSample, mockOcrIdCard } from '@/mock/api'
 import { post, get } from '@/utils/request'
 import { useAuth } from '@/composables/useAuth'
 

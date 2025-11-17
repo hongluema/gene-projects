@@ -332,7 +332,7 @@ const contactService = () => {
   align-items: center;
   justify-content: center;
   gap: 12rpx;
-  padding: 24rpx;
+  /* padding: 24rpx; */
   font-size: 28rpx;
   border-radius: 50rpx;
   border: none;
@@ -391,7 +391,7 @@ const contactService = () => {
   align-items: center;
   justify-content: center;
   gap: 12rpx;
-  padding: 28rpx;
+  /* padding: 28rpx; */
   background: #fff;
   color: #667eea;
   font-size: 30rpx;

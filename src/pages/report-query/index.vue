@@ -30,11 +30,11 @@
       <!-- 查询表单 -->
       <view class="query-form">
         <!-- 手机号查询 -->
-        <view v-show="queryType === 'phone'" class="form-content">
+        <view v-if="queryType === 'phone'" class="form-content">
           <view class="form-item">
             <text class="item-label">手机号</text>
-            <input 
-              class="item-input" 
+            <input
+              class="item-input"
               v-model="phoneForm.mobile"
               type="number"
               maxlength="11"
@@ -45,16 +45,16 @@
           <view class="form-item">
             <text class="item-label">验证码</text>
             <view class="code-input-wrap">
-              <input 
-                class="item-input code-input" 
+              <input
+                class="item-input code-input"
                 v-model="phoneForm.code"
                 type="number"
                 maxlength="6"
                 placeholder="请输入验证码"
                 placeholder-class="input-placeholder"
               />
-              <button 
-                class="send-code-btn" 
+              <button
+                class="send-code-btn"
                 :disabled="codeSending || countdown > 0"
                 @click="sendCode"
               >
@@ -68,11 +68,11 @@
         </view>
 
         <!-- 身份证查询 -->
-        <view v-show="queryType === 'idcard'" class="form-content">
+        <view v-if="queryType === 'idcard'" class="form-content">
           <view class="form-item">
             <text class="item-label">身份证号</text>
-            <input 
-              class="item-input" 
+            <input
+              class="item-input"
               v-model="idCardForm.idCard"
               maxlength="18"
               placeholder="请输入身份证号"
@@ -90,14 +90,14 @@
       </view>
 
       <!-- 历史查询记录 -->
-      <view v-if="historyList.length > 0" class="history-section">
+      <view v-if="filteredHistoryList.length > 0" class="history-section">
         <view class="section-title">
           <text>最近查询</text>
           <text class="clear-btn" @click="clearHistory">清除</text>
         </view>
         <view class="history-list">
-          <view 
-            v-for="(item, index) in historyList" 
+          <view
+            v-for="(item, index) in filteredHistoryList"
             :key="index"
             class="history-item"
             @click="quickQuery(item)"
@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { validatePhone, validateIdCard, validateCode } from '@/utils/validator'
 import { USE_MOCK, API } from '@/config'
 import { mockQueryReport } from '@/mock/api'
@@ -136,6 +136,11 @@ const idCardForm = ref({
 })
 
 const historyList = ref([])
+
+// 根据 queryType 过滤历史记录
+const filteredHistoryList = computed(() => {
+  return historyList.value.filter(item => item.type === queryType.value)
+})
 
 // 页面加载时恢复查询历史
 onMounted(() => {
@@ -434,7 +439,9 @@ const maskSensitive = (value, type) => {
 
 .send-code-btn {
   width: 200rpx;
-  padding: 24rpx 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #667eea;
   color: #fff;
   font-size: 26rpx;
@@ -470,7 +477,7 @@ const maskSensitive = (value, type) => {
 
 .query-btn {
   margin-top: 20rpx;
-  padding: 28rpx;
+  width: 300rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   font-size: 32rpx;

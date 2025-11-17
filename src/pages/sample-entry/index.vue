@@ -708,7 +708,7 @@ const handleSubmit = async () => {
   align-items: center;
   justify-content: center;
   gap: 12rpx;
-  padding: 32rpx 20rpx;
+  /* padding: 32rpx 20rpx; */
   border-radius: 16rpx;
   border: none;
   font-size: 28rpx;
@@ -727,6 +727,7 @@ const handleSubmit = async () => {
 
 .btn-icon {
   font-size: 40rpx;
+  height: 60rpx;
 }
 
 .manual-input-area {
@@ -799,7 +800,7 @@ const handleSubmit = async () => {
 .reset-btn {
   width: 100%;
   margin-top: 20rpx;
-  padding: 16rpx;
+  padding: 8rpx;
   background: #f5f7fa;
   color: #666;
   font-size: 26rpx;
@@ -916,7 +917,7 @@ const handleSubmit = async () => {
 
 .submit-btn {
   width: 100%;
-  padding: 28rpx;
+  padding: 12rpx;
   font-size: 32rpx;
   font-weight: bold;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

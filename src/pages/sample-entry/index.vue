@@ -26,15 +26,13 @@
               </button>
             </view>
             
-            <!-- 手动输入项目ID -->
+            <!-- 下拉选择项目 -->
             <view v-if="showProjectInput" class="manual-input-area">
               <view class="input-row">
-                <text class="input-label">项目ID</text>
-                <input 
-                  class="input-field" 
-                  v-model="manualProjectId"
-                  placeholder="请输入项目ID"
-                />
+                <text class="input-label">选择项目</text>
+                <picker mode="selector" :range="projectOptions" range-key="label" @change="onProjectChange">
+                  <view class="input-field">{{ selectedProjectLabel }}</view>
+                </picker>
               </view>
               <button class="confirm-btn" @click="loadProjectManually">确认</button>
             </view>
@@ -199,13 +197,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { scanQRCode, scanBarCode, parseProjectQRCode } from '@/utils/scan'
 import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/utils/validator'
 import { USE_MOCK, API } from '@/config'
 import { mockGetProject, mockGetInstitution, mockSubmitSample, mockOcrIdCard } from '@/mock/api'
-import { post } from '@/utils/request'
+import { post, get } from '@/utils/request'
 import { useAuth } from '@/composables/useAuth'
 
 // 登录检查
@@ -235,6 +233,48 @@ const showProjectInput = ref(false)
 const showSampleInput = ref(false)
 const manualProjectId = ref('')
 const manualSampleId = ref('')
+
+// 项目下拉选项
+const projectOptions = ref([])
+const selectedProjectIndex = ref(-1)
+const selectedProjectLabel = computed(() => {
+  const idx = selectedProjectIndex.value
+  if (idx >= 0 && idx < projectOptions.value.length) return projectOptions.value[idx].label
+  return '请选择项目'
+})
+
+const onProjectChange = (e) => {
+  const idx = Number(e?.detail?.value ?? -1)
+  if (idx >= 0 && idx < projectOptions.value.length) {
+    selectedProjectIndex.value = idx
+    manualProjectId.value = projectOptions.value[idx].value
+  }
+}
+
+// 加载项目列表（供下拉选择）
+const projectsFetched = ref(false)
+const fetchProjects = async () => {
+  try {
+    uni.showLoading({ title: '加载项目...' })
+    const res = await get('http://localhost:8002/api/projects')
+    let list = res.data.list;
+    projectOptions.value = (list || []).map((item) => ({
+      label: item?.name,
+      value: item?.id
+    })).filter(x => x.value)
+    console.log('>>>>projectOptions', res);
+    projectsFetched.value = true
+  } catch (err) {
+    console.error('[SampleEntry] Fetch projects fail:', err)
+    uni.showToast({ title: '加载项目列表失败', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+  }
+}
+
+watch(showProjectInput, (val) => {
+  if (val && !projectsFetched.value) fetchProjects()
+})
 
 // 页面加载时检查是否有二维码参数
 onLoad((options) => {
@@ -280,7 +320,7 @@ const loadProjectFromQRCode = async (qrData) => {
 // 手动输入项目ID并加载
 const loadProjectManually = async () => {
   if (!manualProjectId.value) {
-    uni.showToast({ title: '请输入项目ID', icon: 'none' })
+    uni.showToast({ title: '请选择项目', icon: 'none' })
     return
   }
   await loadProject(manualProjectId.value, '')

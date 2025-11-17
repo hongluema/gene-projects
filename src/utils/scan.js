@@ -72,7 +72,8 @@ export function parseProjectQRCode(qrCodeData) {
     
     if (qrCodeData.startsWith('{')) {
       // JSON 格式
-      const data = JSON.parse(qrCodeData)
+      const data = JSON.parse(qrCodeData);
+      console.log('>>>>data', data);
       return {
         projectId: data.program_id || '',
         institutionId: data.org_id || ''

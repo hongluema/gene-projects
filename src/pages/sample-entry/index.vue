@@ -203,7 +203,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { scanQRCode, scanBarCode, parseProjectQRCode } from '@/utils/scan'
 import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/utils/validator'
@@ -323,14 +323,17 @@ watch(showProjectInput, (val) => {
 })
 
 // 页面加载时检查是否有二维码参数
-onLoad((options) => {
+onLoad(async (options) => {
   console.log('[SampleEntry] onLoad options:', options)
-  
+
   // 登录检查（会自动初始化）
   if (!checkAuth()) {
     return
   }
-  
+
+  // 先加载项目和机构列表，用于回显
+  await Promise.all([fetchProjects(), fetchInstitutions()])
+
   if (options.qrCode) {
     // 从二维码进入
     const qrData = decodeURIComponent(options.qrCode)
@@ -388,32 +391,24 @@ const loadProjectManually = async () => {
 const loadProject = async (projectId, institutionId) => {
   uni.showLoading({ title: '加载中...' })
   try {
-    // 获取项目信息
-    let projectData
-    if (USE_MOCK) {
-      const res = await mockGetProject(projectId)
-      projectData = res.data
-    } else {
-      const res = await post(`${API.getProject}/${projectId}`)
-      projectData = res.data
+    // 直接从已加载的列表中查找项目信息
+    const projectInList = projectOptions.value.find(p => p.value == projectId)
+    if (!projectInList) {
+      uni.showToast({ title: '未找到对应的项目', icon: 'none' })
+      return
     }
 
-    projectInfo.value.projectId = projectData.id
-    projectInfo.value.projectName = projectData.name
-    projectInfo.value.institutionId = projectData.institutionId || institutionId
-    projectInfo.value.description = projectData.description
+    projectInfo.value.projectId = projectId
+    projectInfo.value.projectName = projectInList.label
+    projectInfo.value.description = '' // 列表中没有描述信息
 
-    // 获取机构信息
-    if (projectInfo.value.institutionId) {
-      let institutionData
-      if (USE_MOCK) {
-        const res = await mockGetInstitution(projectInfo.value.institutionId)
-        institutionData = res.data
-      } else {
-        const res = await post(`${API.getInstitution}/${projectInfo.value.institutionId}`)
-        institutionData = res.data
+    // 从已加载的列表中查找机构信息
+    if (institutionId) {
+      const institutionInList = institutionOptions.value.find(inst => inst.value == institutionId)
+      if (institutionInList) {
+        projectInfo.value.institutionId = institutionId
+        projectInfo.value.institutionName = institutionInList.label
       }
-      projectInfo.value.institutionName = institutionData.name
     }
 
     showProjectInput.value = false

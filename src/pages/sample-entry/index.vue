@@ -34,6 +34,12 @@
                   <view class="input-field">{{ selectedProjectLabel }}</view>
                 </picker>
               </view>
+              <view class="input-row">
+                <text class="input-label">选择机构</text>
+                <picker mode="selector" :range="institutionOptions" range-key="label" @change="onInstitutionChange">
+                  <view class="input-field">{{ selectedInstitutionLabel }}</view>
+                </picker>
+              </view>
               <button class="confirm-btn" @click="loadProjectManually">确认</button>
             </view>
           </view>
@@ -232,6 +238,7 @@ const submitting = ref(false)
 const showProjectInput = ref(false)
 const showSampleInput = ref(false)
 const manualProjectId = ref('')
+const manualInstitutionId = ref('')
 const manualSampleId = ref('')
 
 // 项目下拉选项
@@ -248,6 +255,23 @@ const onProjectChange = (e) => {
   if (idx >= 0 && idx < projectOptions.value.length) {
     selectedProjectIndex.value = idx
     manualProjectId.value = projectOptions.value[idx].value
+  }
+}
+
+// 机构下拉选项
+const institutionOptions = ref([])
+const selectedInstitutionIndex = ref(-1)
+const selectedInstitutionLabel = computed(() => {
+  const idx = selectedInstitutionIndex.value
+  if (idx >= 0 && idx < institutionOptions.value.length) return institutionOptions.value[idx].label
+  return '请选择机构'
+})
+
+const onInstitutionChange = (e) => {
+  const idx = Number(e?.detail?.value ?? -1)
+  if (idx >= 0 && idx < institutionOptions.value.length) {
+    selectedInstitutionIndex.value = idx
+    manualInstitutionId.value = institutionOptions.value[idx].value
   }
 }
 
@@ -272,8 +296,30 @@ const fetchProjects = async () => {
   }
 }
 
+// 加载机构列表（供下拉选择）
+const institutionsFetched = ref(false)
+const fetchInstitutions = async () => {
+  try {
+    uni.showLoading({ title: '加载机构...' })
+    // const res = await get('http://localhost:8002/api/institutions')
+    let list = [{name: '测试机构', id: 1}];
+    institutionOptions.value = (list || []).map((item) => ({
+      label: item?.name,
+      value: item?.id
+    })).filter(x => x.value)
+    console.log('>>>>institutionOptions', res);
+    institutionsFetched.value = true
+  } catch (err) {
+    console.error('[SampleEntry] Fetch institutions fail:', err)
+    uni.showToast({ title: '加载机构列表失败', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+  }
+}
+
 watch(showProjectInput, (val) => {
   if (val && !projectsFetched.value) fetchProjects()
+  if (val && !institutionsFetched.value) fetchInstitutions()
 })
 
 // 页面加载时检查是否有二维码参数
@@ -323,7 +369,7 @@ const loadProjectManually = async () => {
     uni.showToast({ title: '请选择项目', icon: 'none' })
     return
   }
-  await loadProject(manualProjectId.value, '')
+  await loadProject(manualProjectId.value, manualInstitutionId.value)
 }
 
 // 加载项目信息

@@ -215,7 +215,7 @@ const handleLogin = async () => {
     userInfo = resData.data.data;
 
     console.log('[Login] login success:', userInfo)
-    uni.setStorageSync(STORAGE_KEY_PROFILE_COMPLETED, !!userInfo.id_number);
+    // uni.setStorageSync(STORAGE_KEY_PROFILE_COMPLETED, !!userInfo.id_number);
     // 保存登录信息
     saveLoginInfo({
       userId: userInfo.user_id,

@@ -112,12 +112,8 @@ export function useAuth() {
    * 自动初始化登录状态
    */
   const checkAuth = () => {
-    // 如果还没初始化，先初始化
-    if (!hasInitialized) {
-      initAuth()
-    }
 
-    if (!isLogin.value || !token.value) {
+    if (!userId.value) {
       console.log('[Auth] checkAuth failed, redirect to login')
       uni.showToast({
         title: '请先登录',

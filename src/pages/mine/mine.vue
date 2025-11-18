@@ -9,7 +9,7 @@
           <text class="user-name">{{ userInfo.phone ? userInfo.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : '未登录' }}</text>
           <text class="user-name">{{ userInfo.name }}</text>
         </view>
-        <view v-if="!isLogin" class="auth-btn" @click="goToLogin">
+        <view v-if="!userInfo.phone" class="auth-btn" @click="goToLogin">
           <text class="auth-text">登录</text>
         </view>
       </view>

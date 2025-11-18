@@ -5,8 +5,8 @@
       <van-field
         label="身份证号"
         placeholder="请输入身份证号"
-        :value="form.idCard"
-        @change="onChange('idCard', $event)"
+        :value="form.id_number"
+        @change="onChange('id_number', $event)"
         clearable
       />
       <van-field
@@ -19,8 +19,8 @@
 
       <view class="picker-row">
         <text class="picker-label">性别</text>
-        <picker mode="selector" :range="genderOptions" range-key="label" @change="onGenderChange">
-          <view class="picker-value">{{ genderLabel }}</view>
+        <picker mode="selector" :range="sexOptions" range-key="label" @change="onSexChange">
+          <view class="picker-value">{{ sexLabel }}</view>
         </picker>
       </view>
 
@@ -57,29 +57,29 @@ import { mockUpdateUser } from '@/mock/api'
 import { useAuth } from '@/composables/useAuth'
 
 const form = reactive({
-  idCard: '',
+  id_number: '',
   name: '',
-  gender: '',
+  sex: '',
   age: '',
   phone: ''
 })
 
 const { userId, phone, markProfileComplete } = useAuth()
 
-const genderOptions = [
+const sexOptions = [
   { label: '男', value: 'male' },
   { label: '女', value: 'female' }
 ]
 
-const genderLabel = computed(() => {
-  const g = genderOptions.find((x) => x.value === form.gender)
+const sexLabel = computed(() => {
+  const g = sexOptions.find((x) => x.value === form.sex)
   return g ? g.label : '请选择性别'
 })
 
-const onGenderChange = (e) => {
+const onSexChange = (e) => {
   const idx = Number(e?.detail?.value ?? -1)
   if (idx >= 0 && idx < genderOptions.length) {
-    form.gender = genderOptions[idx].value
+    form.sex = sexOptions[idx].value
   }
 }
 
@@ -92,21 +92,21 @@ const isMobile = (s) => /^1[3-9]\d{9}$/.test(String(s).trim())
 const isIdCard = (s) => /^(\d{15}|\d{17}[\dXx])$/.test(String(s).trim())
 
 const onSubmit = async () => {
-  if (!form.idCard) return uni.showToast({ title: '请输入身份证号', icon: 'none' })
-  if (!isIdCard(form.idCard)) return uni.showToast({ title: '身份证号格式不正确', icon: 'none' })
+  if (!form.id_number) return uni.showToast({ title: '请输入身份证号', icon: 'none' })
+  if (!isIdCard(form.id_number)) return uni.showToast({ title: '身份证号格式不正确', icon: 'none' })
   if (!form.name) return uni.showToast({ title: '请输入姓名', icon: 'none' })
-  if (!form.gender) return uni.showToast({ title: '请选择性别', icon: 'none' })
+  if (!form.sex) return uni.showToast({ title: '请选择性别', icon: 'none' })
   if (form.age && !/^\d{1,3}$/.test(String(form.age))) return uni.showToast({ title: '年龄需为数字', icon: 'none' })
   if (form.phone && !isMobile(form.phone)) return uni.showToast({ title: '手机号格式不正确', icon: 'none' })
   if (!userId.value) return uni.showToast({ title: '缺少userId，请重新登录', icon: 'none' })
-  const { idCard, name, gender, age, phone } = form;
+  const { id_number, name, sex, age, phone } = form;
   const userData = {
     userId: userId.value,
     phone: '',
     name: name,
     avatar: '',
-    id_number: idCard,
-    sex: gender,
+    id_number: id_number,
+    sex: sex,
     age: age,
   };
   try {
@@ -144,7 +144,7 @@ onLoad(async () => {
     console.log('>>>>res', res);
     const userInfo = res.data.data;
     if (userInfo) {
-      form.idCard = userInfo.id_number || ''
+      form.id_number = userInfo.id_number || ''
       form.name = userInfo.name || ''
       form.gender = userInfo.sex || ''
       form.age = userInfo.age || ''

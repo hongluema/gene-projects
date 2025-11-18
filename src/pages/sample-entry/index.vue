@@ -207,7 +207,7 @@ import { ref, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { scanQRCode, scanBarCode, parseProjectQRCode } from '@/utils/scan'
 import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/utils/validator'
-import { USE_MOCK, API } from '@/config'
+import { USE_MOCK, API, API_BASE } from '@/config'
 import { mockSubmitSample, mockOcrIdCard } from '@/mock/api'
 import { post, get } from '@/utils/request'
 import { useAuth } from '@/composables/useAuth'
@@ -280,7 +280,12 @@ const projectsFetched = ref(false)
 const fetchProjects = async () => {
   try {
     uni.showLoading({ title: '加载项目...' })
-    const res = await get(`{API_BASE}/api/projects`)
+    console.log('>>>>res projects');
+    const res = await uni.request({
+      url: `${API_BASE}/api/projects`,
+      method: 'GET',
+    })
+    console.log('>>>>res projects', res);
     let list = res.data.list;
     projectOptions.value = (list || []).map((item) => ({
       label: item?.name,
@@ -302,12 +307,17 @@ const fetchInstitutions = async () => {
   try {
     uni.showLoading({ title: '加载机构...' })
     // const res = await get('http://localhost:8002/api/institutions')
+    // const res = await uni.request({
+    //   url: `${API_BASE}/api/institutions`,
+    //   method: 'GET',
+    // })
+    // console.log('>>>>res institutions', res);
     let list = [{name: '测试机构', id: 1}];
     institutionOptions.value = (list || []).map((item) => ({
       label: item?.name,
       value: item?.id
     })).filter(x => x.value)
-    console.log('>>>>institutionOptions', res);
+    // console.log('>>>>institutionOptions', res);
     institutionsFetched.value = true
   } catch (err) {
     console.error('[SampleEntry] Fetch institutions fail:', err)

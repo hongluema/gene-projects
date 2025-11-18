@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <view>{{ phone }}</view>
+    <view>{{ phone }} | {{ userId }}</view>
     <view class="form">
       <van-cell-group>
       <van-field

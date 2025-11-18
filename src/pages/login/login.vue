@@ -202,47 +202,23 @@ const handleLogin = async () => {
     let result
     let userInfo;
     // 调用登录接口
-    if (USE_MOCK) {
-      result = await mockLoginByPhone(form.value.phone, form.value.code);
-      const resData = await uni.request({
-        url: API.createByPhone,
-        method: 'POST',
-        data: {
-          phone: form.value.phone
-        },
-        header: { 'Content-Type': 'application/json' }
-      });
-      console.log('>>>>resData', resData);
-      userInfo = resData.data.data;
-      // if (userInfo) {
-      //   uni.setStorageSync(USER_INFO, userInfo)
-      // }
-    } else {
-      const res = await uni.request({
-        url: API.loginByPhone,
-        method: 'POST',
-        data: {
-          phone: form.value.phone,
-          code: form.value.code
-        },
-        header: { 'Content-Type': 'application/json' }
-      })
-
-      if (res.data && res.data.success) {
-        result = res.data;
-        await post(API.createByPhone, {
+    result = await mockLoginByPhone(form.value.phone, form.value.code);
+    const resData = await uni.request({
+      url: API.createByPhone,
+      method: 'POST',
+      data: {
         phone: form.value.phone
-      })
-      } else {
-        throw new Error(res.data?.message || '登录失败')
-      }
-    }
+      },
+      header: { 'Content-Type': 'application/json' }
+    });
+    console.log('>>>>resData', resData);
+    userInfo = resData.data.data;
 
     console.log('[Login] login success:', result)
 
     // 保存登录信息
     saveLoginInfo({
-      userId: userInfo.userId,
+      userId: userInfo.user_id,
       phone: result.phone || form.value.phone
     })
 
@@ -253,7 +229,7 @@ const handleLogin = async () => {
 
     // 根据是否完善信息跳转
     setTimeout(() => {
-      if (result.isProfileComplete) {
+      if (userInfo.isProfileComplete) {
         // 已完善信息，跳转首页
         uni.switchTab({
           url: '/pages/index/index'

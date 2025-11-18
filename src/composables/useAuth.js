@@ -64,7 +64,7 @@ export function useAuth() {
    */
   const saveLoginInfo = (data) => {
     console.log('[Auth] saveLoginInfo', data)
-    userId.value = data.user_id
+    userId.value = data.userId
     phone.value = data.phone || ''
     isLogin.value = true
     isProfileComplete.value = data.isProfileComplete || false

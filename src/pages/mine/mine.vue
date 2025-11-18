@@ -42,7 +42,7 @@
             <text class="menu-text">个人信息</text>
           </view>
           <view class="menu-right">
-            <text class="menu-value">{{ isProfileComplete ? '已完善' : '未完善' }}</text>
+            <text class="menu-value">{{ userInfo.id_number ? '已完善' : '未完善' }}</text>
             <text class="menu-arrow">→</text>
           </view>
         </view>
@@ -112,9 +112,7 @@ import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useAuth } from '@/composables/useAuth'
 
 const {
-  // phone,
   isLogin,
-  isProfileComplete,
   initAuth,
   userInfo,
   logout

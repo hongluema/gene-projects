@@ -7,9 +7,9 @@ const isLogin = ref(false)
 const isProfileComplete = ref(false)
 const phone = ref('')
 
-const STORAGE_KEY_TOKEN = 'USER_TOKEN'
+const STORAGE_KEY_USER_INFO = 'USER_INFO'
 const STORAGE_KEY_USER_ID = 'USER_ID'
-const STORAGE_KEY_PHONE = 'USER_PHONE'
+const STORAGE_KEY_USER_PHONE = 'USER_PHONE'
 const STORAGE_KEY_PROFILE_COMPLETED = 'PROFILE_COMPLETED'
 
 // 是否已初始化标识
@@ -64,18 +64,15 @@ export function useAuth() {
    */
   const saveLoginInfo = (data) => {
     console.log('[Auth] saveLoginInfo', data)
-    userId.value = data.userId
-    token.value = data.token
+    userId.value = data.user_id
     phone.value = data.phone || ''
     isLogin.value = true
     isProfileComplete.value = data.isProfileComplete || false
 
     try {
-      uni.setStorageSync(STORAGE_KEY_TOKEN, token.value)
       uni.setStorageSync(STORAGE_KEY_USER_ID, userId.value)
-      if (phone.value) {
-        uni.setStorageSync(STORAGE_KEY_PHONE, phone.value)
-      }
+      uni.setStorageSync(STORAGE_KEY_USER_PHONE, phone.value)
+      uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...data })
       if (isProfileComplete.value) {
         uni.setStorageSync(STORAGE_KEY_PROFILE_COMPLETED, true)
       }

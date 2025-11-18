@@ -1,5 +1,6 @@
 <template>
   <view class="container">
+    <view>{{ phone }}</view>
     <view class="form">
       <van-cell-group>
       <van-field
@@ -64,7 +65,7 @@ const form = reactive({
   mobile: ''
 })
 
-const { userId, token, phone, markProfileComplete, getAuthHeader } = useAuth()
+const { userId, phone, markProfileComplete } = useAuth()
 
 const genderOptions = [
   { label: '男', value: 'male' },
@@ -108,7 +109,6 @@ const onSubmit = async () => {
         url: API.updateUser,
         method: 'POST',
         data: { userId: userId.value, ...form },
-        header: getAuthHeader()
       })
     }
     

@@ -1,11 +1,11 @@
 export const USE_MOCK = true
-
-export const API_BASE = 'http://localhost:8000'
+export const API_BASE = 'http://localhost:8002'
 
 export const API = {
   // 认证相关
   sendSmsCode: `${API_BASE}/api/auth/send-code`,      // 发送短信验证码
-  loginByPhone: `${API_BASE}/api/auth/login`,         // 手机验证码登录
+  loginByPhone: `${API_BASE}/api/user/login`,         // 手机验证码登录
+  createByPhone: `${API_BASE}/api/users/create`,         // 创建用户
   
   // 用户相关
   wxLogin: `${API_BASE}/api/wx/login`,

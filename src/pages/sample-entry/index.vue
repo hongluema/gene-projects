@@ -280,7 +280,7 @@ const projectsFetched = ref(false)
 const fetchProjects = async () => {
   try {
     uni.showLoading({ title: '加载项目...' })
-    const res = await get('http://localhost:8002/api/projects')
+    const res = await get(`{API_BASE}/api/projects`)
     let list = res.data.list;
     projectOptions.value = (list || []).map((item) => ({
       label: item?.name,

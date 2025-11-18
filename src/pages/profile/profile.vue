@@ -1,6 +1,5 @@
 <template>
   <view class="container">
-    <view>{{ phone }} | {{ userId }}</view>
     <view class="form">
       <van-cell-group>
       <van-field
@@ -134,17 +133,22 @@ const onSubmit = async () => {
   }
 }
 
-onLoad(() => {
+onLoad(async () => {
   // // 加载缓存的表单数据
   try {
-    const cache = uni.getStorageSync('STORAGE_KEY_USER_INFO')
-    console.log('>>>>cache', cache);
-    if (cache) {
-      form.idCard = cache.id_number || ''
-      form.name = cache.name || ''
-      form.gender = cache.sex || ''
-      form.age = cache.age || ''
-      form.phone = cache.phone || ''
+    const res = await uni.request({
+      url: API.getUserInfo,
+      method: 'GET',
+      data: { user_id: userId.value},
+    })
+    console.log('>>>>res', res);
+    const userInfo = res.data.data;
+    if (userInfo) {
+      form.idCard = userInfo.id_number || ''
+      form.name = userInfo.name || ''
+      form.gender = userInfo.sex || ''
+      form.age = userInfo.age || ''
+      form.phone = userInfo.phone || ''
     }
   } catch {}
   

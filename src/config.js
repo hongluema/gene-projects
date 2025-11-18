@@ -12,7 +12,7 @@ export const API = {
   saveUser: `${API_BASE}/api/user/save`,
   updateUser: `${API_BASE}/api/users/update`,
   bindPhone: `${API_BASE}/api/user/bind-phone`,
-  getUserInfo: `${API_BASE}/api/user/info`,
+  getUserInfo: `${API_BASE}/api/users/info`,
   checkProfile: `${API_BASE}/api/user/check-profile`, // 检查信息是否完善
   
   // 项目相关

@@ -36,6 +36,7 @@ export function useAuth() {
       console.log('>>>>res', res);
       const info = res.data.data;
       userInfo.value = { ...info };
+      isLogin.value = true;
     } catch {}
 
     return;

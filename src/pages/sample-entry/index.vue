@@ -286,7 +286,7 @@ const fetchProjects = async () => {
       method: 'GET',
     })
     console.log('>>>>res projects', res);
-    let list = res.data.list;
+    let list = res.data.data?.list || [];
     projectOptions.value = (list || []).map((item) => ({
       label: item?.name,
       value: item?.id
@@ -768,7 +768,7 @@ const handleSubmit = async () => {
 
 .confirm-btn {
   width: 100%;
-  padding: 20rpx;
+  padding: 12rpx;
   background: #667eea;
   color: #fff;
   font-size: 28rpx;

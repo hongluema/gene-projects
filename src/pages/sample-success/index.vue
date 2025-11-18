@@ -223,7 +223,7 @@ const goToHome = () => {
 
 .btn {
   width: 100%;
-  padding: 28rpx;
+  padding: 12rpx;
   font-size: 30rpx;
   border-radius: 50rpx;
   border: none;

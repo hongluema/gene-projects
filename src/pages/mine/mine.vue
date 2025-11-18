@@ -3,7 +3,7 @@
     <!-- 用户信息头部 -->
     <view class="user-header">
       <view class="user-info-card">
-        <image v-if="userInfo.sex === 'male'" class="user-avatar" src="/static/male-avatar.png" mode="aspectFill" />
+        <image v-if="userInfo.gender === 'male'" class="user-avatar" src="/static/male-avatar.png" mode="aspectFill" />
         <image v-else class="user-avatar" src="/static/female-avatar.png" mode="aspectFill" />
         <view class="user-details">
           <text class="user-name">{{ userInfo.phone ? userInfo.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : '未登录' }}</text>

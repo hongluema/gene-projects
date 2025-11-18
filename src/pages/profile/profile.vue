@@ -19,8 +19,8 @@
 
       <view class="picker-row">
         <text class="picker-label">性别</text>
-        <picker mode="selector" :range="sexOptions" range-key="label" @change="onSexChange">
-          <view class="picker-value">{{ sexLabel }}</view>
+        <picker mode="selector" :range="genderOptions" range-key="label" @change="onGenderChange">
+          <view class="picker-value">{{ genderLabel }}</view>
         </picker>
       </view>
 
@@ -59,27 +59,27 @@ import { useAuth } from '@/composables/useAuth'
 const form = reactive({
   id_number: '',
   name: '',
-  sex: '',
+  gender: '',
   age: '',
   phone: ''
 })
 
 const { userId, phone, markProfileComplete } = useAuth()
 
-const sexOptions = [
+const genderOptions = [
   { label: '男', value: 'male' },
   { label: '女', value: 'female' }
 ]
 
-const sexLabel = computed(() => {
-  const g = sexOptions.find((x) => x.value === form.sex)
+const genderLabel = computed(() => {
+  const g = genderOptions.find((x) => x.value === form.gender)
   return g ? g.label : '请选择性别'
 })
 
-const onSexChange = (e) => {
+const onGenderChange = (e) => {
   const idx = Number(e?.detail?.value ?? -1)
-  if (idx >= 0 && idx < sexOptions.length) {
-    form.sex = sexOptions[idx].value
+  if (idx >= 0 && idx < genderOptions.length) {
+    form.gender = genderOptions[idx].value
   }
 }
 
@@ -95,18 +95,18 @@ const onSubmit = async () => {
   if (!form.id_number) return uni.showToast({ title: '请输入身份证号', icon: 'none' })
   if (!isIdCard(form.id_number)) return uni.showToast({ title: '身份证号格式不正确', icon: 'none' })
   if (!form.name) return uni.showToast({ title: '请输入姓名', icon: 'none' })
-  if (!form.sex) return uni.showToast({ title: '请选择性别', icon: 'none' })
+  if (!form.gender) return uni.showToast({ title: '请选择性别', icon: 'none' })
   if (form.age && !/^\d{1,3}$/.test(String(form.age))) return uni.showToast({ title: '年龄需为数字', icon: 'none' })
   if (form.phone && !isMobile(form.phone)) return uni.showToast({ title: '手机号格式不正确', icon: 'none' })
   if (!userId.value) return uni.showToast({ title: '缺少userId，请重新登录', icon: 'none' })
-  const { id_number, name, sex, age, phone } = form;
+  const { id_number, name, gender, age, phone } = form;
   const userData = {
     userId: userId.value,
     phone: '',
     name: name,
     avatar: '',
     id_number: id_number,
-    sex: sex,
+    gender: gender,
     age: age,
   };
   try {
@@ -146,7 +146,7 @@ onLoad(async () => {
     if (userInfo) {
       form.id_number = userInfo.id_number || ''
       form.name = userInfo.name || ''
-      form.sex = userInfo.sex || ''
+      form.gender = userInfo.gender || ''
       form.age = userInfo.age || ''
       form.phone = userInfo.phone || ''
     }

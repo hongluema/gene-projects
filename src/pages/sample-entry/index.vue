@@ -87,7 +87,7 @@
             <text class="form-label required">身份证号</text>
             <input 
               class="form-input" 
-              v-model="formData.idCard" 
+              v-model="formData.id_number" 
               placeholder="请输入身份证号"
               placeholder-class="input-placeholder"
               maxlength="18"
@@ -227,7 +227,7 @@ const projectInfo = ref({
 // 表单数据
 const formData = ref({
   name: '',
-  idCard: '',
+  id_number: '',
   gender: '',
   age: '',
   mobile: '',
@@ -486,7 +486,7 @@ const performIdCardOCR = async (imagePath) => {
     }
 
     formData.value.name = ocrData.name
-    formData.value.idCard = ocrData.idCard
+    formData.value.id_number = ocrData.idCard
     formData.value.gender = ocrData.gender
     
     // 从身份证号解析年龄
@@ -507,8 +507,8 @@ const performIdCardOCR = async (imagePath) => {
 
 // 身份证号失焦时自动解析
 const onIdCardBlur = () => {
-  if (validateIdCard(formData.value.idCard)) {
-    const parsed = parseIdCard(formData.value.idCard)
+  if (validateIdCard(formData.value.id_number)) {
+    const parsed = parseIdCard(formData.value.id_number)
     if (parsed) {
       // 只在未填写时自动填充
       if (!formData.value.gender) {
@@ -599,7 +599,7 @@ const handleSubmit = async () => {
       projectId: projectInfo.value.projectId,
       institutionId: projectInfo.value.institutionId,
       name: formData.value.name,
-      idCard: formData.value.idCard,
+      id_number: formData.value.idCard,
       gender: formData.value.gender,
       age: formData.value.age,
       mobile: formData.value.mobile,
@@ -607,11 +607,20 @@ const handleSubmit = async () => {
     }
 
     let result
-    if (USE_MOCK) {
-      result = await mockSubmitSample(submitData)
-    } else {
-      result = await post(API.submitSample, submitData)
-    }
+    result = await uni.request({
+      url: `${API_BASE}/api/samples`,
+      method: 'POST',
+      data: submitData,
+    })
+    // if (USE_MOCK) {
+    //   result = await mockSubmitSample(submitData)
+    // } else {
+    //   result = await uni.request({
+    //     url: `${API_BASE}/api/samples`,
+    //     method: 'POST',
+    //     data: submitData,
+    //   })
+    // }
 
     uni.hideLoading()
 

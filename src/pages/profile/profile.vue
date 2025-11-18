@@ -119,7 +119,7 @@ const onSubmit = async () => {
     try { uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...userData})} catch {}
     
     // 标记信息已完善
-    markProfileComplete()
+    markProfileComplete(userData)
     
     uni.showToast({ title: '保存成功', icon: 'success' })
     

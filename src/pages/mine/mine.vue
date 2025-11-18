@@ -2,11 +2,11 @@
   <view class="mine-page">
     <!-- 用户信息头部 -->
     <view class="user-header">
+      <view>{{ JSON.stringify(userInfo) }}</view>
       <view class="user-info-card">
-        <image class="user-avatar" src="/static/avatar.png" mode="aspectFill" />
+        <image class="user-avatar" src="/static/male-avatar.png" mode="aspectFill" />
         <view class="user-details">
-          <text class="user-name">{{ phone ? phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : '未登录' }}</text>
-          <text class="user-id">{{ userId || '未绑定账号' }}</text>
+          <text class="user-name">{{ userInfo.phone ? userInfo.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : '未登录' }}</text>
         </view>
         <view v-if="!isLogin" class="auth-btn" @click="goToLogin">
           <text class="auth-text">登录</text>
@@ -111,15 +111,16 @@ import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useAuth } from '@/composables/useAuth'
 
 const {
-  userId,
-  phone,
+  // phone,
   isLogin,
   isProfileComplete,
   initAuth,
+  userInfo,
   logout
 } = useAuth()
 
 onLoad(() => {
+  console.log('>>>>mine init');
   initAuth()
 })
 

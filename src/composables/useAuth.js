@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { API } from '@/config'
 
 // ========== 单例状态（所有页面共享） ==========
 const userId = ref('')
@@ -6,6 +7,7 @@ const token = ref('')
 const isLogin = ref(false)
 const isProfileComplete = ref(false)
 const phone = ref('')
+const userInfo = ref({});
 
 const STORAGE_KEY_USER_INFO = 'USER_INFO'
 const STORAGE_KEY_USER_ID = 'USER_ID'
@@ -24,39 +26,53 @@ export function useAuth() {
   /**
    * 初始化：从本地恢复登录态（只初始化一次）
    */
-  const initAuth = () => {
-    // 如果已经初始化过，直接返回
-    if (hasInitialized) {
-      console.log('[Auth] already initialized, skip')
-      return
-    }
-
-    console.log('[Auth] initAuth start')
+  const initAuth = async () => {
     try {
-      // const cachedToken = uni.getStorageSync(STORAGE_KEY_TOKEN)
-      const cachedUserId = uni.getStorageSync(STORAGE_KEY_USER_ID)
-      const cachedPhone = uni.getStorageSync(STORAGE_KEY_USER_PHONE)
-      const profileCompleted = uni.getStorageSync(STORAGE_KEY_PROFILE_COMPLETED)
-      console.log('>>>>profileCompleted', profileCompleted);
-      isProfileComplete.value = !!profileCompleted;
-      // if (cachedToken && cachedUserId) {
-      //   token.value = cachedToken
-      //   userId.value = cachedUserId
-      //   phone.value = cachedPhone || ''
-      //   isLogin.value = true
-      //   console.log('[Auth] initAuth success', {
-      //     userId: userId.value,
-      //     isLogin: isLogin.value,
-      //     isProfileComplete: isProfileComplete.value
-      //   })
-      // } else {
-      //   console.log('[Auth] initAuth no cached token')
-      // }
+      const res = await uni.request({
+        url: API.getUserInfo,
+        method: 'GET',
+        data: { user_id: userId.value},
+      })
+      console.log('>>>>res', res);
+      const info = res.data.data;
+      userInfo.value = { ...info };
+    } catch {}
 
-      // hasInitialized = true
-    } catch (err) {
-      console.warn('[Auth] initAuth error', err)
-    }
+    return;
+    // // 如果已经初始化过，直接返回
+    // if (hasInitialized) {
+    //   console.log('[Auth] already initialized, skip')
+    //   return
+    // }
+
+    // console.log('[Auth] initAuth start')
+    // try {
+    //   // const cachedToken = uni.getStorageSync(STORAGE_KEY_TOKEN)
+    //   const cachedUserId = uni.getStorageSync(STORAGE_KEY_USER_ID)
+    //   const cachedPhone = uni.getStorageSync(STORAGE_KEY_USER_PHONE)
+    //   const profileCompleted = uni.getStorageSync(STORAGE_KEY_PROFILE_COMPLETED)
+    //   const userInfo = uni.getStorageSync(STORAGE_KEY_USER_INFO)
+    //   console.log('>>>>userInfo', userInfo);
+    //   console.log('>>>>profileCompleted', profileCompleted);
+    //   isProfileComplete.value = !!profileCompleted;
+    //   // if (cachedToken && cachedUserId) {
+    //   //   token.value = cachedToken
+    //   //   userId.value = cachedUserId
+    //   //   phone.value = cachedPhone || ''
+    //   //   isLogin.value = true
+    //   //   console.log('[Auth] initAuth success', {
+    //   //     userId: userId.value,
+    //   //     isLogin: isLogin.value,
+    //   //     isProfileComplete: isProfileComplete.value
+    //   //   })
+    //   // } else {
+    //   //   console.log('[Auth] initAuth no cached token')
+    //   // }
+
+    //   // hasInitialized = true
+    // } catch (err) {
+    //   console.warn('[Auth] initAuth error', err)
+    // }
   }
 
   /**
@@ -67,12 +83,12 @@ export function useAuth() {
     userId.value = data.userId
     phone.value = data.phone || ''
     isLogin.value = true
-    isProfileComplete.value = data.isProfileComplete || false
-
+    isProfileComplete.value = data.isProfileComplete || false;
+    // userInfo.value = { ...data }
     try {
       uni.setStorageSync(STORAGE_KEY_USER_ID, userId.value)
       uni.setStorageSync(STORAGE_KEY_USER_PHONE, phone.value)
-      uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...data })
+      // uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...data })
     } catch (err) {
       console.warn('[Auth] saveLoginInfo storage error', err)
     }
@@ -81,9 +97,11 @@ export function useAuth() {
   /**
    * 标记信息已完善
    */
-  const markProfileComplete = () => {
+  const markProfileComplete = (userData) => {
     console.log('[Auth] markProfileComplete')
     isProfileComplete.value = true
+    uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...userData })
+    userInfo.value = { ...userData };
     try {
       uni.setStorageSync(STORAGE_KEY_PROFILE_COMPLETED, true)
     } catch (err) {
@@ -184,6 +202,7 @@ export function useAuth() {
     userId,
     token,
     phone,
+    userInfo,
     isLogin,
     isProfileComplete,
     initAuth,
@@ -195,4 +214,3 @@ export function useAuth() {
     getAuthHeader
   }
 }
-

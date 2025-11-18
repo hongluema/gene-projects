@@ -603,7 +603,7 @@ const handleSubmit = async () => {
       gender: formData.value.gender,
       age: formData.value.age,
       phone: formData.value.phone,
-      sampleId: formData.value.sampleId
+      sample_id: formData.value.sampleId
     }
 
     let result

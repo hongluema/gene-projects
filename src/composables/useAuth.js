@@ -72,10 +72,7 @@ export function useAuth() {
     try {
       uni.setStorageSync(STORAGE_KEY_USER_ID, userId.value)
       uni.setStorageSync(STORAGE_KEY_USER_PHONE, phone.value)
-      uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...data })
-      if (isProfileComplete.value) {
-        uni.setStorageSync(STORAGE_KEY_PROFILE_COMPLETED, true)
-      }
+      uni.setStorageSync(STORAGE_KEY_USER_INFO, {...data})
     } catch (err) {
       console.warn('[Auth] saveLoginInfo storage error', err)
     }

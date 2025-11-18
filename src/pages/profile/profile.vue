@@ -38,8 +38,8 @@
         label="手机号"
         type="number"
         placeholder="请输入手机号"
-        :value="form.mobile"
-        @change="onChange('mobile', $event)"
+        :value="form.phone"
+        @change="onChange('phone', $event)"
         clearable
       />
     </van-cell-group>
@@ -62,7 +62,7 @@ const form = reactive({
   name: '',
   gender: '',
   age: '',
-  mobile: ''
+  phone: ''
 })
 
 const { userId, phone, markProfileComplete } = useAuth()
@@ -98,22 +98,26 @@ const onSubmit = async () => {
   if (!form.name) return uni.showToast({ title: '请输入姓名', icon: 'none' })
   if (!form.gender) return uni.showToast({ title: '请选择性别', icon: 'none' })
   if (form.age && !/^\d{1,3}$/.test(String(form.age))) return uni.showToast({ title: '年龄需为数字', icon: 'none' })
-  if (form.mobile && !isMobile(form.mobile)) return uni.showToast({ title: '手机号格式不正确', icon: 'none' })
+  if (form.phone && !isMobile(form.phone)) return uni.showToast({ title: '手机号格式不正确', icon: 'none' })
   if (!userId.value) return uni.showToast({ title: '缺少userId，请重新登录', icon: 'none' })
-
+  const { idCard, name, gender, age, phone } = form;
+  const userData = {
+    userId: userId.value,
+    phone: '',
+    name: name,
+    avatar: '',
+    id_number: idCard,
+    sex: gender,
+    age: age,
+  };
   try {
-    if (USE_MOCK) {
-      await mockUpdateUser({ userId: userId.value, ...form })
-    } else {
-      await uni.request({
-        url: API.updateUser,
-        method: 'POST',
-        data: { userId: userId.value, ...form },
-      })
-    }
-    
+    await uni.request({
+      url: API.updateUser,
+      method: 'POST',
+      data: { ...userData, user_id: userId.value},
+    })
     // 保存到本地缓存
-    try { uni.setStorageSync('USER_PROFILE_FORM', { ...form }) } catch {}
+    try { uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...userData})} catch {}
     
     // 标记信息已完善
     markProfileComplete()
@@ -131,21 +135,22 @@ const onSubmit = async () => {
 }
 
 onLoad(() => {
-  // 加载缓存的表单数据
+  // // 加载缓存的表单数据
   try {
-    const cache = uni.getStorageSync('USER_PROFILE_FORM')
+    const cache = uni.getStorageSync('STORAGE_KEY_USER_INFO')
+    console.log('>>>>cache', cache);
     if (cache) {
-      form.idCard = cache.idCard || ''
+      form.idCard = cache.id_number || ''
       form.name = cache.name || ''
-      form.gender = cache.gender || ''
+      form.gender = cache.sex || ''
       form.age = cache.age || ''
-      form.mobile = cache.mobile || ''
+      form.phone = cache.phone || ''
     }
   } catch {}
   
   // 如果手机号为空，自动填充登录时的手机号
-  if (!form.mobile && phone.value) {
-    form.mobile = phone.value
+  if (!form.phone && phone.value) {
+    form.phone = phone.value
     console.log('[Profile] 自动填充登录手机号:', phone.value)
   }
 })

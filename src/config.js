@@ -10,7 +10,7 @@ export const API = {
   // 用户相关
   wxLogin: `${API_BASE}/api/wx/login`,
   saveUser: `${API_BASE}/api/user/save`,
-  updateUser: `${API_BASE}/api/user/update`,
+  updateUser: `${API_BASE}/api/users/update`,
   bindPhone: `${API_BASE}/api/user/bind-phone`,
   getUserInfo: `${API_BASE}/api/user/info`,
   checkProfile: `${API_BASE}/api/user/check-profile`, // 检查信息是否完善

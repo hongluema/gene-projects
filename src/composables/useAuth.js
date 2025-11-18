@@ -10,7 +10,7 @@ const phone = ref('')
 const STORAGE_KEY_USER_INFO = 'USER_INFO'
 const STORAGE_KEY_USER_ID = 'USER_ID'
 const STORAGE_KEY_USER_PHONE = 'USER_PHONE'
-const STORAGE_KEY_PROFILE_COMPLETED = 'PROFILE_COMPLETED'
+export const STORAGE_KEY_PROFILE_COMPLETED = 'PROFILE_COMPLETED'
 
 // 是否已初始化标识
 let hasInitialized = false
@@ -33,27 +33,27 @@ export function useAuth() {
 
     console.log('[Auth] initAuth start')
     try {
-      const cachedToken = uni.getStorageSync(STORAGE_KEY_TOKEN)
+      // const cachedToken = uni.getStorageSync(STORAGE_KEY_TOKEN)
       const cachedUserId = uni.getStorageSync(STORAGE_KEY_USER_ID)
-      const cachedPhone = uni.getStorageSync(STORAGE_KEY_PHONE)
+      const cachedPhone = uni.getStorageSync(STORAGE_KEY_USER_PHONE)
       const profileCompleted = uni.getStorageSync(STORAGE_KEY_PROFILE_COMPLETED)
+      console.log('>>>>profileCompleted', profileCompleted);
+      isProfileComplete.value = !!profileCompleted;
+      // if (cachedToken && cachedUserId) {
+      //   token.value = cachedToken
+      //   userId.value = cachedUserId
+      //   phone.value = cachedPhone || ''
+      //   isLogin.value = true
+      //   console.log('[Auth] initAuth success', {
+      //     userId: userId.value,
+      //     isLogin: isLogin.value,
+      //     isProfileComplete: isProfileComplete.value
+      //   })
+      // } else {
+      //   console.log('[Auth] initAuth no cached token')
+      // }
 
-      if (cachedToken && cachedUserId) {
-        token.value = cachedToken
-        userId.value = cachedUserId
-        phone.value = cachedPhone || ''
-        isLogin.value = true
-        isProfileComplete.value = !!profileCompleted
-        console.log('[Auth] initAuth success', {
-          userId: userId.value,
-          isLogin: isLogin.value,
-          isProfileComplete: isProfileComplete.value
-        })
-      } else {
-        console.log('[Auth] initAuth no cached token')
-      }
-
-      hasInitialized = true
+      // hasInitialized = true
     } catch (err) {
       console.warn('[Auth] initAuth error', err)
     }
@@ -72,7 +72,7 @@ export function useAuth() {
     try {
       uni.setStorageSync(STORAGE_KEY_USER_ID, userId.value)
       uni.setStorageSync(STORAGE_KEY_USER_PHONE, phone.value)
-      uni.setStorageSync(STORAGE_KEY_USER_INFO, {...data})
+      uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...data })
     } catch (err) {
       console.warn('[Auth] saveLoginInfo storage error', err)
     }
@@ -186,7 +186,6 @@ export function useAuth() {
     phone,
     isLogin,
     isProfileComplete,
-    // actions
     initAuth,
     saveLoginInfo,
     markProfileComplete,

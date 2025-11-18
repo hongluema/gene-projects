@@ -84,7 +84,7 @@
 import { ref, computed } from 'vue'
 import { USE_MOCK, API } from '@/config'
 import { mockSendSmsCode, mockLoginByPhone } from '@/mock/api'
-import { useAuth } from '@/composables/useAuth'
+import { useAuth, STORAGE_KEY_PROFILE_COMPLETED } from '@/composables/useAuth'
 
 const form = ref({
   phone: '',
@@ -214,8 +214,8 @@ const handleLogin = async () => {
     console.log('>>>>resData', resData);
     userInfo = resData.data.data;
 
-    console.log('[Login] login success:', result)
-
+    console.log('[Login] login success:', userInfo)
+    uni.setStorageSync(STORAGE_KEY_PROFILE_COMPLETED, !!userInfo.id_number);
     // 保存登录信息
     saveLoginInfo({
       userId: userInfo.user_id,
@@ -229,7 +229,7 @@ const handleLogin = async () => {
 
     // 根据是否完善信息跳转
     setTimeout(() => {
-      if (userInfo.isProfileComplete) {
+      if (userInfo.id_number) {
         // 已完善信息，跳转首页
         uni.switchTab({
           url: '/pages/index/index'

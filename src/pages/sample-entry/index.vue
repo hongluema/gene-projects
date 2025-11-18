@@ -137,7 +137,7 @@
             <text class="form-label required">手机号</text>
             <input 
               class="form-input" 
-              v-model="formData.mobile" 
+              v-model="formData.phone" 
               type="number"
               placeholder="请输入手机号"
               placeholder-class="input-placeholder"
@@ -230,7 +230,7 @@ const formData = ref({
   id_number: '',
   gender: '',
   age: '',
-  mobile: '',
+  phone: '',
   sampleId: ''
 })
 
@@ -574,7 +574,7 @@ const validateForm = () => {
     return false
   }
 
-  if (!validatePhone(formData.value.mobile)) {
+  if (!validatePhone(formData.value.phone)) {
     uni.showToast({ title: '请输入正确的手机号', icon: 'none' })
     return false
   }
@@ -596,13 +596,13 @@ const handleSubmit = async () => {
 
   try {
     const submitData = {
-      projectId: projectInfo.value.projectId,
-      institutionId: projectInfo.value.institutionId,
+      program_id: projectInfo.value.projectId,
+      org_id: projectInfo.value.institutionId,
       name: formData.value.name,
       id_number: formData.value.idCard,
       gender: formData.value.gender,
       age: formData.value.age,
-      mobile: formData.value.mobile,
+      phone: formData.value.phone,
       sampleId: formData.value.sampleId
     }
 

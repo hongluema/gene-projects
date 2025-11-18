@@ -78,7 +78,7 @@ const sexLabel = computed(() => {
 
 const onSexChange = (e) => {
   const idx = Number(e?.detail?.value ?? -1)
-  if (idx >= 0 && idx < genderOptions.length) {
+  if (idx >= 0 && idx < sexOptions.length) {
     form.sex = sexOptions[idx].value
   }
 }
@@ -146,7 +146,7 @@ onLoad(async () => {
     if (userInfo) {
       form.id_number = userInfo.id_number || ''
       form.name = userInfo.name || ''
-      form.gender = userInfo.sex || ''
+      form.sex = userInfo.sex || ''
       form.age = userInfo.age || ''
       form.phone = userInfo.phone || ''
     }

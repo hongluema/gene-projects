@@ -32,3 +32,26 @@ async function downloadReport(pk) {
 
 // 使用示例
 // downloadReport('375766785955336192');
+
+// 第二种方法
+
+async function downloadReportSimple(pk) {
+  try {
+    const response = await fetch(`/api/report/pdf?pk=${pk}`);
+    if (!response.ok) throw new Error('请求失败');
+    
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '样本.pdf';
+    a.click();
+    
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('错误:', error);
+    alert('下载失败');
+  }
+}
+// downloadReportSimple('375766785955336192')

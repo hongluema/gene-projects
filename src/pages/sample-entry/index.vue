@@ -211,9 +211,16 @@ import { USE_MOCK, API, API_BASE } from '@/config'
 import { mockSubmitSample, mockOcrIdCard } from '@/mock/api'
 import { post, get } from '@/utils/request'
 import { useAuth } from '@/composables/useAuth'
+import dayjs from 'dayjs'
 
 // 登录检查
-const { checkAuth } = useAuth()
+// const { checkAuth } = useAuth()
+
+const {
+  checkAuth,
+  initAuth,
+  userInfo,
+} = useAuth()
 
 // 项目信息
 const projectInfo = ref({
@@ -334,6 +341,7 @@ watch(showProjectInput, (val) => {
 
 // 页面加载时检查是否有二维码参数
 onLoad(async (options) => {
+  initAuth();
   console.log('[SampleEntry] onLoad options:', options)
 
   // 登录检查（会自动初始化）
@@ -564,7 +572,7 @@ const validateForm = () => {
     return false
   }
 
-  if (!validateIdCard(formData.value.idCard)) {
+  if (!validateIdCard(formData.value.id_number)) {
     uni.showToast({ title: '请输入正确的身份证号', icon: 'none' })
     return false
   }
@@ -596,19 +604,30 @@ const handleSubmit = async () => {
 
   try {
     const submitData = {
-      program_id: projectInfo.value.projectId,
+      customer: {
+        // program_id: projectInfo.value.projectId,
+        name: formData.value.name,
+        id_number: formData.value.idCard,
+        gender: formData.value.gender,
+        age: formData.value.age,
+        phone: formData.value.phone,
+        user_id: userInfo.user_id,
+        // sample_id: formData.value.sampleId
+      },
       org_id: projectInfo.value.institutionId,
-      name: formData.value.name,
-      id_number: formData.value.idCard,
-      gender: formData.value.gender,
-      age: formData.value.age,
-      phone: formData.value.phone,
-      sample_id: formData.value.sampleId
-    }
+      samples: [{
+        programs: [projectInfo.value.projectId],
+        other_code: formData.value.sampleId,
+        receive_time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        send_time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        s_type_id: '1',
+      }]
+    };
+    
 
     let result
     result = await uni.request({
-      url: `${API_BASE}/api/samples`,
+      url: `${API_BASE}/api/sample/create`,
       method: 'POST',
       data: submitData,
     })

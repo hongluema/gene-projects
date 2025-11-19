@@ -29,7 +29,7 @@ export function useAuth() {
   const initAuth = async () => {
     try {
       if (!userId.value) {
-        uni.getStorageSync(STORAGE_KEY_USER_ID)
+        userId.value = uni.getStorageSync(STORAGE_KEY_USER_ID)
       }
       const res = await uni.request({
         url: API.getUserInfo,

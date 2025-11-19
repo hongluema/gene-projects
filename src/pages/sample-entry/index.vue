@@ -341,7 +341,7 @@ watch(showProjectInput, (val) => {
 
 // 页面加载时检查是否有二维码参数
 onLoad(async (options) => {
-  initAuth();
+  await initAuth();
   console.log('[SampleEntry] onLoad options:', options)
 
   // 登录检查（会自动初始化）
@@ -611,7 +611,7 @@ const handleSubmit = async () => {
         gender: formData.value.gender,
         age: formData.value.age,
         phone: formData.value.phone,
-        user_id: userInfo.user_id,
+        user_id: userInfo.value.user_id,
         // sample_id: formData.value.sampleId
       },
       org_id: projectInfo.value.institutionId,

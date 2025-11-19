@@ -642,8 +642,8 @@ const handleSubmit = async () => {
     // }
 
     uni.hideLoading()
-
-    if (result.success) {
+    console.log('>>>>result', result);
+    if (result.data.status_code === 200) {
       // 跳转到成功页面
       uni.redirectTo({
         url: `/pages/sample-success/index?sampleId=${result.sampleId}`

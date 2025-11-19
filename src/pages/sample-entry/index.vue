@@ -312,7 +312,7 @@ const fetchInstitutions = async () => {
     //   method: 'GET',
     // })
     // console.log('>>>>res institutions', res);
-    let list = [{name: '测试机构', id: 1}];
+    let list = [{name: '测试机构', id: '213399541418954752'}];
     institutionOptions.value = (list || []).map((item) => ({
       label: item?.name,
       value: item?.id

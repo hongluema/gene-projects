@@ -607,7 +607,7 @@ const handleSubmit = async () => {
       customer: {
         // program_id: projectInfo.value.projectId,
         name: formData.value.name,
-        id_number: formData.value.idCard,
+        id_number: formData.value.id_number,
         gender: formData.value.gender,
         age: formData.value.age,
         phone: formData.value.phone,

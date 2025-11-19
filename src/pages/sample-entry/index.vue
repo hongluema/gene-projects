@@ -646,7 +646,7 @@ const handleSubmit = async () => {
     if (result.data.status_code === 200) {
       // 跳转到成功页面
       uni.redirectTo({
-        url: `/pages/sample-success/index?sampleId=${result.sampleId}`
+        url: `/pages/sample-success/index?sampleId=${result.data.data.other_code_list[0]}`
       })
     } else {
       uni.showToast({ title: '提交失败', icon: 'none' })

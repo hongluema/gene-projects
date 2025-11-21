@@ -98,7 +98,7 @@
 import { onLoad } from '@dcloudio/uni-app'
 import { useAuth } from '@/composables/useAuth'
 
-const { initAuth } = useAuth()
+const { initAuth, userId } = useAuth()
 
 onLoad(() => {
   // 初始化登录状态
@@ -129,7 +129,7 @@ const goToMyReports = () => {
 // 跳转到我录入的报告
 const goToMyEntryReports = () => {
   uni.navigateTo({
-    url: '/pages/report-list/index'
+    url: `/pages/report-list/index?user_id=${userId.value}`
   })
 }
 

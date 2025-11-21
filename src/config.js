@@ -1,7 +1,7 @@
 export const USE_MOCK = true
-// export const API_BASE = 'http://localhost:8002'
+export const API_BASE = 'http://localhost:8002'
 // export const API_BASE = 'http://117.149.9.79:9005'
-export const API_BASE = 'https://app.oriomics.cn'
+// export const API_BASE = 'https://app.oriomics.cn'
 
 export const API = {
   // 认证相关
@@ -24,6 +24,8 @@ export const API = {
   // 样本相关
   submitSample: `${API_BASE}/api/sample/submit`,
   ocrIdCard: `${API_BASE}/api/ocr/idcard`,
+  getSamplesByPhone: `${API_BASE}/api/samples/phone`,  // 根据手机号获取样本
+  getSamplesByUserId: `${API_BASE}/api/samples`,       // 根据用户ID获取样本
   
   // 报告相关
   queryReportByPhone: `${API_BASE}/api/report/query-by-phone`,

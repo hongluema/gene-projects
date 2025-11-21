@@ -105,31 +105,96 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useAuth } from '@/composables/useAuth'
+import { API } from '@/config'
 
 // 登录检查
-const { checkAuth } = useAuth()
+const { checkAuth, phone, userId } = useAuth()
 
 const queryType = ref('my')
-
 const reportList = ref([])
+const loading = ref(false)
 
 onLoad((options) => {
   // 登录检查（会自动初始化）
   if (!checkAuth()) {
     return
   }
-  
+
   if (options.data) {
     try {
       reportList.value = JSON.parse(decodeURIComponent(options.data))
     } catch (err) {
       console.error('[ReportList] Parse data fail:', err)
     }
+  } else {
+    // 初始加载数据
+    fetchReportList()
   }
 })
+
+// 监听 tab 切换
+watch(queryType, () => {
+  fetchReportList()
+})
+
+// 获取报告列表
+const fetchReportList = async () => {
+  if (loading.value) return
+
+  loading.value = true
+
+  try {
+    let url = ''
+    let params = {}
+
+    if (queryType.value === 'my') {
+      // 我的报告 - 根据手机号查询
+      url = API.getSamplesByPhone
+      params = { phone: phone.value }
+    } else {
+      // 录入报告 - 根据用户ID查询
+      url = API.getSamplesByUserId
+      params = { user_id: userId.value }
+    }
+
+    console.log('[ReportList] Fetching data:', { url, params })
+
+    const res = await uni.request({
+      url,
+      method: 'GET',
+      data: params
+    })
+
+    console.log('[ReportList] Response:', res)
+
+    if (res.statusCode === 200 && res.data) {
+      // 根据实际接口返回的数据结构调整
+      if (res.data.status_code === 200 || res.data.data) {
+        reportList.value = res.data.data || []
+      } else {
+        uni.showToast({
+          title: res.data.message || '获取数据失败',
+          icon: 'none'
+        })
+      }
+    } else {
+      throw new Error('请求失败')
+    }
+  } catch (err) {
+    console.error('[ReportList] Fetch error:', err)
+    uni.showToast({
+      title: '获取报告列表失败',
+      icon: 'none'
+    })
+    // 失败时清空列表
+    reportList.value = []
+  } finally {
+    loading.value = false
+  }
+}
 
 // 获取状态样式类
 const getStatusClass = (status) => {

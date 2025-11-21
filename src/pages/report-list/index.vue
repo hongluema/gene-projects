@@ -66,7 +66,7 @@
           <!-- 操作按钮 -->
           <view class="report-actions">
             <button 
-              v-if="item.process === 'progressed' && item.hasPdf" 
+              v-if="item.process === 'progressed' && item.sample_data_name" 
               class="action-btn primary"
               @click.stop="viewReportDetail(item)"
             >
@@ -206,11 +206,10 @@ const fetchReportList = async () => {
 // 获取状态样式类
 const getStatusClass = (status) => {
   const classMap = {
-    'completed': 'status-success',
-    'testing': 'status-process',
-    'pending': 'status-default'
+    'progressed': 'status-success',
+    'progressing': 'status-process',
   }
-  return classMap[status] || 'status-default'
+  return classMap[status] || 'status-process'
 }
 
 // 查看报告详情
@@ -222,11 +221,11 @@ const viewReportDetail = (item) => {
 
 // 查看报告（包含未完成的也能点击查看状态）
 const viewReport = (item) => {
-  if (item.status === 'completed' && item.hasPdf) {
+  if (item.process === 'progressed' && item.sample_data_name) {
     viewReportDetail(item)
   } else {
     uni.showToast({ 
-      title: item.status === 'testing' ? '报告检测中，请耐心等待' : '报告尚未开始检测',
+      title: '报告检测中，请耐心等待',
       icon: 'none',
       duration: 2000
     })

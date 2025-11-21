@@ -68,6 +68,10 @@
         <view class="card-title">
           <text class="title-icon">👤</text>
           <text>身份信息</text>
+          <button v-if="hasUserDataFilled" class="clear-mini-btn" @click="clearUserInfo">
+            <text class="mini-icon">🗑️</text>
+            清除信息
+          </button>
           <button class="scan-mini-btn" @click="showIdCardOptions">
             <text class="mini-icon">📷</text>
             快速识别
@@ -339,6 +343,72 @@ watch(showProjectInput, (val) => {
   if (val && !institutionsFetched.value) fetchInstitutions()
 })
 
+// 计算属性：判断是否有用户数据被填充
+const hasUserDataFilled = computed(() => {
+  const userData = userInfo.value;
+  if (!userData) return false;
+  
+  return !!(userData.name || userData.id_number || userData.phone || userData.gender);
+});
+
+// 填充用户信息的函数
+const fillUserInfo = () => {
+  if (userInfo.value) {
+    // 只填充空值字段，避免覆盖用户已输入的信息
+    if (!formData.value.name && userInfo.value.name) {
+      formData.value.name = userInfo.value.name;
+    }
+    if (!formData.value.id_number && userInfo.value.id_number) {
+      formData.value.id_number = userInfo.value.id_number;
+    }
+    if (!formData.value.phone && userInfo.value.phone) {
+      formData.value.phone = userInfo.value.phone;
+    }
+    if (!formData.value.gender && userInfo.value.gender) {
+      formData.value.gender = userInfo.value.gender;
+    }
+    if (!formData.value.age && userInfo.value.age) {
+      formData.value.age = userInfo.value.age;
+    }
+    
+    // 如果有身份证号但没有年龄或性别，则解析身份证号
+    if (formData.value.id_number && (!formData.value.age || !formData.value.gender)) {
+      const parsed = parseIdCard(formData.value.id_number);
+      if (parsed) {
+        if (!formData.value.gender) {
+          formData.value.gender = parsed.gender;
+        }
+        if (!formData.value.age) {
+          formData.value.age = parsed.age;
+        }
+      }
+    }
+  }
+};
+
+// 清除用户信息的函数
+const clearUserInfo = () => {
+  uni.showModal({
+    title: '确认清除',
+    content: '确定要清除已填充的个人信息吗？',
+    success: (res) => {
+      if (res.confirm) {
+        // 清除表单中的用户相关信息
+        formData.value.name = '';
+        formData.value.id_number = '';
+        formData.value.phone = '';
+        formData.value.gender = '';
+        formData.value.age = '';
+        
+        uni.showToast({
+          title: '已清除个人信息',
+          icon: 'success'
+        });
+      }
+    }
+  });
+};
+
 // 页面加载时检查是否有二维码参数
 onLoad(async (options) => {
   await initAuth();
@@ -348,6 +418,9 @@ onLoad(async (options) => {
   if (!checkAuth()) {
     return
   }
+
+  // 自动填充用户信息
+  fillUserInfo();
 
   // 先加载项目和机构列表，用于回显
   await Promise.all([fetchProjects(), fetchInstitutions()])
@@ -713,6 +786,17 @@ const handleSubmit = async () => {
   padding: 8rpx 20rpx;
   font-size: 24rpx;
   background: #667eea;
+  color: #fff;
+  border-radius: 30rpx;
+  border: none;
+}
+
+.clear-mini-btn {
+  position: absolute;
+  right: 180rpx; /* 调整位置，避免与扫描按钮重叠 */
+  padding: 8rpx 20rpx;
+  font-size: 24rpx;
+  background: #ff4d4f;
   color: #fff;
   border-radius: 30rpx;
   border: none;

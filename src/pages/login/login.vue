@@ -245,7 +245,7 @@ const handleLogin = async () => {
   } catch (err) {
     console.error('[Login] login error:', err)
     uni.showToast({
-      title: err.message || '登录失败，请稍后重试',
+      title: JSON.stringify(err) || '登录失败，请稍后重试',
       icon: 'none'
     })
   } finally {

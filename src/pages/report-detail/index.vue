@@ -108,15 +108,11 @@ onLoad((options) => {
 const loadReportPdf = async () => {
   try {
     let result
-    if (USE_MOCK) {
-      result = await mockGetReportPdf(reportId.value)
-    } else {
-      const res = await uni.request({
-        url: `${API.getReportPdf}/${reportId.value}`,
+    const res = await uni.request({
+        url: `${API.getReportPdf}?pk=${reportId.value}`,
         method: 'GET'
       })
-      result = res.data
-    }
+    result = res.data;
 
     if (result.success) {
       pdfUrl.value = result.pdfUrl

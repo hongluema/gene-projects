@@ -215,7 +215,7 @@ const getStatusClass = (status) => {
 // 查看报告详情
 const viewReportDetail = (item) => {
   uni.navigateTo({
-    url: `/pages/report-detail/index?reportId=${item.id}`
+    url: `/pages/report-detail/index?reportId=${item.sample_data_id}&reportName=${item.sample_data_name}`
   })
 }
 

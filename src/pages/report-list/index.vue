@@ -43,19 +43,19 @@
           <!-- 报告信息 -->
           <view class="report-info">
             <view class="info-row main">
-              <text class="project-name">{{ item.projectName }}</text>
+              <text class="project-name">{{ item.program_id }}</text>
             </view>
             <view class="info-row">
               <text class="label">样本编号：</text>
-              <text class="value">{{ item.sampleId }}</text>
+              <text class="value">{{ item.code }}</text>
             </view>
             <view class="info-row">
               <text class="label">检测机构：</text>
-              <text class="value">{{ item.institutionName }}</text>
+              <text class="value">{{ item.org_id }}</text>
             </view>
             <view class="info-row">
               <text class="label">采样时间：</text>
-              <text class="value">{{ item.createTime }}</text>
+              <text class="value">{{ item.created_at }}</text>
             </view>
             <view v-if="item.completeTime" class="info-row">
               <text class="label">完成时间：</text>
@@ -66,25 +66,25 @@
           <!-- 操作按钮 -->
           <view class="report-actions">
             <button 
-              v-if="item.status === 'completed' && item.hasPdf" 
+              v-if="item.process === 'progressed' && item.hasPdf" 
               class="action-btn primary"
               @click.stop="viewReportDetail(item)"
             >
               查看报告
             </button>
             <button 
-              v-else-if="item.status === 'testing'" 
+              v-else-if="item.process === 'progressing'" 
               class="action-btn disabled"
               disabled
             >
               检测中...
             </button>
-            <button 
+            <!-- <button 
               v-else 
               class="action-btn secondary"
             >
               等待检测
-            </button>
+            </button> -->
           </view>
         </view>
       </view>
@@ -384,7 +384,7 @@ const goToEntry = () => {
 
 .action-btn {
   flex: 1;
-  padding: 20rpx;
+  padding: 12rpx;
   font-size: 28rpx;
   border-radius: 50rpx;
   border: none;

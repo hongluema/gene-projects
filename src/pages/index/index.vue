@@ -54,6 +54,18 @@
           <text class="feature-arrow">→</text>
         </view>
 
+        <!-- 我录入的报告 -->
+        <view class="feature-item" @click="goToMyEntryReports">
+          <view class="feature-left">
+            <text class="feature-icon">📊</text>
+            <view class="feature-info">
+              <text class="feature-name">录入报告</text>
+              <text class="feature-desc">查看我录入的检测报告</text>
+            </view>
+          </view>
+          <text class="feature-arrow">→</text>
+        </view>
+
         <!-- 关于我们 -->
         <view class="feature-item" @click="goToAbout">
           <view class="feature-left">
@@ -111,6 +123,13 @@ const goToReportQuery = () => {
 const goToMyReports = () => {
   uni.navigateTo({
     url: '/pages/report-query/index'
+  })
+}
+
+// 跳转到我录入的报告
+const goToMyEntryReports = () => {
+  uni.navigateTo({
+    url: '/pages/report-list/index'
   })
 }
 

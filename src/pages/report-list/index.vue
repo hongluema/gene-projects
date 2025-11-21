@@ -55,11 +55,11 @@
             </view>
             <view class="info-row">
               <text class="label">采样时间：</text>
-              <text class="value">{{ item.created_at }}</text>
+              <text class="value">{{ formatDateTime(item.created_at) }}</text>
             </view>
             <view v-if="item.completeTime" class="info-row">
               <text class="label">完成时间：</text>
-              <text class="value">{{ item.completeTime }}</text>
+              <text class="value">{{ formatDateTime(item.completeTime) }}</text>
             </view>
           </view>
 
@@ -109,9 +109,16 @@ import { ref, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useAuth } from '@/composables/useAuth'
 import { API } from '@/config'
+import dayjs from 'dayjs'
 
 // 登录检查
 const { checkAuth, phone, userId } = useAuth()
+
+// 格式化日期时间
+const formatDateTime = (date) => {
+  if (!date) return ''
+  return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
+}
 
 const queryType = ref('my')
 const reportList = ref([])
@@ -428,7 +435,7 @@ const goToEntry = () => {
 }
 
 .empty-btn {
-  padding: 20rpx 60rpx;
+  padding: 8rpx 50rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   font-size: 28rpx;

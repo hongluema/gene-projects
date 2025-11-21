@@ -5,8 +5,28 @@
       <text class="page-title">我的报告</text>
       <text class="page-desc">共 {{ reportList.length }} 份报告</text>
     </view>
+    <view class="query-container">
+    <!-- Tab切换 -->
+    <view class="tab-bar">
+        <view 
+          class="tab-item" 
+          :class="{ active: queryType === 'my' }"
+          @click="queryType = 'my'"
+        >
+          <text class="tab-icon">📱</text>
+          <text>我的报告</text>
+        </view>
+        <view 
+          class="tab-item" 
+          :class="{ active: queryType === 'entry' }"
+          @click="queryType = 'entry'"
+        >
+          <text class="tab-icon">🪪</text>
+          <text>录入报告</text>
+        </view>
+      </view>
 
-    <view class="list-container">
+      <view class="list-container">
       <!-- 报告列表 -->
       <view v-if="reportList.length > 0" class="report-list">
         <view 
@@ -78,6 +98,9 @@
         </button>
       </view>
     </view>
+    </view>
+
+    
   </view>
 </template>
 
@@ -88,6 +111,8 @@ import { useAuth } from '@/composables/useAuth'
 
 // 登录检查
 const { checkAuth } = useAuth()
+
+const queryType = ref('my')
 
 const reportList = ref([])
 
@@ -152,7 +177,7 @@ const goToEntry = () => {
 
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 60rpx 40rpx 40rpx;
+  padding: 60rpx 40rpx 50rpx;
   text-align: center;
 }
 
@@ -168,6 +193,41 @@ const goToEntry = () => {
   display: block;
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.8);
+}
+
+.query-container {
+  margin-top: -40rpx;
+  padding: 0 30rpx 40rpx;
+}
+
+.tab-bar {
+  display: flex;
+  background: #fff;
+  border-radius: 50rpx;
+  padding: 8rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx;
+  border-radius: 46rpx;
+  font-size: 28rpx;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-weight: bold;
+}
+
+.tab-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
 }
 
 .list-container {

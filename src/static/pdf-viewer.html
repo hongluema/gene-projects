@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PDF预览</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f7fa;
+      overflow: hidden;
+    }
+
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f5f7fa;
+      z-index: 1000;
+    }
+
+    #loading.hidden {
+      display: none;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    #error {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f5f7fa;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #error.show {
+      display: flex;
+    }
+
+    .error-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+
+    .error-text {
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .retry-btn {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #pdf-container {
+      width: 100vw;
+      height: 100vh;
+      overflow: auto;
+      background: #525659;
+      display: none;
+    }
+
+    #pdf-container.show {
+      display: block;
+    }
+
+    .pdf-page {
+      margin: 10px auto;
+      display: block;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    #page-info {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <!-- 加载状态 -->
+  <div id="loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">正在加载PDF...</div>
+  </div>
+
+  <!-- 错误状态 -->
+  <div id="error">
+    <div class="error-icon">❌</div>
+    <div class="error-text" id="error-message">加载失败</div>
+    <button class="retry-btn" onclick="loadPDF()">重试</button>
+  </div>
+
+  <!-- PDF容器 -->
+  <div id="pdf-container"></div>
+
+  <!-- 页码信息 -->
+  <div id="page-info"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // 配置 PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const errorMessage = document.getElementById('error-message');
+    const pdfContainer = document.getElementById('pdf-container');
+    const pageInfo = document.getElementById('page-info');
+
+    let pdfDoc = null;
+    let currentPage = 1;
+
+    // 获取URL参数
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    // 显示错误
+    function showError(message) {
+      loading.classList.add('hidden');
+      errorMessage.textContent = message;
+      error.classList.add('show');
+      pdfContainer.classList.remove('show');
+    }
+
+    // 渲染PDF页面
+    async function renderPage(pageNum) {
+      try {
+        const page = await pdfDoc.getPage(pageNum);
+
+        // 计算合适的缩放比例
+        const viewport = page.getViewport({ scale: 1 });
+        const scale = window.innerWidth / viewport.width;
+        const scaledViewport = page.getViewport({ scale: scale * 0.95 });
+
+        // 创建canvas
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-page';
+        const context = canvas.getContext('2d');
+        canvas.height = scaledViewport.height;
+        canvas.width = scaledViewport.width;
+
+        // 渲染PDF页面到canvas
+        const renderContext = {
+          canvasContext: context,
+          viewport: scaledViewport
+        };
+
+        await page.render(renderContext).promise;
+        pdfContainer.appendChild(canvas);
+
+      } catch (err) {
+        console.error('渲染页面失败:', err);
+      }
+    }
+
+    // 加载PDF
+    async function loadPDF() {
+      try {
+        // 重置状态
+        loading.classList.remove('hidden');
+        error.classList.remove('show');
+        pdfContainer.innerHTML = '';
+        pdfContainer.classList.remove('show');
+
+        // 获取PDF URL
+        const pdfUrl = getQueryParam('url');
+        if (!pdfUrl) {
+          throw new Error('未提供PDF地址');
+        }
+
+        console.log('Loading PDF from:', pdfUrl);
+
+        // 加载PDF文档
+        const loadingTask = pdfjsLib.getDocument({
+          url: pdfUrl,
+          withCredentials: false,
+        });
+
+        pdfDoc = await loadingTask.promise;
+        const numPages = pdfDoc.numPages;
+
+        console.log('PDF加载成功，共', numPages, '页');
+
+        // 更新页码信息
+        pageInfo.textContent = `共 ${numPages} 页`;
+
+        // 渲染所有页面
+        for (let i = 1; i <= numPages; i++) {
+          await renderPage(i);
+        }
+
+        // 显示PDF
+        loading.classList.add('hidden');
+        pdfContainer.classList.add('show');
+
+      } catch (err) {
+        console.error('加载PDF失败:', err);
+        showError(err.message || '加载PDF失败，请重试');
+      }
+    }
+
+    // 页面加载完成后自动加载PDF
+    window.addEventListener('load', loadPDF);
+
+    // 监听滚动更新页码
+    pdfContainer.addEventListener('scroll', () => {
+      if (!pdfDoc) return;
+
+      const pages = pdfContainer.querySelectorAll('.pdf-page');
+      pages.forEach((page, index) => {
+        const rect = page.getBoundingClientRect();
+        if (rect.top >= 0 && rect.top < window.innerHeight / 2) {
+          currentPage = index + 1;
+          pageInfo.textContent = `${currentPage} / ${pdfDoc.numPages}`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

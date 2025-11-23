@@ -66,7 +66,7 @@
           <!-- 操作按钮 -->
           <view class="report-actions">
             <button 
-              v-if="item.process === 'progressed' && item.sample_data_name" 
+              v-if="item.sample_data_name" 
               class="action-btn primary"
               @click.stop="viewReportDetail(item)"
             >

@@ -91,16 +91,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { USE_MOCK, API } from '@/config'
-import { mockGetReportPdf } from '@/mock/api'
+import { API } from '@/config'
 import { downloadFile } from '@/utils/request'
 
 const reportId = ref('')
+const reportName= ref('')
 const pdfUrl = ref('')
 const downloading = ref(false)
 
 onLoad((options) => {
   reportId.value = options.reportId || ''
+  reportName.value = options.reportName || ''
   loadReportPdf()
 })
 
@@ -124,33 +125,13 @@ const loadReportPdf = async () => {
 
 // 预览PDF
 const previewPdf = () => {
-  if (!pdfUrl.value) {
-    uni.showToast({ title: 'PDF地址获取失败', icon: 'none' })
+  if (!reportId.value) {
+    uni.showToast({ title: '报告ID获取失败', icon: 'none' })
     return
   }
 
-  // 在小程序中，可以下载后用文件管理器打开
-  uni.showLoading({ title: '准备中...' })
-  
-  downloadFile(pdfUrl.value).then(filePath => {
-    uni.hideLoading()
-    
-    // 打开文档
-    uni.openDocument({
-      filePath: filePath,
-      fileType: 'pdf',
-      success: () => {
-        console.log('[ReportDetail] Open PDF success')
-      },
-      fail: (err) => {
-        console.error('[ReportDetail] Open PDF fail:', err)
-        uni.showToast({ title: '打开失败', icon: 'none' })
-      }
-    })
-  }).catch(err => {
-    uni.hideLoading()
-    console.error('[ReportDetail] Download fail:', err)
-    uni.showToast({ title: '下载失败', icon: 'none' })
+  uni.navigateTo({
+    url: `/pages/report-preview/index?reportId=${reportId.value}&reportName=${encodeURIComponent(reportName.value || '')}`
   })
 }
 

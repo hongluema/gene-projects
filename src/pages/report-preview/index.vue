@@ -40,8 +40,7 @@
     <view v-else class="tips-container">
       <text class="tips-icon">📄</text>
       <text class="tips-text">准备打开PDF报告</text>
-      <text class="tips-hint">点击下方按钮查看</text>
-      <button class="open-btn" @click="openPdfWithSystem">打开报告</button>
+      <text class="tips-hint">正在自动打开，请稍候...</text>
     </view>
     <!-- #endif -->
   </view>
@@ -393,4 +392,3 @@ export default {
   z-index: 1000;
 }
 </style>
-

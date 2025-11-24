@@ -31,6 +31,6 @@ export const API = {
   queryReportByPhone: `${API_BASE}/api/report/query-by-phone`,
   queryReportByIdCard: `${API_BASE}/api/report/query-by-idcard`,
   getReportList: `${API_BASE}/api/report/list`,
-  getReportPdf: `${API_BASE}/api/report/pdf`,
+  getReportPdf: `${API_BASE}/api/report/pdf/local`,
 }
 

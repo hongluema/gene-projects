@@ -297,7 +297,7 @@ const fetchProjects = async () => {
       method: 'GET',
     })
     console.log('>>>>res projects', res);
-    let list = res.data.data?.list || [];
+    let list = res.data.data || [];
     projectOptions.value = (list || []).map((item) => ({
       label: item?.name,
       value: item?.id

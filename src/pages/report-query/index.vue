@@ -119,7 +119,7 @@ import { ref, onMounted, computed } from 'vue'
 import { validatePhone, validateIdCard, validateCode } from '@/utils/validator'
 import { USE_MOCK, API } from '@/config'
 import { mockQueryReport } from '@/mock/api'
-import { post } from '@/utils/request'
+import { get, post } from '@/utils/request'
 
 const queryType = ref('phone')
 const querying = ref(false)
@@ -220,24 +220,18 @@ const handlePhoneQuery = async () => {
   uni.showLoading({ title: '查询中...' })
 
   try {
-    let result
-    if (USE_MOCK) {
-      result = await mockQueryReport({ mobile: phoneForm.value.mobile })
-    } else {
-      result = await post(API.queryReportByPhone, {
-        mobile: phoneForm.value.mobile,
-        code: phoneForm.value.code
+    const result = await get(API.getSamplesByPhone, {
+        phone: phoneForm.value.mobile,
       })
-    }
-
+    console.log('>>>>>result', result);
     uni.hideLoading()
 
-    if (result.success && result.data.length > 0) {
+    if (result && result.length > 0) {
       saveQueryHistory('phone', phoneForm.value.mobile)
       
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result.data))}`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result))}`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })
@@ -262,14 +256,9 @@ const handleIdCardQuery = async () => {
   uni.showLoading({ title: '查询中...' })
 
   try {
-    let result
-    if (USE_MOCK) {
-      result = await mockQueryReport({ idCard: idCardForm.value.idCard })
-    } else {
-      result = await post(API.queryReportByIdCard, {
+    const result = await post(API.queryReportByIdCard, {
         idCard: idCardForm.value.idCard
       })
-    }
 
     uni.hideLoading()
 

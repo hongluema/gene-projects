@@ -27,3 +27,52 @@
 - 安全注意
   - 不要在小程序前端直接信任 openId。前端只上传 code，服务端向微信接口换取 openId 后再返回给前端或仅在服务端保存。
   - session_key 只应保存在服务端，不要下发给前端。
+
+### 生成随机身份证号
+
+```js
+function generateIDCard() {
+// 随机生成前 6 位（地区码，这里使用一些真实存在的地区码）
+const areaCodes = [
+'110101', // 北京市东城区
+'310104', // 上海市徐汇区
+'440103', // 广州市荔湾区
+'440106', // 广州市天河区
+'440305', // 深圳市南山区
+'330102', // 杭州市上城区
+'320105', // 南京市建邺区
+'510104', // 成都市锦江区
+'420102', // 武汉市江岸区
+'430102' // 长沙市芙蓉区
+];
+const areaCode = areaCodes[Math.floor(Math.random() * areaCodes.length)];
+
+// 随机生成 8 位出生日期（1980-2000 年）
+const year = 1980 + Math.floor(Math.random() _ 21);
+const month = String(Math.floor(Math.random() _ 12) + 1).padStart(2, '0');
+const day = String(Math.floor(Math.random() \* 28) + 1).padStart(2, '0');
+const birthDate = `${year}${month}${day}`;
+
+// 随机生成 3 位顺序码
+const sequenceCode = String(Math.floor(Math.random() \* 999) + 1).padStart(3, '0');
+
+// 前 17 位
+const first17 = areaCode + birthDate + sequenceCode;
+
+// 计算校验码（第 18 位）
+const weights = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+const checkCodes = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'];
+
+let sum = 0;
+for (let i = 0; i < 17; i++) {
+sum += parseInt(first17.charAt(i)) \* weights[i];
+}
+
+const checkCode = checkCodes[sum % 11];
+
+return first17 + checkCode;
+}
+
+// 生成示例
+console.log(generateIDCard());
+```

@@ -25,11 +25,9 @@ export const API = {
   submitSample: `${API_BASE}/api/sample/submit`,
   ocrIdCard: `${API_BASE}/api/ocr/idcard`,
   getSamplesByPhone: `${API_BASE}/api/samples/phone`,  // 根据手机号获取样本
-  getSamplesByUserId: `${API_BASE}/api/samples`,       // 根据用户ID获取样本
+  getSamplesByUserId: `${API_BASE}/api/samples/user_id`,       // 根据用户ID获取样本
   
   // 报告相关
-  queryReportByPhone: `${API_BASE}/api/report/query-by-phone`,
-  queryReportByIdCard: `${API_BASE}/api/report/query-by-idcard`,
   getReportList: `${API_BASE}/api/report/list`,
   getReportPdf: `${API_BASE}/api/report/pdf/local`,
 }

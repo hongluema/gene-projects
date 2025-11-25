@@ -7,7 +7,7 @@
     </view>
     <view class="query-container">
     <!-- Tab切换 -->
-    <view class="tab-bar">
+      <view class="tab-bar" v-if="!fromQuery">
         <view 
           class="tab-item" 
           :class="{ active: queryType === 'my' }"
@@ -123,6 +123,7 @@ const formatDateTime = (date) => {
 const queryType = ref('my')
 const reportList = ref([])
 const loading = ref(false)
+const fromQuery = ref(false); // 从查询页面跳转过来 - 那边已经获取好数据了，这里不需要再获取了
 
 onLoad((options) => {
   // 登录检查（会自动初始化）
@@ -132,7 +133,9 @@ onLoad((options) => {
 
   if (options.data) {
     try {
-      reportList.value = JSON.parse(decodeURIComponent(options.data))
+      reportList.value = JSON.parse(decodeURIComponent(options.data));
+      console.log('>>>>>reportList', reportList.value);
+      fromQuery.value = true;
     } catch (err) {
       console.error('[ReportList] Parse data fail:', err)
     }
@@ -193,7 +196,7 @@ const fetchReportList = async () => {
   } catch (err) {
     console.error('[ReportList] Fetch error:', err)
     uni.showToast({
-      title: '获取报告列表失败',
+      title: JSON.stringify(err),
       icon: 'none'
     })
     // 失败时清空列表

@@ -18,10 +18,11 @@ export function request(options) {
         ...options.header
       },
       success: (res) => {
-        if (res.statusCode === 200) {
-          resolve(res.data)
+        console.log('>>>request', res);
+        if (res.statusCode === 200 && res.data.status_code === 200) {
+          resolve(res.data.data)
         } else {
-          reject(new Error(`请求失败: ${res.statusCode}`))
+          reject(new Error(`请求失败: ${res.data.message}`))
         }
       },
       fail: (err) => {

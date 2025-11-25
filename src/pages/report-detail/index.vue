@@ -47,7 +47,7 @@
           <!-- 小程序中预览PDF较为复杂，这里提供下载按钮 -->
           <view class="preview-placeholder">
             <text class="placeholder-icon">📑</text>
-            <text class="placeholder-text">点击下载查看完整报告</text>
+            <text class="placeholder-text">点击下方预览按钮查看完整报告</text>
           </view>
         </view>
 
@@ -98,30 +98,20 @@ const reportId = ref('')
 const reportName= ref('')
 const pdfUrl = ref('')
 const downloading = ref(false)
+const showPreviewModal = ref(false)
+const previewLoading = ref(false)
+const previewError = ref('')
+const previewCurrentPage = ref(1)
+const previewTotalPages = ref(0)
+const loading = ref(false)
+const error = ref('')
 
 onLoad((options) => {
   reportId.value = options.reportId || ''
   reportName.value = options.reportName || ''
-  loadReportPdf()
+  // loadReportPdf()
+  loadPdf()
 })
-
-// 加载PDF链接
-const loadReportPdf = async () => {
-  try {
-    let result
-    const res = await uni.request({
-        url: `${API.getReportPdf}?pk=${reportId.value}`,
-        method: 'GET'
-      })
-    result = res.data;
-
-    if (result.success) {
-      pdfUrl.value = result.pdfUrl
-    }
-  } catch (err) {
-    console.error('[ReportDetail] Load PDF fail:', err)
-  }
-}
 
 // 预览PDF
 const previewPdf = () => {
@@ -133,6 +123,35 @@ const previewPdf = () => {
   uni.navigateTo({
     url: `/pages/report-preview/index?reportId=${reportId.value}&reportName=${encodeURIComponent(reportName.value || '')}`
   })
+}
+
+// 加载PDF
+const loadPdf = async () => {
+  if (!reportId.value) {
+    error.value = '报告ID不能为空'
+    return
+  }
+
+  loading.value = true
+  error.value = ''
+
+  try {
+    const url = `${API.getReportPdf}?pk=375766785955336192`
+    console.log('[ReportPreview] Loading PDF from:', url)
+
+    pdfUrl.value = url
+    // #endif
+
+    // #ifndef MP
+    // 非小程序环境，等待 renderjs 渲染
+    loading.value = false
+    // #endif
+
+  } catch (err) {
+    console.error('[ReportPreview] Load PDF fail:', err)
+    error.value = err.message || '加载报告失败'
+    loading.value = false
+  }
 }
 
 // 下载PDF
@@ -173,7 +192,6 @@ const downloadPdf = () => {
     uni.showToast({ title: '下载失败', icon: 'none' })
   })
 }
-
 // 联系客服
 const contactService = () => {
   uni.showModal({
@@ -285,6 +303,11 @@ const contactService = () => {
   background: #f5f7fa;
   border-radius: 16rpx;
   border: 2rpx dashed #d9d9d9;
+  cursor: pointer;
+}
+
+.preview-placeholder:active {
+  opacity: 0.8;
 }
 
 .placeholder-icon {
@@ -379,6 +402,104 @@ const contactService = () => {
 
 .contact-icon {
   font-size: 36rpx;
+}
+
+.preview-modal {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #525659;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-modal-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 30rpx 40rpx;
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.preview-modal-close {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.preview-modal-content-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-top: 100rpx;
+  position: relative;
+}
+
+.preview-modal-content {
+  width: 100%;
+  height: calc(100vh - 100rpx);
+  background: #525659;
+}
+
+.pdf-modal-canvas-container {
+  width: 100%;
+  min-height: 100%;
+  padding: 20rpx 0;
+}
+
+.preview-page-indicator {
+  position: fixed;
+  bottom: 40rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 16rpx 32rpx;
+  border-radius: 40rpx;
+  font-size: 24rpx;
+  z-index: 1000;
+}
+
+.preview-modal-loading,
+.preview-modal-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #fff;
+}
+
+.error-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.error-text {
+  font-size: 32rpx;
+  color: #fff;
+  text-align: center;
+}
+
+.preview-web-view {
+  width: 100%;
+  height: 100%;
 }
 </style>
 

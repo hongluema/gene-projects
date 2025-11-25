@@ -98,12 +98,6 @@
 				"navigationBarTextStyle": "white"
 			}
 		},
-    {
-      "path": "pages/report-view/index",
-      "style": {
-        "navigationBarTitleText": "报告查看"
-      }
-    },
 		{
 			"path": "pages/about/index",
 			"style": {

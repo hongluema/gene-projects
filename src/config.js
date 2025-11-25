@@ -1,7 +1,7 @@
 export const USE_MOCK = true
-export const API_BASE = 'http://localhost:8002'
+// export const API_BASE = 'http://localhost:8002'
 // export const API_BASE = 'http://117.149.9.79:9005'
-// export const API_BASE = 'https://app.oriomics.cn'
+export const API_BASE = 'https://app.oriomics.cn'
 
 export const API = {
   // 认证相关

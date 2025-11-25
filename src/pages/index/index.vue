@@ -43,7 +43,7 @@
 
       <view class="feature-list">
         <!-- 我的报告 -->
-        <view class="feature-item" @click="goToMyReports">
+        <!--  <view class="feature-item" @click="goToMyReports">
           <view class="feature-left">
             <text class="feature-icon">📊</text>
             <view class="feature-info">
@@ -52,15 +52,15 @@
             </view>
           </view>
           <text class="feature-arrow">→</text>
-        </view>
+        </view> -->
 
         <!-- 我录入的报告 -->
         <view class="feature-item" @click="goToMyEntryReports">
           <view class="feature-left">
             <text class="feature-icon">📊</text>
             <view class="feature-info">
-              <text class="feature-name">录入报告</text>
-              <text class="feature-desc">查看我录入的检测报告</text>
+              <text class="feature-name">检测报告</text>
+              <text class="feature-desc">查看我的和录入的检测报告</text>
             </view>
           </view>
           <text class="feature-arrow">→</text>

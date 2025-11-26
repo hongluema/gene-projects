@@ -171,7 +171,7 @@ const goToReportQuery = () => {
   //   url: '/pages/report-query/index'
   // })
   uni.navigateTo({
-    url: `/pages/report-list/index?user_id=${userInfo.value.id}`
+    url: `/pages/report-list/index?user_id=${userInfo.value.user_id}`
   })
 }
 

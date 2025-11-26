@@ -158,7 +158,7 @@ const fetchReportList = async () => {
 
   try {
     let url = API.getSamplesByMy;
-    let params = { phone: userInfo.value.phone,  user_id: userInfo.value.id}
+    let params = { phone: userInfo.value.phone,  user_id: userInfo.value.user_id}
 
     // if (queryType.value === 'my') {
     //   // 我的报告 - 根据手机号查询

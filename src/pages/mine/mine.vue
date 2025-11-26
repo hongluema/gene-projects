@@ -49,7 +49,7 @@
       </view>
 
       <view class="menu-group">
-        <view class="menu-item" @click="goToReportQuery(reportList.value)">
+        <view class="menu-item" @click="goToReportQuery(reportList)">
           <view class="menu-left">
             <text class="menu-icon">📊</text>
             <text class="menu-text">我的报告</text>

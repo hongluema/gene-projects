@@ -17,17 +17,17 @@
 
     <!-- 快捷功能 -->
     <view class="quick-stats">
-      <view class="stat-item" @click="goToReportQuery">
+      <view class="stat-item" @click="goToReportQuery(reportList)">
         <text class="stat-number">{{ reportList.length }}</text>
         <text class="stat-label">我的报告</text>
       </view>
       <view class="stat-divider"></view>
-      <view class="stat-item">
+      <view class="stat-item" @click="goToReportQuery(progressingReportList)">
         <text class="stat-number">{{ progressingReportList.length }}</text>
         <text class="stat-label">检测中</text>
       </view>
       <view class="stat-divider"></view>
-      <view class="stat-item">
+      <view class="stat-item" @click="goToReportQuery(progressedReportList)">
         <text class="stat-number">{{ progressedReportList.length }}</text>
         <text class="stat-label">已完成</text>
       </view>
@@ -49,7 +49,7 @@
       </view>
 
       <view class="menu-group">
-        <view class="menu-item" @click="goToReportQuery">
+        <view class="menu-item" @click="goToReportQuery(reportList.value)">
           <view class="menu-left">
             <text class="menu-icon">📊</text>
             <text class="menu-text">我的报告</text>
@@ -223,16 +223,15 @@ const fetchReportList = async () => {
     reportList.value = []
   }
 }
-
+  
 // 跳转到报告查询
-const goToReportQuery = () => {
-  // uni.navigateTo({
-  //   url: '/pages/report-query/index'
-  // })
+const goToReportQuery = (data) => {
+  console.log('>>>>data', data);
   uni.navigateTo({
-    url: `/pages/report-list/index?user_id=${userInfo.value.user_id}`
+    url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(data))}`
   })
 }
+
 
 // 跳转到样本录入
 const goToSampleEntry = () => {

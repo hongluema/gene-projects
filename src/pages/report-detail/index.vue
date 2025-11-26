@@ -92,7 +92,7 @@
 import { ref, onMounted } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { API } from '@/config'
-import { downloadFile } from '@/utils/request'
+import { previewFile, downloadFile } from '@/utils/request'
 
 const reportInfo = ref({})
 // const reportName= ref('')
@@ -126,7 +126,7 @@ const previewPdf = () => {
   if (downloading.value) return
 
   downloading.value = true
-  downloadFile(pdfUrl.value).then(filePath => {
+  previewFile(pdfUrl.value).then(filePath => {
     downloading.value = false
     uni.openDocument({
       filePath: filePath,

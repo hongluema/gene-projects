@@ -84,6 +84,27 @@ export function uploadFile(url, filePath, name = 'file', formData = {}) {
 }
 
 /**
+ * 预览文件
+ */
+export function previewFile(url) {
+  return new Promise((resolve, reject) => {
+    uni.downloadFile({
+      url,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          resolve(res.tempFilePath)
+        } else {
+          reject(new Error(`预览失败: ${res.statusCode}`))
+        }
+      },
+      fail: reject
+    })
+  })
+}
+
+
+
+/**
  * 下载文件
  */
 export function downloadFile(url) {

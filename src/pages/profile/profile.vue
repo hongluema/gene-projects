@@ -36,10 +36,9 @@
       <van-field
         label="手机号"
         type="number"
+        disabled
         placeholder="请输入手机号"
         :value="form.phone"
-        @change="onChange('phone', $event)"
-        clearable
       />
     </van-cell-group>
       <view class="actions">
@@ -92,22 +91,22 @@ const isMobile = (s) => /^1[3-9]\d{9}$/.test(String(s).trim())
 const isIdCard = (s) => /^(\d{15}|\d{17}[\dXx])$/.test(String(s).trim())
 
 const onSubmit = async () => {
+  console.log('>>>form', form);
   if (!form.id_number) return uni.showToast({ title: '请输入身份证号', icon: 'none' })
   if (!isIdCard(form.id_number)) return uni.showToast({ title: '身份证号格式不正确', icon: 'none' })
   if (!form.name) return uni.showToast({ title: '请输入姓名', icon: 'none' })
   if (!form.gender) return uni.showToast({ title: '请选择性别', icon: 'none' })
-  if (form.age && !/^\d{1,3}$/.test(String(form.age))) return uni.showToast({ title: '年龄需为数字', icon: 'none' })
+  if ((form.age == null || form.age === '') || (!/^\d{1,3}$/.test(String(form.age).trim()))) return uni.showToast({ title: '年龄需为1-3位数字', icon: 'none' })
   if (form.phone && !isMobile(form.phone)) return uni.showToast({ title: '手机号格式不正确', icon: 'none' })
   if (!userId.value) return uni.showToast({ title: '缺少userId，请重新登录', icon: 'none' })
   const { id_number, name, gender, age, phone } = form;
   const userData = {
     userId: userId.value,
-    phone: '',
-    name: name,
-    avatar: '',
-    id_number: id_number,
-    gender: gender,
-    age: age,
+    phone,
+    name,
+    id_number,
+    gender,
+    age,
   };
   try {
     await uni.request({

@@ -36,8 +36,8 @@
           @click="viewReport(item)"
         >
           <!-- 状态标签 -->
-          <view class="status-badge" :class="getStatusClass(item.status)">
-            {{ item.statusText }}
+          <view class="status-badge" :class="item.phone === userInfo.phone ? 'status-success' : 'status-process'">
+            {{ getReportTypeLabel(item) }}
           </view>
 
           <!-- 报告信息 -->
@@ -209,10 +209,17 @@ const fetchReportList = async () => {
 // 获取状态样式类
 const getStatusClass = (status) => {
   const classMap = {
-    'progressed': 'status-success',
-    'progressing': 'status-process',
+    'my' : 'status-success',
   }
   return classMap[status] || 'status-process'
+}
+
+// 获取报告类型标签
+const getReportTypeLabel = (item) => {
+  if (item.phone === userInfo.value.phone) {
+    return '我的'
+  }
+  return '录入'
 }
 
 // 查看报告详情

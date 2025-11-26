@@ -29,6 +29,7 @@ export const API = {
   getSamplesByPhone: `${API_BASE}/api/samples/phone`,  // 根据手机号获取样本
   queryReportByIdCard: `${API_BASE}/api/samples/id-number`,  // 根据手机号获取样本
   getSamplesByUserId: `${API_BASE}/api/samples/user_id`,       // 根据用户ID获取样本
+  getSamplesByMy: `${API_BASE}/api/samples/query/my`,       // 查询我的报告
   
   // 报告相关
   getReportList: `${API_BASE}/api/report/list`,

@@ -5,9 +5,9 @@
       <text class="page-title">我的报告</text>
       <text class="page-desc">共 {{ reportList.length }} 份报告</text>
     </view>
-    <view class="query-container" :class="{ 'no-tabs': fromQuery }">
+    <view class="query-container" :class="{ 'no-tabs': true }">
     <!-- Tab切换 -->
-      <view class="tab-bar" v-if="!fromQuery">
+      <view class="tab-bar" v-if="false">
         <view 
           class="tab-item" 
           :class="{ active: queryType === 'my' }"
@@ -112,7 +112,7 @@ import { API } from '@/config'
 import dayjs from 'dayjs'
 
 // 登录检查
-const { checkAuth, phone, userId } = useAuth()
+const { checkAuth, userInfo } = useAuth()
 
 // 格式化日期时间
 const formatDateTime = (date) => {
@@ -157,18 +157,18 @@ const fetchReportList = async () => {
   loading.value = true
 
   try {
-    let url = ''
-    let params = {}
+    let url = API.getSamplesByMy;
+    let params = { phone: userInfo.value.phone,  user_id: userInfo.value.id}
 
-    if (queryType.value === 'my') {
-      // 我的报告 - 根据手机号查询
-      url = API.getSamplesByPhone
-      params = { phone: phone.value }
-    } else {
-      // 录入报告 - 根据用户ID查询
-      url = API.getSamplesByUserId
-      params = { user_id: userId.value }
-    }
+    // if (queryType.value === 'my') {
+    //   // 我的报告 - 根据手机号查询
+    //   url = API.getSamplesByPhone
+    //   params = { phone: phone.value }
+    // } else {
+    //   // 录入报告 - 根据用户ID查询
+    //   url = API.getSamplesByUserId
+    //   params = { user_id: userId.value }
+    // }
 
     console.log('[ReportList] Fetching data:', { url, params })
 

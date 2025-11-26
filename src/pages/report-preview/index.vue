@@ -52,6 +52,7 @@ import { API } from '@/config'
 
 const reportId = ref('')
 const reportName = ref('')
+const reportInfo = ref({})
 const pdfUrl = ref('')
 const loading = ref(false)
 const error = ref('')
@@ -59,13 +60,12 @@ const currentPage = ref(1)
 const totalPages = ref(0)
 
 onLoad((options) => {
-  reportId.value = options.reportId || ''
-  reportName.value = decodeURIComponent(options.reportName || '')
+  reportInfo.value = JSON.parse(decodeURIComponent(options.data));
 
   // 设置导航栏标题
   if (reportName.value) {
     uni.setNavigationBarTitle({
-      title: reportName.value
+      title: reportInfo.value.sample_data_name
     })
   }
 
@@ -75,7 +75,7 @@ onLoad((options) => {
 
 // 加载PDF
 const loadPdf = async () => {
-  if (!reportId.value) {
+  if (!reportInfo.value.sample_data_id) {
     error.value = '报告ID不能为空'
     return
   }
@@ -84,7 +84,7 @@ const loadPdf = async () => {
   error.value = ''
 
   try {
-    const url = `${API.getReportPdf}?pk=375766785955336192`
+    const url = `${API.getReportPdf}?pk=${reportInfo.value.sample_data_id}`
     console.log('[ReportPreview] Loading PDF from:', url)
 
     pdfUrl.value = url

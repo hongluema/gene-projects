@@ -160,7 +160,7 @@ const loadPdf = async () => {
   error.value = ''
 
   try {
-    const url = `${API.getReportPdf}?pk=375766785955336192`
+    const url = `${API.getReportPdf}?pk=${reportInfo.value.sample_data_id}`
     console.log('[ReportPreview] Loading PDF from:', url)
 
     pdfUrl.value = url

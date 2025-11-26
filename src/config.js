@@ -27,6 +27,7 @@ export const API = {
   submitSample: `${API_BASE}/api/sample/submit`,
   ocrIdCard: `${API_BASE}/api/ocr/idcard`,
   getSamplesByPhone: `${API_BASE}/api/samples/phone`,  // 根据手机号获取样本
+  queryReportByIdCard: `${API_BASE}/api/samples/id-number`,  // 根据手机号获取样本
   getSamplesByUserId: `${API_BASE}/api/samples/user_id`,       // 根据用户ID获取样本
   
   // 报告相关

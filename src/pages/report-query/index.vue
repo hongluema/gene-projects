@@ -231,7 +231,7 @@ const handlePhoneQuery = async () => {
       
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify([...result, ...result]))}`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result))}`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })

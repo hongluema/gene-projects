@@ -43,11 +43,11 @@
           <!-- 报告信息 -->
           <view class="report-info">
             <view class="info-row main">
-              <text class="project-name">{{ item.program_id }}</text>
+              <text class="project-name">{{ item.program_name }}</text>
             </view>
             <view class="info-row">
-              <text class="label">样本编号：</text>
-              <text class="value">{{ item.code }}</text>
+              <text class="label">检测人姓名：</text>
+              <text class="value">{{ item.name }}</text>
             </view>
             <view class="info-row">
               <text class="label">检测机构：</text>

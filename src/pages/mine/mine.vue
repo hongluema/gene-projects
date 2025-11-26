@@ -167,8 +167,11 @@ const handleLogout = () => {
 
 // 跳转到报告查询
 const goToReportQuery = () => {
+  // uni.navigateTo({
+  //   url: '/pages/report-query/index'
+  // })
   uni.navigateTo({
-    url: '/pages/report-query/index'
+    url: `/pages/report-list/index?user_id=${userInfo.value.id}`
   })
 }
 

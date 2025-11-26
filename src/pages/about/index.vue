@@ -3,7 +3,7 @@
     <!-- Logo区域 -->
     <view class="logo-section">
       <image class="logo-img" src="/static/logo.png" mode="aspectFit" />
-      <text class="app-name">采样检测查询</text>
+      <text class="app-name">翱锐健康</text>
       <text class="app-version">v1.0.0</text>
     </view>
 
@@ -105,7 +105,7 @@
 
     <!-- 版权信息 -->
     <view class="copyright">
-      <text class="copyright-text">© 2024 采样检测查询平台</text>
+      <text class="copyright-text">© 2024 翱锐健康</text>
       <text class="copyright-text">All Rights Reserved</text>
     </view>
   </view>

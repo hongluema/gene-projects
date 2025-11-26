@@ -57,10 +57,10 @@
             <text class="btn-icon">👁️</text>
             <text>预览报告</text>
           </button>
-          <!-- <button class="action-btn download-btn" @click="downloadPdf">
+          <button class="action-btn download-btn" @click="downloadPdf">
             <text class="btn-icon">⬇️</text>
             <text>下载报告</text>
-          </button> -->
+          </button>
         </view>
       </view>
 

@@ -3,8 +3,8 @@
     <!-- 顶部Banner -->
     <view class="banner-section">
       <view class="banner-content">
-        <text class="banner-title">采样检测查询平台</text>
-        <text class="banner-desc">便捷、专业、安全的检测服务</text>
+        <text class="banner-title">翱锐健康</text>
+        <text class="banner-desc">消化道肿瘤甲基化筛查领先企业</text>
       </view>
     </view>
 

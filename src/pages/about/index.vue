@@ -2,7 +2,7 @@
   <view class="about-page">
     <!-- Logo区域 -->
     <view class="logo-section">
-      <image class="logo-img" src="/static/logo.png" mode="aspectFit" />
+      <image class="logo-img" src="/static/logo.jpg" mode="aspectFit" />
       <text class="app-name">翱锐健康</text>
       <text class="app-version">v1.0.0</text>
     </view>

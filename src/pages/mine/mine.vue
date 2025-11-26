@@ -18,17 +18,17 @@
     <!-- 快捷功能 -->
     <view class="quick-stats">
       <view class="stat-item" @click="goToReportQuery">
-        <text class="stat-number">--</text>
+        <text class="stat-number">{{ reportList.length }}</text>
         <text class="stat-label">我的报告</text>
       </view>
       <view class="stat-divider"></view>
       <view class="stat-item">
-        <text class="stat-number">--</text>
+        <text class="stat-number">{{ progressingReportList.length }}</text>
         <text class="stat-label">检测中</text>
       </view>
       <view class="stat-divider"></view>
       <view class="stat-item">
-        <text class="stat-number">--</text>
+        <text class="stat-number">{{ progressedReportList.length }}</text>
         <text class="stat-label">已完成</text>
       </view>
     </view>
@@ -110,6 +110,7 @@
 import { ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useAuth } from '@/composables/useAuth'
+import { API } from '@/config'
 
 const {
   isLogin,
@@ -117,10 +118,14 @@ const {
   userInfo,
   logout
 } = useAuth()
+const reportList = ref([])
+const progressingReportList = ref([])
+const progressedReportList = ref([])
 
 onLoad(() => {
   console.log('>>>>mine init');
-  initAuth()
+  initAuth();
+  fetchReportList();
 })
 
 onShow(() => {
@@ -163,6 +168,60 @@ const handleLogout = () => {
       }
     }
   })
+}
+
+// 获取报告列表
+const fetchReportList = async () => {
+
+  try {
+    let url = API.getSamplesByMy;
+    let params = { phone: userInfo.value.phone,  user_id: userInfo.value.user_id}
+
+    // if (queryType.value === 'my') {
+    //   // 我的报告 - 根据手机号查询
+    //   url = API.getSamplesByPhone
+    //   params = { phone: phone.value }
+    // } else {
+    //   // 录入报告 - 根据用户ID查询
+    //   url = API.getSamplesByUserId
+    //   params = { user_id: userId.value }
+    // }
+
+    console.log('[ReportList] Fetching data:', { url, params })
+
+    const res = await uni.request({
+      url,
+      method: 'GET',
+      data: params
+    })
+
+    console.log('[ReportList] Response:', res)
+
+    if (res.statusCode === 200 && res.data) {
+      // 根据实际接口返回的数据结构调整
+      if (res.data.status_code === 200 || res.data.data) {
+        const reportResData = res.data.data || [];
+        reportList.value = reportResData;
+        progressingReportList.value = reportResData.filter(item => item.process === 'progressing');
+        progressedReportList.value = reportResData.filter(item => item.process === 'progressed');
+      } else {
+        uni.showToast({
+          title: res.data.message || '获取数据失败',
+          icon: 'none'
+        })
+      }
+    } else {
+      throw new Error('请求失败')
+    }
+  } catch (err) {
+    console.error('[ReportList] Fetch error:', err)
+    uni.showToast({
+      title: JSON.stringify(err),
+      icon: 'none'
+    })
+    // 失败时清空列表
+    reportList.value = []
+  }
 }
 
 // 跳转到报告查询

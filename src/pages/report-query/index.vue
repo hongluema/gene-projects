@@ -223,7 +223,7 @@ const handlePhoneQuery = async () => {
     const result = await get(API.getSamplesByPhone, {
         phone: phoneForm.value.mobile,
       })
-    console.log('>>>>>result', result);
+    console.log('>>>>>result phone', result);
     uni.hideLoading()
 
     if (result && result.length > 0) {
@@ -231,7 +231,7 @@ const handlePhoneQuery = async () => {
       
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result))}`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify([...result, ...result]))}`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })
@@ -256,18 +256,18 @@ const handleIdCardQuery = async () => {
   uni.showLoading({ title: '查询中...' })
 
   try {
-    const result = await post(API.queryReportByIdCard, {
-        idCard: idCardForm.value.idCard
+    const result = await get(API.queryReportByIdCard, {
+      id_number: idCardForm.value.idCard
       })
 
     uni.hideLoading()
 
-    if (result.success && result.data.length > 0) {
+    if (result && result.length > 0) {
       saveQueryHistory('idcard', idCardForm.value.idCard)
       
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result.data))}`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result))}`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })

@@ -5,7 +5,7 @@
       <text class="page-title">我的报告</text>
       <text class="page-desc">共 {{ reportList.length }} 份报告</text>
     </view>
-    <view class="query-container">
+    <view class="query-container" :class="{ 'no-tabs': fromQuery }">
     <!-- Tab切换 -->
       <view class="tab-bar" v-if="!fromQuery">
         <view 
@@ -51,7 +51,7 @@
             </view>
             <view class="info-row">
               <text class="label">检测机构：</text>
-              <text class="value">{{ item.org_id }}</text>
+              <text class="value">{{ '测试机构' || item.org_id }}</text>
             </view>
             <view class="info-row">
               <text class="label">采样时间：</text>
@@ -218,7 +218,7 @@ const getStatusClass = (status) => {
 // 查看报告详情
 const viewReportDetail = (item) => {
   uni.navigateTo({
-    url: `/pages/report-detail/index?reportId=${item.sample_data_id}&reportName=${item.sample_data_name}`
+    url: `/pages/report-detail/index?data=${encodeURIComponent(JSON.stringify(item))}`
   })
 }
 
@@ -272,6 +272,11 @@ const goToEntry = () => {
 .query-container {
   margin-top: -40rpx;
   padding: 0 30rpx 40rpx;
+}
+
+.query-container.no-tabs {
+  margin-top: -20rpx;
+  padding: 20rpx 0rpx 40rpx;
 }
 
 .tab-bar {

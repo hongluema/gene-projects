@@ -15,23 +15,23 @@
         <view class="info-list">
           <view class="info-item">
             <text class="item-label">报告编号</text>
-            <text class="item-value">{{ reportId }}</text>
+            <text class="item-value">{{ reportInfo.sample_data_id }}</text>
           </view>
           <view class="info-item">
             <text class="item-label">样本编号</text>
-            <text class="item-value">SAMPLE_20240315_A1B2</text>
+            <text class="item-value">{{ reportInfo.code }}</text>
           </view>
           <view class="info-item">
             <text class="item-label">项目名称</text>
-            <text class="item-value">MTHFR基因检测</text>
+            <text class="item-value">{{ reportInfo.program_name }}</text>
           </view>
           <view class="info-item">
             <text class="item-label">检测机构</text>
-            <text class="item-value">XX医学检验所</text>
+            <text class="item-value">{{ reportInfo.org_name || '测试机构'}}</text>
           </view>
           <view class="info-item">
             <text class="item-label">报告日期</text>
-            <text class="item-value">2024-03-20 14:20:00</text>
+            <text class="item-value">{{ reportInfo.report_date || '--' }}</text>
           </view>
         </view>
       </view>
@@ -94,8 +94,8 @@ import { onLoad } from '@dcloudio/uni-app'
 import { API } from '@/config'
 import { downloadFile } from '@/utils/request'
 
-const reportId = ref('')
-const reportName= ref('')
+const reportInfo = ref({})
+// const reportName= ref('')
 const pdfUrl = ref('')
 const downloading = ref(false)
 const showPreviewModal = ref(false)
@@ -107,27 +107,29 @@ const loading = ref(false)
 const error = ref('')
 
 onLoad((options) => {
-  reportId.value = options.reportId || ''
-  reportName.value = options.reportName || ''
+  reportInfo.value = JSON.parse(decodeURIComponent(options.data));
+  console.log('>>>>>reportInfo', reportInfo.value);
+  // reportId.value = options.reportId || ''
+  // reportName.value = options.reportName || ''
   // loadReportPdf()
   loadPdf()
 })
 
 // 预览PDF
 const previewPdf = () => {
-  if (!reportId.value) {
+  if (!reportInfo.value.sample_data_id) {
     uni.showToast({ title: '报告ID获取失败', icon: 'none' })
     return
   }
 
   uni.navigateTo({
-    url: `/pages/report-preview/index?reportId=${reportId.value}&reportName=${encodeURIComponent(reportName.value || '')}`
+    url: `/pages/report-preview/index?reportId=${reportInfo.value.sample_data_id}&reportName=${encodeURIComponent(reportInfo.value.sample_data_name || '')}`
   })
 }
 
 // 加载PDF
 const loadPdf = async () => {
-  if (!reportId.value) {
+  if (!reportInfo.value.sample_data_id) {
     error.value = '报告ID不能为空'
     return
   }

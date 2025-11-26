@@ -122,6 +122,27 @@ const previewPdf = () => {
     return
   }
 
+  // TODO: 新的方法 - 开始
+  if (downloading.value) return
+
+  downloading.value = true
+  downloadFile(pdfUrl.value).then(filePath => {
+    downloading.value = false
+    uni.openDocument({
+      filePath: filePath,
+      fileType: 'pdf',
+      fail: (err) => {
+        console.error('[ReportDetail] Open PDF fail:', err)
+      }
+    })
+  }).catch(err => {
+    downloading.value = false
+    console.error('[ReportDetail] Preview fail:', err)
+    uni.showToast({ title: '预览失败', icon: 'none' })
+  })
+  // 新的方法 - 结束
+  return;
+
   uni.navigateTo({
     url: `/pages/report-preview/index?reportId=${reportInfo.value.sample_data_id}&reportName=${encodeURIComponent(reportInfo.value.sample_data_name || '')}`
   })

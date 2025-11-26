@@ -23,7 +23,6 @@
         <view
           id="pdf-canvas-container"
           class="pdf-canvas-container"
-          :change:pdfUrl="renderPdf.urlChanged"
           :pdfUrl="pdfUrl"
         ></view>
       </scroll-view>

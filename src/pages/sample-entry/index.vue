@@ -103,15 +103,15 @@
             <view class="gender-group">
               <view 
                 class="gender-btn" 
-                :class="{ active: formData.gender === '男' }"
-                @click="formData.gender = '男'"
+                :class="{ active: formData.gender === 'male' }"
+                @click="formData.gender = 'male'"
               >
                 <text>男</text>
               </view>
               <view 
                 class="gender-btn" 
-                :class="{ active: formData.gender === '女' }"
-                @click="formData.gender = '女'"
+                :class="{ active: formData.gender === 'female' }"
+                @click="formData.gender = 'female'"
               >
                 <text>女</text>
               </view>

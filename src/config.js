@@ -1,9 +1,18 @@
 export const USE_MOCK = true
 // TODO: 测试环境
-// export const API_BASE = 'http://localhost:8002'
-// export const API_BASE = 'http://117.149.9.79:9005'
+export const API_BASE = 'http://localhost:8002'
 // TODO: 生产环境
-export const API_BASE = 'https://app.oriomics.cn'
+// export const API_BASE = 'https://app.oriomics.cn'
+
+// 阿里云OCR配置
+export const ALIYUN_OCR = {
+  accessKeyId: 'LTAI5t6w5whKfqBscfnYFJ6n', // 请配置您的AccessKeyId 
+  accessKeySecret: 'RgOkODZuCap6ne35AZOiOdrqTk31ZC', // 请配置您的AccessKeySecret
+  endpoint: 'https://ocr.cn-shanghai.aliyuncs.com',
+  apiVersion: '2019-12-30',
+  region_id: 'cn-shanghai',
+  action: 'RecognizeIdCard',
+}
 
 export const API = {
   // 认证相关
@@ -25,7 +34,7 @@ export const API = {
   
   // 样本相关
   submitSample: `${API_BASE}/api/sample/submit`,
-  ocrIdCard: `${API_BASE}/api/ocr/idcard`,
+  ocrIdCard: `${API_BASE}/api/ocr/id-card/recognize`,
   getSamplesByPhone: `${API_BASE}/api/samples/phone`,  // 根据手机号获取样本
   queryReportByIdCard: `${API_BASE}/api/samples/id-number`,  // 根据手机号获取样本
   getSamplesByUserId: `${API_BASE}/api/samples/user_id`,       // 根据用户ID获取样本

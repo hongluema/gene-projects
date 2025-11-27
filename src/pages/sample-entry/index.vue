@@ -211,7 +211,7 @@ import { ref, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { scanQRCode, scanBarCode, parseProjectQRCode } from '@/utils/scan'
 import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/utils/validator'
-import { USE_MOCK, API, API_BASE } from '@/config'
+import { USE_MOCK, API, API_BASE, ALIYUN_OCR } from '@/config'
 import { mockSubmitSample, mockOcrIdCard } from '@/mock/api'
 import { post, get } from '@/utils/request'
 import { useAuth } from '@/composables/useAuth'
@@ -551,30 +551,101 @@ const chooseIdCardImage = (sourceType) => {
   })
 }
 
+// 读取文件并转换为base64
+const getFileBase64 = (filePath) => {
+  return new Promise((resolve, reject) => {
+    uni.getFileSystemManager().readFile({
+      filePath: filePath,
+      encoding: 'base64',
+      success: (res) => {
+        resolve(res.data)
+      },
+      fail: (err) => {
+        reject(err)
+      }
+    })
+  })
+}
+
+// 调用阿里云OCR API识别身份证
+const recognizeIdCardWithAliyun = async (imagePath) => {
+  try {
+    // 1. 读取图片文件并转换为base64
+    const base64Data = await getFileBase64(imagePath)
+    const imageUrl = `data:image/jpeg;base64,${base64Data}`
+    console.log('>>>>imageUrl', imageUrl);
+    // 2. 调用后端阿里云OCR API
+    // 通过后端API代理调用
+    const res = await post(API.ocrIdCard, { 
+        'image_base64': base64Data,
+        side: "face"
+    })
+    console.log('>>>>ocr res', res);
+    return res
+  } catch (err) {
+    console.error('[SampleEntry] Aliyun OCR error:', err)
+    throw err
+  }
+}
+
+// 解析阿里云OCR返回结果
+const parseAliyunOCRResult = (ocrResult) => {
+  // 根据阿里云OCR API返回格式解析
+  // 身份证识别API返回格式示例：
+  // {
+  //   Data: {
+  //     Name: "姓名",
+  //     IdNumber: "身份证号",
+  //     Gender: "性别",
+  //     BirthDate: "出生日期",
+  //     Address: "地址"
+  //   }
+  // }
+  
+  if (ocrResult.Data) {
+    const data = ocrResult.Data
+    return {
+      name: data.Name || '',
+      idCard: data.IdNumber || '',
+      gender: data.Gender === '男' ? 'male' : data.Gender === '女' ? 'female' : '',
+      birth: data.BirthDate || '',
+      address: data.Address || ''
+    }
+  }
+  
+  // 如果格式不同，尝试其他解析方式
+  if (ocrResult.name || ocrResult.idCard) {
+    return {
+      name: ocrResult.name || '',
+      idCard: ocrResult.idCard || ocrResult.id_number || '',
+      gender: ocrResult.gender || '',
+      birth: ocrResult.birth || '',
+      address: ocrResult.address || ''
+    }
+  }
+  
+  throw new Error('OCR结果格式不正确')
+}
+
 // 执行身份证OCR识别
 const performIdCardOCR = async (imagePath) => {
   uni.showLoading({ title: '识别中...' })
   
   try {
-    let ocrData
-    if (USE_MOCK) {
-      const res = await mockOcrIdCard(imagePath)
-      ocrData = res.data
-    } else {
-      // 实际项目中需要先上传图片，然后调用OCR接口
-      const res = await post(API.ocrIdCard, { image: imagePath })
-      ocrData = res.data
-    }
+    // 使用阿里云OCR API识别
+    let ocrData = await recognizeIdCardWithAliyun(imagePath)
+    
 
     formData.value.name = ocrData.name
-    formData.value.id_number = ocrData.idCard
-    formData.value.gender = ocrData.gender
+    formData.value.id_number = ocrData.id_number
+    formData.value.gender = ocrData.gender;
     
     // 从身份证号解析年龄
-    const parsed = parseIdCard(ocrData.idCard)
+    const parsed = parseIdCard(ocrData.id_number)
+    console.log('>>>>parsed', parsed);
     if (parsed) {
       formData.value.age = parsed.age
-      formData.value.gender = parsed.gender
+      formData.value.gender = parsed.gender;
     }
 
     uni.showToast({ title: '识别成功', icon: 'success' })
@@ -593,7 +664,7 @@ const onIdCardBlur = () => {
     if (parsed) {
       // 只在未填写时自动填充
       if (!formData.value.gender) {
-        formData.value.gender = parsed.gender
+        formData.value.gender = parsed.gender;
       }
       if (!formData.value.age) {
         formData.value.age = parsed.age

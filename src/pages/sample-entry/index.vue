@@ -211,8 +211,7 @@ import { ref, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { scanQRCode, scanBarCode, parseProjectQRCode } from '@/utils/scan'
 import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/utils/validator'
-import { USE_MOCK, API, API_BASE, ALIYUN_OCR } from '@/config'
-import { mockSubmitSample, mockOcrIdCard } from '@/mock/api'
+import { API, API_BASE,  } from '@/config'
 import { post, get } from '@/utils/request'
 import { useAuth } from '@/composables/useAuth'
 import dayjs from 'dayjs'
@@ -396,7 +395,6 @@ const clearUserInfo = () => {
         // 清除表单中的用户相关信息
         formData.value.name = '';
         formData.value.id_number = '';
-        formData.value.phone = '';
         formData.value.gender = '';
         formData.value.age = '';
         

@@ -4,16 +4,6 @@ export const API_BASE = 'http://localhost:8002'
 // TODO: 生产环境
 // export const API_BASE = 'https://app.oriomics.cn'
 
-// 阿里云OCR配置
-export const ALIYUN_OCR = {
-  accessKeyId: 'LTAI5t6w5whKfqBscfnYFJ6n', // 请配置您的AccessKeyId 
-  accessKeySecret: 'RgOkODZuCap6ne35AZOiOdrqTk31ZC', // 请配置您的AccessKeySecret
-  endpoint: 'https://ocr.cn-shanghai.aliyuncs.com',
-  apiVersion: '2019-12-30',
-  region_id: 'cn-shanghai',
-  action: 'RecognizeIdCard',
-}
-
 export const API = {
   // 认证相关
   sendSmsCode: `${API_BASE}/api/auth/send-code`,      // 发送短信验证码

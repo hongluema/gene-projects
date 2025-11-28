@@ -66,8 +66,8 @@ const form = reactive({
 const { userId, phone, markProfileComplete } = useAuth()
 
 const genderOptions = [
-  { label: '男', value: 'male' },
-  { label: '女', value: 'female' }
+  { label: '男', value: '男' },
+  { label: '女', value: '女' }
 ]
 
 const genderLabel = computed(() => {

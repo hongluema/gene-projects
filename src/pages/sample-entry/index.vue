@@ -103,15 +103,15 @@
             <view class="gender-group">
               <view 
                 class="gender-btn" 
-                :class="{ active: formData.gender === 'male' }"
-                @click="formData.gender = 'male'"
+                :class="{ active: formData.gender === '男' }"
+                @click="formData.gender = '男'"
               >
                 <text>男</text>
               </view>
               <view 
                 class="gender-btn" 
-                :class="{ active: formData.gender === 'female' }"
-                @click="formData.gender = 'female'"
+                :class="{ active: formData.gender === '女' }"
+                @click="formData.gender = '女'"
               >
                 <text>女</text>
               </view>
@@ -605,7 +605,7 @@ const parseAliyunOCRResult = (ocrResult) => {
     return {
       name: data.Name || '',
       idCard: data.IdNumber || '',
-      gender: data.Gender === '男' ? 'male' : data.Gender === '女' ? 'female' : '',
+      gender: data.Gender,
       birth: data.BirthDate || '',
       address: data.Address || ''
     }

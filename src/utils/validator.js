@@ -47,7 +47,7 @@ export function parseIdCard(idCard) {
   const genderCode = idCard.substr(idCard.length === 18 ? 16 : 14, 1)
   
   const birth = `${year}-${month}-${day}`
-  const gender = parseInt(genderCode) % 2 === 0 ? 'female' : 'male'
+  const gender = parseInt(genderCode) % 2 === 0 ? '女' : '男'
   
   // 计算年龄
   const birthDate = new Date(birth)

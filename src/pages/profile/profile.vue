@@ -2,10 +2,10 @@
   <view class="container">
     <view class="card-title">
       <text class="title-icon">👤</text>
-      <button class="scan-mini-btn" @click="showIdCardOptions">
+      <text class="scan-mini-btn" @click="showIdCardOptions">
         <text class="mini-icon">📷</text>
         快速识别
-      </button>
+      </text>
     </view>
     <view class="form">
       <van-cell-group>
@@ -213,5 +213,18 @@ onLoad(async () => {
 }
 .actions {
   padding: 24rpx 32rpx 40rpx;
+}
+.card-title {
+  padding: 16rpx;
+}
+.scan-mini-btn {
+  position: absolute;
+  right: 16rpx;
+  padding: 8rpx 20rpx;
+  font-size: 24rpx;
+  background: #667eea;
+  color: #fff;
+  border-radius: 30rpx;
+  border: none;
 }
 </style>

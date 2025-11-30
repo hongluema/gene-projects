@@ -1,5 +1,12 @@
 <template>
   <view class="container">
+    <view class="card-title">
+      <text class="title-icon">👤</text>
+      <button class="scan-mini-btn" @click="showIdCardOptions">
+        <text class="mini-icon">📷</text>
+        快速识别
+      </button>
+    </view>
     <view class="form">
       <van-cell-group>
       <van-field

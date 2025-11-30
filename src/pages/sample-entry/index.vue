@@ -214,6 +214,7 @@ import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/util
 import { API, API_BASE,  } from '@/config'
 import { post, get } from '@/utils/request'
 import { useAuth } from '@/composables/useAuth'
+import { useOCR } from '@/composables/useOCR'
 import dayjs from 'dayjs'
 
 // 登录检查
@@ -224,6 +225,9 @@ const {
   initAuth,
   userInfo,
 } = useAuth()
+
+// OCR功能
+const { showIdCardOptions: showOCRIdCardOptions, performIdCardOCR: performOCRIdCard } = useOCR()
 
 // 项目信息
 const projectInfo = ref({
@@ -523,136 +527,22 @@ const resetProject = () => {
   showProjectInput.value = false
 }
 
-// 显示身份证识别选项
+// 显示身份证识别选项（使用公共OCR方法）
 const showIdCardOptions = () => {
-  uni.showActionSheet({
-    itemList: ['拍照识别身份证', '从相册选择'],
-    success: (res) => {
-      if (res.tapIndex === 0) {
-        chooseIdCardImage('camera')
-      } else if (res.tapIndex === 1) {
-        chooseIdCardImage('album')
-      }
-    }
+  showOCRIdCardOptions({
+    onSuccess: (ocrData) => {
+      // 填充表单数据
+      formData.value.name = ocrData.name || ''
+      formData.value.id_number = ocrData.id_number || ''
+      formData.value.gender = ocrData.gender || ''
+      formData.value.age = ocrData.age || ''
+    },
+    onError: (err) => {
+      console.error('[SampleEntry] OCR error:', err)
+    },
+    autoParseAge: true,
+    side: 'face'
   })
-}
-
-// 选择身份证图片
-const chooseIdCardImage = (sourceType) => {
-  uni.chooseImage({
-    count: 1,
-    sourceType: [sourceType],
-    success: (res) => {
-      const tempFilePath = res.tempFilePaths[0]
-      performIdCardOCR(tempFilePath)
-    }
-  })
-}
-
-// 读取文件并转换为base64
-const getFileBase64 = (filePath) => {
-  return new Promise((resolve, reject) => {
-    uni.getFileSystemManager().readFile({
-      filePath: filePath,
-      encoding: 'base64',
-      success: (res) => {
-        resolve(res.data)
-      },
-      fail: (err) => {
-        reject(err)
-      }
-    })
-  })
-}
-
-// 调用阿里云OCR API识别身份证
-const recognizeIdCardWithAliyun = async (imagePath) => {
-  try {
-    // 1. 读取图片文件并转换为base64
-    const base64Data = await getFileBase64(imagePath)
-    const imageUrl = `data:image/jpeg;base64,${base64Data}`
-    console.log('>>>>imageUrl', imageUrl);
-    // 2. 调用后端阿里云OCR API
-    // 通过后端API代理调用
-    const res = await post(API.ocrIdCard, { 
-        'image_base64': base64Data,
-        side: "face"
-    })
-    console.log('>>>>ocr res', res);
-    return res
-  } catch (err) {
-    console.error('[SampleEntry] Aliyun OCR error:', err)
-    throw err
-  }
-}
-
-// 解析阿里云OCR返回结果
-const parseAliyunOCRResult = (ocrResult) => {
-  // 根据阿里云OCR API返回格式解析
-  // 身份证识别API返回格式示例：
-  // {
-  //   Data: {
-  //     Name: "姓名",
-  //     IdNumber: "身份证号",
-  //     Gender: "性别",
-  //     BirthDate: "出生日期",
-  //     Address: "地址"
-  //   }
-  // }
-  
-  if (ocrResult.Data) {
-    const data = ocrResult.Data
-    return {
-      name: data.Name || '',
-      idCard: data.IdNumber || '',
-      gender: data.Gender,
-      birth: data.BirthDate || '',
-      address: data.Address || ''
-    }
-  }
-  
-  // 如果格式不同，尝试其他解析方式
-  if (ocrResult.name || ocrResult.idCard) {
-    return {
-      name: ocrResult.name || '',
-      idCard: ocrResult.idCard || ocrResult.id_number || '',
-      gender: ocrResult.gender || '',
-      birth: ocrResult.birth || '',
-      address: ocrResult.address || ''
-    }
-  }
-  
-  throw new Error('OCR结果格式不正确')
-}
-
-// 执行身份证OCR识别
-const performIdCardOCR = async (imagePath) => {
-  uni.showLoading({ title: '识别中...' })
-  
-  try {
-    // 使用阿里云OCR API识别
-    let ocrData = await recognizeIdCardWithAliyun(imagePath)
-    
-
-    formData.value.name = ocrData.name
-    formData.value.id_number = ocrData.id_number
-    formData.value.gender = ocrData.gender;
-    
-    // 从身份证号解析年龄
-    const parsed = parseIdCard(ocrData.id_number)
-    console.log('>>>>parsed', parsed);
-    if (parsed) {
-      formData.value.age = parsed.age
-      formData.value.gender = parsed.gender;
-    }
-
-    uni.showToast({ title: '识别成功', icon: 'success' })
-  } catch (err) {
-    console.error('[SampleEntry] OCR fail:', err)
-    uni.showToast({ title: 'OCR识别失败，请手动填写', icon: 'none' })
-  } finally {
-    uni.hideLoading()
-  }
 }
 
 // 身份证号失焦时自动解析

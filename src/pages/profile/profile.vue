@@ -58,9 +58,12 @@
 <script setup>
 import { reactive, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { USE_MOCK, API } from '@/config'
-import { mockUpdateUser } from '@/mock/api'
+import { API } from '@/config'
 import { useAuth } from '@/composables/useAuth'
+import { useOCR } from '@/composables/useOCR'
+
+// OCR功能
+const { showIdCardOptions: showOCRIdCardOptions, performIdCardOCR: performOCRIdCard } = useOCR()
 
 const form = reactive({
   id_number: '',
@@ -82,6 +85,23 @@ const genderLabel = computed(() => {
   return g ? g.label : '请选择性别'
 })
 
+// 显示身份证识别选项（使用公共OCR方法）
+const showIdCardOptions = () => {
+  showOCRIdCardOptions({
+    onSuccess: (ocrData) => {
+      // 填充表单数据
+      form.name = ocrData.name || ''
+      form.id_number = ocrData.id_number || ''
+      form.gender = ocrData.gender || ''
+      form.age = ocrData.age || ''
+    },
+    onError: (err) => {
+      console.error('[SampleEntry] OCR error:', err)
+    },
+    autoParseAge: true,
+    side: 'face'
+  })
+}
 const onGenderChange = (e) => {
   const idx = Number(e?.detail?.value ?? -1)
   if (idx >= 0 && idx < genderOptions.length) {

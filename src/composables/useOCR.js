@@ -155,21 +155,82 @@ export function useOCR() {
   }
 
   /**
-   * 显示身份证识别选项（拍照/相册）
+   * 实时扫描识别身份证（使用camera组件）
    * @param {Object} options - 选项
    * @param {Function} options.onSuccess - 成功回调，参数为OCR结果
    * @param {Function} options.onError - 失败回调
    * @param {boolean} options.autoParseAge - 是否自动解析年龄
    * @param {string} options.side - 身份证面
    */
-  const showIdCardOptions = (options = {}) => {
-    uni.showActionSheet({
-      itemList: ['拍照识别身份证', '从相册选择'],
-      success: (res) => {
-        if (res.tapIndex === 0) {
+  const scanIdCardRealTime = (options = {}) => {
+    // 监听识别成功事件（一次性监听）
+    if (options.onSuccess) {
+      const successHandler = (ocrData) => {
+        options.onSuccess(ocrData)
+        uni.$off('idcard-ocr-success', successHandler)
+      }
+      uni.$on('idcard-ocr-success', successHandler)
+    }
+    
+    // 监听识别失败事件（一次性监听）
+    if (options.onError) {
+      const errorHandler = (err) => {
+        options.onError(err)
+        uni.$off('idcard-ocr-error', errorHandler)
+      }
+      uni.$on('idcard-ocr-error', errorHandler)
+    }
+    
+    // 跳转到实时扫描页面
+    uni.navigateTo({
+      url: `/pages/idcard-scan/index?autoParseAge=${options.autoParseAge !== false}&side=${options.side || 'face'}`,
+      fail: (err) => {
+        console.error('[OCR] Navigate to scan page fail:', err)
+        // 如果扫描页面不存在，降级为拍照识别
+        uni.showToast({ title: '扫描功能暂不可用，使用拍照识别', icon: 'none' })
+        setTimeout(() => {
           chooseIdCardImage('camera', options)
-        } else if (res.tapIndex === 1) {
-          chooseIdCardImage('album', options)
+        }, 1500)
+      }
+    })
+  }
+
+  /**
+   * 显示身份证识别选项（实时扫描/拍照/相册）
+   * @param {Object} options - 选项
+   * @param {Function} options.onSuccess - 成功回调，参数为OCR结果
+   * @param {Function} options.onError - 失败回调
+   * @param {boolean} options.autoParseAge - 是否自动解析年龄
+   * @param {string} options.side - 身份证面
+   * @param {boolean} options.enableRealTimeScan - 是否启用实时扫描，默认 true
+   */
+  const showIdCardOptions = (options = {}) => {
+    const { enableRealTimeScan = true } = options
+    
+    const itemList = enableRealTimeScan 
+      ? ['实时扫描识别', '拍照识别身份证', '从相册选择']
+      : ['拍照识别身份证', '从相册选择']
+    
+    uni.showActionSheet({
+      itemList: itemList,
+      success: (res) => {
+        if (enableRealTimeScan) {
+          if (res.tapIndex === 0) {
+            // 实时扫描识别
+            scanIdCardRealTime(options)
+          } else if (res.tapIndex === 1) {
+            // 拍照识别
+            chooseIdCardImage('camera', options)
+          } else if (res.tapIndex === 2) {
+            // 从相册选择
+            chooseIdCardImage('album', options)
+          }
+        } else {
+          if (res.tapIndex === 0) {
+            chooseIdCardImage('camera', options)
+          } else if (res.tapIndex === 1) {
+            chooseIdCardImage('album', options)
+          }
         }
       }
     })
@@ -206,7 +267,8 @@ export function useOCR() {
     // 便捷方法
     performIdCardOCR,
     showIdCardOptions,
-    chooseIdCardImage
+    chooseIdCardImage,
+    scanIdCardRealTime
   }
 }
 

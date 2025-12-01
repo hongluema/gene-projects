@@ -103,6 +103,14 @@
 			"style": {
 				"navigationBarTitleText": "关于我们"
 			}
+		},
+		{
+			"path": "pages/idcard-scan/index",
+			"style": {
+				"navigationBarTitleText": "身份证扫描",
+				"navigationBarBackgroundColor": "#000",
+				"navigationBarTextStyle": "white"
+			}
 		}
 	],
 	"globalStyle": {

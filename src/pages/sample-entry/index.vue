@@ -208,7 +208,7 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow, onUnload } from '@dcloudio/uni-app'
 import { scanQRCode, scanBarCode, parseProjectQRCode } from '@/utils/scan'
 import { validatePhone, validateIdCard, validateName, parseIdCard } from '@/utils/validator'
 import { API, API_BASE,  } from '@/config'
@@ -436,6 +436,35 @@ onLoad(async (options) => {
     loadProject(options.projectId, options.institutionId || '')
   }
 })
+
+// 监听扫描页面返回的OCR识别结果
+onShow(() => {
+  // 监听OCR识别成功事件
+  uni.$on('idcard-ocr-success', handleOCRSuccess)
+  // 监听OCR识别失败事件
+  uni.$on('idcard-ocr-error', handleOCRError)
+})
+
+// 页面卸载时清理事件监听
+onUnload(() => {
+  uni.$off('idcard-ocr-success', handleOCRSuccess)
+  uni.$off('idcard-ocr-error', handleOCRError)
+})
+
+// 处理OCR识别成功
+const handleOCRSuccess = (ocrData) => {
+  console.log('[SampleEntry] OCR success from scan page:', ocrData)
+  // 填充表单数据
+  formData.value.name = ocrData.name || ''
+  formData.value.id_number = ocrData.id_number || ''
+  formData.value.gender = ocrData.gender || ''
+  formData.value.age = ocrData.age || ''
+}
+
+// 处理OCR识别失败
+const handleOCRError = (err) => {
+  console.error('[SampleEntry] OCR error from scan page:', err)
+}
 
 // 扫描项目二维码
 const handleScanProject = async () => {

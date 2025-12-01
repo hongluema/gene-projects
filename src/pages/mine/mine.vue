@@ -227,9 +227,20 @@ const fetchReportList = async () => {
 // 跳转到报告查询
 const goToReportQuery = (data) => {
   console.log('>>>>data', data);
-  uni.navigateTo({
-    url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(data))}`
-  })
+  const myReport = data.filter((item) => item.phone === userInfo.value.phone);
+  if (myReport.length > 0) {
+    uni.navigateTo({
+      url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myReport))}`
+    })
+  } else {
+    uni.showToast({
+      title: '您尚未做任何检查，暂无报告',
+      icon: 'none'
+    })
+  }
+  // uni.navigateTo({
+  //   url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(data))}`
+  // })
 }
 
 

@@ -115,11 +115,17 @@
 </template>
 
 <script setup>
+import { onLoad } from '@dcloudio/uni-app'
 import { ref, onMounted, computed } from 'vue'
 import { validatePhone, validateIdCard, validateCode } from '@/utils/validator'
-import { USE_MOCK, API } from '@/config'
-import { mockQueryReport } from '@/mock/api'
+import { API } from '@/config'
+import { useAuth } from '@/composables/useAuth'
 import { get, post } from '@/utils/request'
+
+const {
+  initAuth,
+  userInfo,
+} = useAuth()
 
 const queryType = ref('phone')
 const querying = ref(false)
@@ -137,15 +143,29 @@ const idCardForm = ref({
 
 const historyList = ref([])
 
+// 页面加载时恢复查询历史
+onMounted(() => {
+  loadQueryHistory()
+  initAuth();
+})
+
+// onLoad(() => {
+//   console.log('>>>>mine init');
+  
+// })
+
+// onShow(() => {
+//   // 每次显示时刷新状态
+//   initAuth()
+// })
+
 // 根据 queryType 过滤历史记录
 const filteredHistoryList = computed(() => {
   return historyList.value.filter(item => item.type === queryType.value)
 })
 
-// 页面加载时恢复查询历史
-onMounted(() => {
-  loadQueryHistory()
-})
+
+
 
 // 加载查询历史
 const loadQueryHistory = () => {
@@ -154,6 +174,10 @@ const loadQueryHistory = () => {
     historyList.value = history.slice(0, 5) // 只显示最近5条
   } catch {}
 }
+
+
+
+
 
 // 保存查询历史
 const saveQueryHistory = (type, value) => {
@@ -228,10 +252,11 @@ const handlePhoneQuery = async () => {
 
     if (result && result.length > 0) {
       saveQueryHistory('phone', phoneForm.value.mobile)
-      
+      // 我录入的报告 - 其他人的
+      const myEntryOthersReport = result.filter(item => item.phone !== userInfo.value.phone);
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result))}`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myEntryOthersReport))}`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })

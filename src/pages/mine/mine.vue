@@ -200,7 +200,7 @@ const fetchReportList = async () => {
     if (res.statusCode === 200 && res.data) {
       // 根据实际接口返回的数据结构调整
       if (res.data.status_code === 200 || res.data.data) {
-        const reportResData = res.data.data || [];
+        const reportResData = res.data.data.filter(item => item.phone === userInfo.value.phone) || [];
         reportList.value = reportResData;
         progressingReportList.value = reportResData.filter(item => item.process === 'progressing');
         progressedReportList.value = reportResData.filter(item => item.process === 'progressed');
@@ -227,7 +227,7 @@ const fetchReportList = async () => {
 // 跳转到报告查询
 const goToReportQuery = (data) => {
   console.log('>>>>data', data);
-  const myReport = data.filter((item) => item.phone === userInfo.value.phone);
+  const myReport = data;
   if (myReport.length > 0) {
     uni.navigateTo({
       url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myReport))}`

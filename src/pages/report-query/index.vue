@@ -42,7 +42,7 @@
               placeholder-class="input-placeholder"
             />
           </view>
-          <view class="form-item">
+          <!-- <view class="form-item">
             <text class="item-label">验证码</text>
             <view class="code-input-wrap">
               <input
@@ -61,9 +61,13 @@
                 {{ countdown > 0 ? `${countdown}秒后重试` : '获取验证码' }}
               </button>
             </view>
-          </view>
+          </view> 
           <button class="query-btn" @click="handlePhoneQuery" :disabled="querying">
             {{ querying ? '查询中...' : '查询报告' }}
+          </button>
+          -->
+          <button class="query-btn" @click="handlePhoneQuery" >
+            {{ '查询报告' }}
           </button>
         </view>
 

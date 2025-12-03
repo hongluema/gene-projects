@@ -1,9 +1,9 @@
 <template>
   <view class="sample-entry-page">
     <!-- 顶部标题 -->
-    <view class="page-header">
+    <!-- <view class="page-header">
       <text class="page-title">样本信息录入</text>
-    </view>
+    </view> -->
 
     <view class="form-container">
       <!-- 项目信息卡片 -->

@@ -230,7 +230,7 @@ const goToReportQuery = (data) => {
   const myReport = data;
   if (myReport.length > 0) {
     uni.navigateTo({
-      url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myReport))}`
+      url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myReport))}&type=my`
     })
   } else {
     uni.showToast({

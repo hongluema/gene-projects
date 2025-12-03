@@ -88,6 +88,17 @@
             />
           </view>
           <view class="form-item">
+            <text class="form-label required">手机号</text>
+            <input 
+              class="form-input" 
+              v-model="formData.phone" 
+              type="number"
+              placeholder="请输入手机号"
+              placeholder-class="input-placeholder"
+              maxlength="11"
+            />
+          </view>
+          <view class="form-item">
             <text class="form-label required">身份证号</text>
             <input 
               class="form-input" 
@@ -131,7 +142,7 @@
       </view>
 
       <!-- 联系信息 -->
-      <view class="card">
+      <!-- <view class="card">
         <view class="card-title">
           <text class="title-icon">📞</text>
           <text>联系方式</text>
@@ -149,7 +160,7 @@
             />
           </view>
         </view>
-      </view>
+      </view> -->
 
       <!-- 样本信息 -->
       <view class="card">
@@ -814,7 +825,7 @@ const handleSubmit = async () => {
 .option-btn {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   align-items: center;
   justify-content: center;
   gap: 12rpx;
@@ -837,7 +848,7 @@ const handleSubmit = async () => {
 
 .btn-icon {
   font-size: 40rpx;
-  height: 60rpx;
+  /* height: 60rpx; */
 }
 
 .manual-input-area {

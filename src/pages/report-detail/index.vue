@@ -6,50 +6,42 @@
     </view>
 
     <view class="detail-container">
-      <!-- 报告基本信息 -->
+      <!-- 报告结果 -->
       <view class="info-card">
         <view class="card-title">
           <text class="title-icon">📄</text>
-          <text>报告信息</text>
+          <text>报告结果</text>
         </view>
         <view class="info-list">
           <view class="info-item">
-            <text class="item-label">报告编号</text>
+            <text class="item-label">Z值</text>
             <text class="item-value">{{ reportInfo.sample_data_id }}</text>
           </view>
           <view class="info-item">
-            <text class="item-label">样本编号</text>
+            <text class="item-label">阴阳性</text>
             <text class="item-value">{{ reportInfo.code }}</text>
           </view>
           <view class="info-item">
-            <text class="item-label">项目名称</text>
+            <text class="item-label">报告时间</text>
             <text class="item-value">{{ reportInfo.program_name }}</text>
-          </view>
-          <view class="info-item">
-            <text class="item-label">检测机构</text>
-            <text class="item-value">{{ reportInfo.org_name || '测试机构'}}</text>
-          </view>
-          <view class="info-item">
-            <text class="item-label">报告日期</text>
-            <text class="item-value">{{ reportInfo.report_date || '--' }}</text>
           </view>
         </view>
       </view>
 
-      <!-- PDF预览区域 -->
-      <view class="pdf-card">
+       <!-- PDF预览区域 -->
+       <view class="pdf-card">
         <view class="card-title">
           <text class="title-icon">📋</text>
           <text>报告详情</text>
         </view>
         
-        <view class="pdf-preview">
-          <!-- 小程序中预览PDF较为复杂，这里提供下载按钮 -->
+        <!-- 小程序中预览PDF较为复杂，这里提供下载按钮 -->
+        <!-- <view class="pdf-preview">
           <view class="preview-placeholder">
             <text class="placeholder-icon">📑</text>
             <text class="placeholder-text">点击下方预览按钮查看完整报告</text>
           </view>
-        </view>
+        </view> -->
 
         <!-- 操作按钮 -->
         <view class="pdf-actions">
@@ -63,6 +55,50 @@
           </button>
         </view>
       </view>
+
+      <!-- 检测单基本信息 -->
+      <view class="info-card">
+        <view class="card-title">
+          <text class="title-icon">📄</text>
+          <text>检测单信息</text>
+        </view>
+        <view class="info-list">
+          <view class="info-item">
+            <text class="item-label">姓名</text>
+            <text class="item-value">{{ reportInfo.name }}</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">身份证号</text>
+            <text class="item-value">{{ reportInfo.id_number }}</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">性别</text>
+            <text class="item-value">{{ reportInfo.gender }}</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">年龄</text>
+            <text class="item-value">{{ reportInfo.age }}</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">联系方式</text>
+            <text class="item-value">{{ reportInfo.phone }}</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">检测项目</text>
+            <text class="item-value">{{ reportInfo.program_name }}</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">检测机构</text>
+            <text class="item-value">{{ reportInfo.org_name || '测试机构'}}</text>
+          </view>
+          <view class="info-item">
+            <text class="item-label">血管编号</text>
+            <text class="item-value">{{ reportInfo.code || '--' }}</text>
+          </view>
+        </view>
+      </view>
+
+     
 
       <!-- 温馨提示 -->
       <view class="tips-card">

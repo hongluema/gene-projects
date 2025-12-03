@@ -49,10 +49,10 @@
               <text class="label">检测人姓名：</text>
               <text class="value">{{ item.name }}</text>
             </view>
-            <view class="info-row">
+            <!-- <view class="info-row">
               <text class="label">检测机构：</text>
               <text class="value">{{ '测试机构' || item.org_id }}</text>
-            </view>
+            </view> -->
             <view class="info-row">
               <text class="label">采样时间：</text>
               <text class="value">{{ formatDateTime(item.created_at) }}</text>

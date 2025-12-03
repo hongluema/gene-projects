@@ -239,10 +239,10 @@ const handlePhoneQuery = async () => {
     return
   }
 
-  if (!validateCode(phoneForm.value.code)) {
-    uni.showToast({ title: '请输入正确的验证码', icon: 'none' })
-    return
-  }
+  // if (!validateCode(phoneForm.value.code)) {
+  //   uni.showToast({ title: '请输入正确的验证码', icon: 'none' })
+  //   return
+  // }
 
   querying.value = true
   uni.showLoading({ title: '查询中...' })

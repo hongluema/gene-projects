@@ -183,7 +183,13 @@ const fetchReportList = async () => {
     if (res.statusCode === 200 && res.data) {
       // 根据实际接口返回的数据结构调整
       if (res.data.status_code === 200 || res.data.data) {
-        reportList.value = res.data.data || []
+        let reportResult = [];
+        if (options.type === 'my') {
+          reportResult = res.data.data.filter(item => item.phone === userInfo.value.phone) || [];
+        } else {
+          reportResult = res.data.data || [];
+        }
+        reportList.value = reportResult;
       } else {
         uni.showToast({
           title: res.data.message || '获取数据失败',

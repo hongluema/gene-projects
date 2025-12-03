@@ -129,7 +129,7 @@ const goToMyReports = () => {
 // 跳转到我录入的报告
 const goToMyEntryReports = () => {
   uni.navigateTo({
-    url: `/pages/report-list/index?user_id=${userId.value}`
+    url: `/pages/report-list/index?user_id=${userId.value}&type=my`
   })
 }
 

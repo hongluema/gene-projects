@@ -15,15 +15,26 @@
         <view class="info-list">
           <view class="info-item">
             <text class="item-label">Z值</text>
-            <text class="item-value">{{ reportInfo.sample_data_id }}</text>
+            <text class="item-value">{{ mongoInfo.p_Z }}</text>
           </view>
           <view class="info-item">
             <text class="item-label">阴阳性</text>
-            <text class="item-value">{{ reportInfo.code }}</text>
+            <text class="item-value">{{ mongoInfo.result }}</text>
           </view>
+          <view v-if="mongoInfo.result === '阴性'">
+            <view class="info-item">
+              <text class="item-label">癌症</text>
+              <text class="item-value">{{ mongoInfo.top1_cancer }}</text>
+            </view>
+            <view class="info-item" style="border-bottom: 1px solid #f0f0f0;">
+              <text class="item-label">proba</text>
+              <text class="item-value">{{ mongoInfo.top1_proba }}</text>
+            </view>
+          </view>
+          
           <view class="info-item">
             <text class="item-label">报告时间</text>
-            <text class="item-value">{{ reportInfo.program_name }}</text>
+            <text class="item-value">{{ mongoInfo.report_date }}</text>
           </view>
         </view>
       </view>
@@ -131,6 +142,7 @@ import { API } from '@/config'
 import { previewFile, downloadFile } from '@/utils/request'
 
 const reportInfo = ref({})
+const mongoInfo = ref({})
 // const reportName= ref('')
 const pdfUrl = ref('')
 const downloading = ref(false)
@@ -149,7 +161,22 @@ onLoad((options) => {
   // reportName.value = options.reportName || ''
   // loadReportPdf()
   loadPdf()
+  loadMongoInfo();
 })
+
+// 
+const loadMongoInfo = async () => {
+  const res = await uni.request({
+      url: API.getMongoInfoByMongoId,
+      method: 'GET',
+      data: {
+        mongoid: reportInfo.value.mongoid || ''
+      }
+    })
+  console.log('>>>>>res', res);
+  mongoInfo.value = res.data.data;
+  console.log('>>>>>mongoInfo', mongoInfo.value);
+}
 
 // 预览PDF
 const previewPdf = () => {

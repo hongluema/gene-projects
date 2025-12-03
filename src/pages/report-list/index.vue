@@ -2,7 +2,7 @@
   <view class="report-list-page">
     <!-- 顶部 -->
     <view class="page-header">
-      <text class="page-title">我的报告</text>
+      <text class="page-title">{{ queryType === 'my' ? '我的报告' : queryType === 'entry' ? '录入报告' : '全部报告' }}</text>
       <text class="page-desc">共 {{ reportList.length }} 份报告</text>
     </view>
     <view class="query-container" :class="{ 'no-tabs': true }">
@@ -120,7 +120,7 @@ const formatDateTime = (date) => {
   return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
 }
 
-const queryType = ref('my')
+const queryType = ref('all'); // all: 全部, my: 我的, entry: 录入
 const reportList = ref([])
 const loading = ref(false)
 const fromQuery = ref(false); // 从查询页面跳转过来 - 那边已经获取好数据了，这里不需要再获取了
@@ -129,6 +129,10 @@ onLoad((options) => {
   // 登录检查（会自动初始化）
   if (!checkAuth()) {
     return
+  }
+
+  if (options.type) {
+    queryType.value = options.type;
   }
 
   if (options.data) {
@@ -146,9 +150,9 @@ onLoad((options) => {
 })
 
 // 监听 tab 切换
-watch(queryType, () => {
-  fetchReportList()
-})
+// watch(queryType, () => {
+//   fetchReportList()
+// })
 
 // 获取报告列表
 const fetchReportList = async () => {
@@ -184,8 +188,10 @@ const fetchReportList = async () => {
       // 根据实际接口返回的数据结构调整
       if (res.data.status_code === 200 || res.data.data) {
         let reportResult = [];
-        if (options.type === 'my') {
+        if (queryType.value === 'my') {
           reportResult = res.data.data.filter(item => item.phone === userInfo.value.phone) || [];
+        } else if (queryType.value === 'entry') {
+          reportResult = res.data.data.filter(item => item.phone !== userInfo.value.phone) || [];
         } else {
           reportResult = res.data.data || [];
         }

@@ -260,7 +260,7 @@ const handlePhoneQuery = async () => {
       const myEntryOthersReport = result.filter(item => item.phone !== userInfo.value.phone);
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myEntryOthersReport))}`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myEntryOthersReport))}&type=entry`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })
@@ -296,7 +296,7 @@ const handleIdCardQuery = async () => {
       
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result))}`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result))}&type=entry`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })

@@ -248,19 +248,21 @@ const handlePhoneQuery = async () => {
   uni.showLoading({ title: '查询中...' })
 
   try {
-    const result = await get(API.getSamplesByPhone, {
-        phone: phoneForm.value.mobile,
+    const result = await get(API.getSamplesByUserId, {
+      user_id: userInfo.value.user_id,
       })
     console.log('>>>>>result phone', result);
     uni.hideLoading()
 
-    if (result && result.length > 0) {
+    // 我录入的报告 - 自己的和其他人的
+    const myEntryReport = result.filter(item => item.phone === phoneForm.value.mobile);
+
+    if (myEntryReport && myEntryReport.length > 0) {
       saveQueryHistory('phone', phoneForm.value.mobile)
-      // 我录入的报告 - 其他人的
-      const myEntryOthersReport = result.filter(item => item.phone !== userInfo.value.phone);
+      
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myEntryOthersReport))}&type=entry`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myEntryReport))}&type=entry`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })
@@ -285,18 +287,24 @@ const handleIdCardQuery = async () => {
   uni.showLoading({ title: '查询中...' })
 
   try {
-    const result = await get(API.queryReportByIdCard, {
-      id_number: idCardForm.value.idCard
-      })
+    // const result = await get(API.queryReportByIdCard, {
+    //   id_number: idCardForm.value.idCard
+    //   })
 
+    const result = await get(API.getSamplesByUserId, {
+      user_id: userInfo.value.user_id,
+      })
     uni.hideLoading()
 
-    if (result && result.length > 0) {
+    // 我录入的报告 - 自己的和其他人的
+    const myEntryReport = result.filter(item => item.id_number === idCardForm.value.idCard);
+
+    if (myEntryReport && myEntryReport.length > 0) {
       saveQueryHistory('idcard', idCardForm.value.idCard)
       
       // 跳转到报告列表
       uni.navigateTo({
-        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(result))}&type=entry`
+        url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myEntryReport))}&type=entry`
       })
     } else {
       uni.showToast({ title: '未找到相关报告', icon: 'none' })

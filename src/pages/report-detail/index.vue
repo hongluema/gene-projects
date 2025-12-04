@@ -15,7 +15,7 @@
         <view class="info-list">
           <view class="info-item">
             <text class="item-label">Z值</text>
-            <text class="item-value">{{ mongoInfo.p_Z }}</text>
+            <text class="item-value">{{ formatNumber(mongoInfo.p_Z) }}</text>
           </view>
           <view class="info-item">
             <text class="item-label">阴阳性</text>
@@ -153,6 +153,19 @@ const previewCurrentPage = ref(1)
 const previewTotalPages = ref(0)
 const loading = ref(false)
 const error = ref('')
+
+// 格式化数字，保留两位小数
+const formatNumber = (value) => {
+  if (value === null || value === undefined || value === '') {
+    return value
+  }
+  const num = Number(value)
+  if (isNaN(num)) {
+    return value
+  }
+  // 如果是整数，直接返回；如果有小数，保留两位小数
+  return num % 1 === 0 ? num.toString() : num.toFixed(2)
+}
 
 onLoad((options) => {
   reportInfo.value = JSON.parse(decodeURIComponent(options.data));

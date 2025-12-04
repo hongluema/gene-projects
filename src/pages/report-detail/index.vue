@@ -21,15 +21,15 @@
             <text class="item-label">阴阳性</text>
             <text class="item-value">{{ mongoInfo.result }}</text>
           </view>
-          <view v-if="mongoInfo.result === '阴性'">
+          <view v-if="mongoInfo.result === '阳性'">
             <view class="info-item">
-              <text class="item-label">癌症</text>
+              <text class="item-label">癌症溯源</text>
               <text class="item-value">{{ mongoInfo.top1_cancer }}</text>
             </view>
-            <view class="info-item" style="border-bottom: 1px solid #f0f0f0;">
+            <!-- <view class="info-item" style="border-bottom: 1px solid #f0f0f0;">
               <text class="item-label">proba</text>
               <text class="item-value">{{ mongoInfo.top1_proba }}</text>
-            </view>
+            </view> -->
           </view>
           
           <view class="info-item">

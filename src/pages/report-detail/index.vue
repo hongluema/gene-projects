@@ -172,7 +172,7 @@ const loadMongoInfo = async () => {
       data: {
         mongoid: reportInfo.value.mongoid || ''
       }
-    })
+  })
   console.log('>>>>>res', res);
   mongoInfo.value = res.data.data;
   console.log('>>>>>mongoInfo', mongoInfo.value);

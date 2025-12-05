@@ -312,7 +312,7 @@ const fetchProjects = async () => {
     })
     console.log('>>>>res projects', res);
     let list = res.data.data || [];
-    projectOptions.value = (list || []).map((item) => ({
+    projectOptions.value = (list || []).filter(x => x.id === '350668729299898368').map((item) => ({
       label: item?.name,
       value: item?.id
     })).filter(x => x.value)

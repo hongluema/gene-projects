@@ -323,10 +323,10 @@ const deleteReport = () => {
     showCancel: true,
     cancelText: '取消',
     confirmText: '申请作废',
-    success: (res) => {
+    success: async (res) => {
       if (res.confirm) {
         console.log('>>>>>deleteReport', reportInfo.value, userInfo);
-        const res = uni.request({
+        const res = await uni.request({
           url: API.createApply,
           method: 'POST',
           data: {
@@ -337,6 +337,10 @@ const deleteReport = () => {
           }
         })
         console.log('>>>>res', res);
+        if (res.data.status_code === 200) {
+          uni.showToast({ title: '申请成功', icon: 'none' })
+          uni.navigateBack();
+        }
       }
     }
   })

@@ -68,14 +68,14 @@
             <button 
               v-if="item.sample_data_name" 
               class="action-btn primary"
-              @click.stop="viewReportDetail(item)"
+              @click.stop="viewReportDetail(item, item.process)"
             >
               查看报告
             </button>
             <button 
               v-else-if="item.process === 'progressing'" 
               class="action-btn disabled"
-              disabled
+              @click.stop="viewReportDetail(item, item.process)"
             >
               检测中...
             </button>
@@ -235,9 +235,9 @@ const getReportTypeLabel = (item) => {
 }
 
 // 查看报告详情
-const viewReportDetail = (item) => {
+const viewReportDetail = (item, process) => {
   uni.navigateTo({
-    url: `/pages/report-detail/index?data=${encodeURIComponent(JSON.stringify(item))}`
+    url: `/pages/report-detail/index?data=${encodeURIComponent(JSON.stringify(item))}&process=${process}`
   })
 }
 

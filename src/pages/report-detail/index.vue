@@ -7,7 +7,7 @@
 
     <view class="detail-container">
       <!-- 报告结果 -->
-      <view class="info-card">
+      <view class="info-card" v-if="!isProgressing">
         <view class="card-title">
           <text class="title-icon">📄</text>
           <text>报告结果</text>
@@ -40,7 +40,7 @@
       </view>
 
        <!-- PDF预览区域 -->
-       <view class="pdf-card">
+       <view class="pdf-card" v-if="!isProgressing">
         <view class="card-title">
           <text class="title-icon">📋</text>
           <text>报告详情</text>
@@ -153,6 +153,7 @@ const previewCurrentPage = ref(1)
 const previewTotalPages = ref(0)
 const loading = ref(false)
 const error = ref('')
+const isProgressing = ref(true);
 
 // 格式化数字，保留两位小数
 const formatNumber = (value) => {
@@ -169,7 +170,8 @@ const formatNumber = (value) => {
 
 onLoad((options) => {
   reportInfo.value = JSON.parse(decodeURIComponent(options.data));
-  console.log('>>>>>reportInfo', reportInfo.value);
+  console.log('>>>>>reportInfo', reportInfo.value, options.process);
+  isProgressing.value = options.process === 'progressing'
   // reportId.value = options.reportId || ''
   // reportName.value = options.reportName || ''
   // loadReportPdf()

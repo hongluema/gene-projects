@@ -140,21 +140,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { API } from '@/config'
 import { previewFile, downloadFile } from '@/utils/request'
+import { useAuth } from '@/composables/useAuth'
+
+const {
+  userInfo,
+} = useAuth()
 
 const reportInfo = ref({})
 const mongoInfo = ref({})
-// const reportName= ref('')
 const pdfUrl = ref('')
-const downloading = ref(false)
-const showPreviewModal = ref(false)
-const previewLoading = ref(false)
-const previewError = ref('')
-const previewCurrentPage = ref(1)
-const previewTotalPages = ref(0)
 const loading = ref(false)
 const error = ref('')
 const isProgressing = ref(true);
@@ -327,7 +325,18 @@ const deleteReport = () => {
     confirmText: '申请作废',
     success: (res) => {
       if (res.confirm) {
-        console.log('>>>>>deleteReport', reportInfo.value);
+        console.log('>>>>>deleteReport', reportInfo.value, userInfo);
+        const res = uni.request({
+          url: API.createApply,
+          method: 'POST',
+          data: {
+            apply_user_id: userInfo.value.user_id,
+            apply_user_phone: userInfo.value.phone,
+            sample_id: reportInfo.value.sample_id,
+            type: 1,
+          }
+        })
+        console.log('>>>>res', res);
       }
     }
   })

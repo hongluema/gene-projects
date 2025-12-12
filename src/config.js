@@ -34,5 +34,8 @@ export const API = {
   getReportList: `${API_BASE}/api/report/list`,
   getReportPdf: `${API_BASE}/api/report/pdf/local`,
   getMongoInfoByMongoId: `${API_BASE}/api/mongoInfo`, // 根据mongoid获取报告信息
+
+  // 创建作废申请
+  createApply: `${API_BASE}/api/applies/create`, // 作废申请
 }
 

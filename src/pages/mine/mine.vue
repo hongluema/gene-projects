@@ -131,6 +131,7 @@ onLoad(() => {
 onShow(() => {
   // 每次显示时刷新状态
   initAuth()
+  fetchReportList()
 })
 
 // 跳转到登录页

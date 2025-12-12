@@ -173,6 +173,13 @@ const handleLogout = () => {
 
 // 获取报告列表
 const fetchReportList = async () => {
+  // 如果未登录，不请求
+  if (!isLogin.value || !userInfo.value.phone) {
+    reportList.value = []
+    progressingReportList.value = []
+    progressedReportList.value = []
+    return
+  }
 
   try {
     let url = API.getSamplesByMy;

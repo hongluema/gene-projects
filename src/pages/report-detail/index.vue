@@ -130,6 +130,10 @@
           <text class="contact-icon">📞</text>
           <text>联系客服</text>
         </button>
+        <button class="contact-btn delete-btn" @click="deleteReport">
+          <text class="contact-icon">🗑️</text>
+          <text>作废</text>
+        </button>
       </view>
     </view>
   </view>
@@ -312,6 +316,22 @@ const contactService = () => {
     }
   })
 }
+
+// 申请作废
+const deleteReport = () => {
+  uni.showModal({
+    title: '申请作废',
+    content: '是否申请作废？作废后将无法再查看报告。',
+    showCancel: true,
+    cancelText: '取消',
+    confirmText: '申请作废',
+    success: (res) => {
+      if (res.confirm) {
+        console.log('>>>>>deleteReport', reportInfo.value);
+      }
+    }
+  })
+}
 </script>
 
 <style scoped>
@@ -322,7 +342,7 @@ const contactService = () => {
 
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 60rpx 40rpx 40rpx;
+  padding: 32rpx 24rpx 24rpx;
   text-align: center;
 }
 
@@ -500,6 +520,21 @@ const contactService = () => {
   font-size: 30rpx;
   font-weight: bold;
   border: 2rpx solid #667eea;
+  border-radius: 50rpx;
+}
+.delete-btn {
+  margin-top: 16rpx;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  /* padding: 28rpx; */
+  background: #dd4545;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: bold;
+  border: 2rpx solid #dd4545;
   border-radius: 50rpx;
 }
 

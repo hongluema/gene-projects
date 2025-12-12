@@ -130,14 +130,17 @@
           <text class="contact-icon">📞</text>
           <text>联系客服</text>
         </button>
-        <button v-if="applyStatus === 'pending'" class="contact-btn delete-btn" disabled>
-          <text class="contact-icon">🗑️</text>
-          <text>已申请作废</text>
-        </button>
-        <button v-if="applyStatus === ''" class="contact-btn delete-btn" @click="deleteReport">
-          <text class="contact-icon">🗑️</text>
-          <text>作废</text>
-        </button>
+        <view v-if="isMyEntry">
+          <button v-if="applyStatus === 'pending'" class="contact-btn delete-btn" disabled>
+            <text class="contact-icon">🗑️</text>
+            <text>已申请作废</text>
+          </button>
+          <button v-if="applyStatus === ''" class="contact-btn delete-btn" @click="deleteReport">
+            <text class="contact-icon">🗑️</text>
+            <text>作废</text>
+          </button>
+        </view>
+        
       </view>
     </view>
   </view>
@@ -161,6 +164,7 @@ const loading = ref(false)
 const error = ref('')
 const isProgressing = ref(true);
 const applyStatus = ref('');
+const isMyEntry = ref(''); // 是不是我录入的
 
 // 格式化数字，保留两位小数
 const formatNumber = (value) => {
@@ -184,6 +188,7 @@ onLoad((options) => {
   // loadReportPdf()
   loadPdf()
   loadMongoInfo();
+  isMyEntry.value = userInfo.value.phone === reportInfo.value.phone;
 })
 
 onShow(() => {

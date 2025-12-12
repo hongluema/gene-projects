@@ -177,16 +177,6 @@ const fetchReportList = async () => {
     let url = API.getSamplesByMy;
     let params = { phone: userInfo.value.phone,  user_id: userInfo.value.user_id}
 
-    // if (queryType.value === 'my') {
-    //   // 我的报告 - 根据手机号查询
-    //   url = API.getSamplesByPhone
-    //   params = { phone: phone.value }
-    // } else {
-    //   // 录入报告 - 根据用户ID查询
-    //   url = API.getSamplesByUserId
-    //   params = { user_id: userId.value }
-    // }
-
     console.log('[ReportList] Fetching data:', { url, params })
 
     const res = await uni.request({

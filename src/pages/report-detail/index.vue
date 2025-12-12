@@ -130,7 +130,11 @@
           <text class="contact-icon">📞</text>
           <text>联系客服</text>
         </button>
-        <button class="contact-btn delete-btn" @click="deleteReport">
+        <button v-if="applyStatus === 'pending'" class="contact-btn delete-btn" disabled>
+          <text class="contact-icon">🗑️</text>
+          <text>已申请作废</text>
+        </button>
+        <button v-if="applyStatus === ''" class="contact-btn delete-btn" @click="deleteReport">
           <text class="contact-icon">🗑️</text>
           <text>作废</text>
         </button>
@@ -141,7 +145,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { API } from '@/config'
 import { previewFile, downloadFile } from '@/utils/request'
 import { useAuth } from '@/composables/useAuth'
@@ -156,6 +160,7 @@ const pdfUrl = ref('')
 const loading = ref(false)
 const error = ref('')
 const isProgressing = ref(true);
+const applyStatus = ref('');
 
 // 格式化数字，保留两位小数
 const formatNumber = (value) => {
@@ -180,6 +185,25 @@ onLoad((options) => {
   loadPdf()
   loadMongoInfo();
 })
+
+onShow(() => {
+  console.log('>>>>show');
+  getSampleApplyInfo();
+})
+
+const getSampleApplyInfo = async () => {
+  const res = await uni.request({
+    url: API.getApplyInfo,
+    method: 'GET',
+    data: {
+      sample_id: reportInfo.value.sample_id || ''
+    }
+  })
+  console.log('>>>>res apply', res);
+  if (res.data.status_code === 200) {
+    applyStatus.value = res.data.data.status
+  }
+}
 
 // 
 const loadMongoInfo = async () => {
@@ -547,7 +571,7 @@ const deleteReport = () => {
   color: #fff;
   font-size: 30rpx;
   font-weight: bold;
-  border: 2rpx solid #dd4545;
+  border: 2rpx solid #fff;
   border-radius: 50rpx;
 }
 

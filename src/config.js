@@ -37,5 +37,6 @@ export const API = {
 
   // 创建作废申请
   createApply: `${API_BASE}/api/applies/create`, // 作废申请
+  getApplyInfo: `${API_BASE}/api/applies/info`, // 获取作废申请 
 }
 

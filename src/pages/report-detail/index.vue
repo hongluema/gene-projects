@@ -188,7 +188,7 @@ onLoad((options) => {
   // loadReportPdf()
   loadPdf()
   loadMongoInfo();
-  isMyEntry.value = userInfo.value.phone === reportInfo.value.phone;
+  isMyEntry.value = userInfo.value.user_id === reportInfo.value.user_id;
 })
 
 onShow(() => {

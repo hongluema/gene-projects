@@ -33,7 +33,7 @@
           v-for="item in reportList" 
           :key="item.id"
           class="report-item"
-          @click="viewReport(item)"
+          @click="viewReportDetail(item, item.process)"
         >
           <!-- 状态标签 -->
           <view class="status-badge" :class="item.phone === userInfo.phone ? 'status-success' : 'status-process'">

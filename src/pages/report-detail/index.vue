@@ -165,6 +165,7 @@ const error = ref('')
 const isProgressing = ref(true);
 const applyStatus = ref('');
 const isMyEntry = ref(''); // 是不是我录入的
+const downloading = ref(false);
 
 // 格式化数字，保留两位小数
 const formatNumber = (value) => {
@@ -230,7 +231,6 @@ const previewPdf = () => {
     uni.showToast({ title: '报告ID获取失败', icon: 'none' })
     return
   }
-
   // TODO: 新的方法 - 开始
   if (downloading.value) return
 
@@ -273,7 +273,6 @@ const loadPdf = async () => {
     console.log('[ReportPreview] Loading PDF from:', url)
 
     pdfUrl.value = url
-    // #endif
 
     // #ifndef MP
     // 非小程序环境，等待 renderjs 渲染

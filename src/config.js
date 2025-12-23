@@ -1,12 +1,10 @@
 export const USE_MOCK = true
 // TODO: 测试环境
-// export const API_BASE = 'http://localhost:8006'
+export const API_BASE = 'http://localhost:8006'
 // TODO: 生产环境
-export const API_BASE = 'https://app.oriomics.cn'
+// export const API_BASE = 'https://app.oriomics.cn'
 
 export const API = {
-  // 认证相关
-  sendSmsCode: `${API_BASE}/api/auth/send-code`,      // 发送短信验证码
   loginByPhone: `${API_BASE}/api/user/login`,         // 手机验证码登录
   createByPhone: `${API_BASE}/api/users/create`,         // 创建用户
   
@@ -38,5 +36,8 @@ export const API = {
   // 创建作废申请
   createApply: `${API_BASE}/api/applies/create`, // 作废申请
   getApplyInfo: `${API_BASE}/api/applies/info`, // 获取作废申请 
+
+  sendCodeByPhone: `${API_BASE}/api/users/send-sms-code`, // 发送验证码
+  verifyCodeByPhone: `${API_BASE}/api/users/verify-sms-code`, // 验证验证码
 }
 

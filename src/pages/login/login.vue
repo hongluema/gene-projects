@@ -93,7 +93,6 @@ const form = ref({
 
 const countdown = ref(0)
 const isLoading = ref(false)
-const showMockTip = ref(USE_MOCK)
 
 const { saveLoginInfo } = useAuth()
 
@@ -128,33 +127,24 @@ const handleSendCode = async () => {
 
   try {
     // 调用发送验证码接口
-    if (USE_MOCK) {
-      const result = await mockSendSmsCode(form.value.phone)
-      uni.showToast({
-        title: result.message || '验证码已发送',
-        icon: 'none',
-        duration: 2000
-      })
-    } else {
-      const res = await uni.request({
-        url: API.sendSmsCode,
+    const res = await uni.request({
+        url: API.sendCodeByPhone,
         method: 'POST',
         data: { phone: form.value.phone },
         header: { 'Content-Type': 'application/json' }
       })
       
-      if (res.data && res.data.success) {
-        uni.showToast({
-          title: res.data.message || '验证码已发送',
-          icon: 'success'
-        })
-      } else {
-        throw new Error(res.data?.message || '发送失败')
-      }
+    if (res.data && res.data.status_code === 200) {
+      uni.showToast({
+        title: res.data.message || '验证码已发送',
+        icon: 'success'
+      })
+    } else {
+      throw new Error(res.data?.message || '发送失败')
     }
-
+    console.log('>>>>countdown', countdown.value);
     // 启动倒计时
-    countdown.value = 60
+    countdown.value = 120
     timer = setInterval(() => {
       countdown.value--
       if (countdown.value <= 0) {
@@ -201,8 +191,18 @@ const handleLogin = async () => {
   try {
     let result
     let userInfo;
-    // 调用登录接口
-    result = await mockLoginByPhone(form.value.phone, form.value.code);
+    // 调用登录接口 sendCodeByPhone
+    // result = await mockLoginByPhone(form.value.phone, form.value.code);
+    result = await uni.request({
+      url: API.verifyCodeByPhone,
+      method: 'POST',
+      data: {
+        phone: form.value.phone,
+        code: form.value.code
+      },
+      header: { 'Content-Type': 'application/json' }
+    });
+    console.log('>>>>sms result', result);
     const resData = await uni.request({
       url: API.createByPhone,
       method: 'POST',

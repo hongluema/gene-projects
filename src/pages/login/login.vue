@@ -203,6 +203,12 @@ const handleLogin = async () => {
       header: { 'Content-Type': 'application/json' }
     });
     console.log('>>>>sms result', result);
+    if (!result.data.data) {
+      uni.showToast({
+        title: '验证码错误',
+        icon: 'fail'
+      })
+    }
     const resData = await uni.request({
       url: API.createByPhone,
       method: 'POST',

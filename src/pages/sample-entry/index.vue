@@ -331,13 +331,12 @@ const institutionsFetched = ref(false)
 const fetchInstitutions = async () => {
   try {
     uni.showLoading({ title: '加载机构...' })
-    // const res = await get('http://localhost:8002/api/institutions')
-    // const res = await uni.request({
-    //   url: `${API_BASE}/api/institutions`,
-    //   method: 'GET',
-    // })
-    // console.log('>>>>res institutions', res);
-    let list = [{name: '测试机构', id: '213399541418954752'}];
+    const res = await uni.request({
+      url: `${API_BASE}/api/organizations`,
+      method: 'GET',
+    })
+    console.log('>>>>res projects', res);
+    let list = res.data.data || [];
     institutionOptions.value = (list || []).map((item) => ({
       label: item?.name,
       value: item?.id

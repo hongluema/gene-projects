@@ -100,7 +100,7 @@
           </view>
           <view class="info-item">
             <text class="item-label">检测机构</text>
-            <text class="item-value">{{ reportInfo.org_name || '测试机构'}}</text>
+            <text class="item-value">{{ reportInfo.org_name || '--'}}</text>
           </view>
           <view class="info-item">
             <text class="item-label">血管编号</text>

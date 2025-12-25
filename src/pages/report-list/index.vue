@@ -77,7 +77,7 @@
               class="action-btn disabled"
               @click.stop="viewReportDetail(item, item.process)"
             >
-              {{ item.process === 'progressing' ? '检测中...' : '等待检测' }}
+              {{ item.process === 'progressing' ? '检测中...' : '待送样' }}
             </button>
             <!-- <button 
               v-else 

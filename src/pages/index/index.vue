@@ -20,7 +20,7 @@
           <view class="item-icon-wrap">
             <text class="item-icon">📝</text>
           </view>
-          <text class="item-name">扫码录入</text>
+          <text class="item-name">样本录入</text>
           <text class="item-desc">扫描二维码录入样本</text>
         </view>
 

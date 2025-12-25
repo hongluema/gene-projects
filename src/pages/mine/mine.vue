@@ -17,9 +17,9 @@
 
     <!-- 快捷功能 -->
     <view class="quick-stats">
-      <view class="stat-item" @click="goToReportQuery(reportList)">
-        <text class="stat-number">{{ reportList.length }}</text>
-        <text class="stat-label">我的报告</text>
+      <view class="stat-item" @click="goToReportQuery(waitingReportList)">
+        <text class="stat-number">{{ waitingReportList.length }}</text>
+        <text class="stat-label">待送样</text>
       </view>
       <view class="stat-divider"></view>
       <view class="stat-item" @click="goToReportQuery(progressingReportList)">
@@ -119,6 +119,7 @@ const {
   logout
 } = useAuth()
 const reportList = ref([])
+const waitingReportList = ref([])
 const progressingReportList = ref([])
 const progressedReportList = ref([])
 
@@ -178,6 +179,7 @@ const fetchReportList = async () => {
     reportList.value = []
     progressingReportList.value = []
     progressedReportList.value = []
+    waitingReportList.value = []
     return
   }
 
@@ -202,6 +204,7 @@ const fetchReportList = async () => {
         reportList.value = reportResData;
         progressingReportList.value = reportResData.filter(item => item.process === 'progressing');
         progressedReportList.value = reportResData.filter(item => item.process === 'progressed');
+        waitingReportList.value = reportResData.filter(item => item.process === 'waiting');
       } else {
         uni.showToast({
           title: res.data.message || '获取数据失败',

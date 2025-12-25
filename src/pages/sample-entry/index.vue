@@ -54,10 +54,10 @@
               <text class="label">检测机构：</text>
               <text class="value">{{ projectInfo.institutionName }}</text>
             </view>
-            <view class="info-row">
+            <!-- <view class="info-row">
               <text class="label">项目描述：</text>
               <text class="value desc">{{ projectInfo.description }}</text>
-            </view>
+            </view> -->
             <button class="reset-btn" @click="resetProject">重新选择</button>
           </view>
         </view>

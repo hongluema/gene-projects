@@ -82,9 +82,8 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { USE_MOCK, API } from '@/config'
-import { mockSendSmsCode, mockLoginByPhone } from '@/mock/api'
-import { useAuth, STORAGE_KEY_PROFILE_COMPLETED } from '@/composables/useAuth'
+import { API } from '@/config'
+import { useAuth } from '@/composables/useAuth'
 
 const form = ref({
   phone: '',

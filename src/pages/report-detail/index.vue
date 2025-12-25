@@ -7,7 +7,7 @@
 
     <view class="detail-container">
       <!-- 报告结果 -->
-      <view class="info-card" v-if="!isProgressing">
+      <view class="info-card" v-if="isProgressed">
         <view class="card-title">
           <text class="title-icon">📄</text>
           <text>报告结果</text>
@@ -40,7 +40,7 @@
       </view>
 
        <!-- PDF预览区域 -->
-       <view class="pdf-card" v-if="!isProgressing">
+       <view class="pdf-card" v-if="isProgressed">
         <view class="card-title">
           <text class="title-icon">📋</text>
           <text>报告详情</text>
@@ -135,7 +135,7 @@
             <text class="contact-icon">🗑️</text>
             <text>已申请作废</text>
           </button>
-          <button v-if="applyStatus === ''" class="contact-btn delete-btn" @click="deleteReport">
+          <button v-if="!isProgressed && applyStatus === ''" class="contact-btn delete-btn" @click="deleteReport">
             <text class="contact-icon">🗑️</text>
             <text>作废</text>
           </button>
@@ -162,7 +162,7 @@ const mongoInfo = ref({})
 const pdfUrl = ref('')
 const loading = ref(false)
 const error = ref('')
-const isProgressing = ref(true);
+const isProgressed = ref(false);
 const applyStatus = ref('');
 const isMyEntry = ref(''); // 是不是我录入的
 const downloading = ref(false);
@@ -183,7 +183,7 @@ const formatNumber = (value) => {
 onLoad((options) => {
   reportInfo.value = JSON.parse(decodeURIComponent(options.data));
   console.log('>>>>>reportInfo', reportInfo.value, options.process);
-  isProgressing.value = options.process === 'progressing'
+  isProgressed.value = options.process === 'progressed'
   // reportId.value = options.reportId || ''
   // reportName.value = options.reportName || ''
   // loadReportPdf()

@@ -77,7 +77,7 @@
               class="action-btn disabled"
               @click.stop="viewReportDetail(item, item.process)"
             >
-              检测中...
+              {{ item.process === 'progressing' ? '检测中...' : '等待检测' }}
             </button>
             <!-- <button 
               v-else 
@@ -239,19 +239,6 @@ const viewReportDetail = (item, process) => {
   uni.navigateTo({
     url: `/pages/report-detail/index?data=${encodeURIComponent(JSON.stringify(item))}&process=${process}`
   })
-}
-
-// 查看报告（包含未完成的也能点击查看状态）
-const viewReport = (item) => {
-  if (item.process === 'progressed' && item.sample_data_name) {
-    viewReportDetail(item)
-  } else {
-    uni.showToast({ 
-      title: '报告检测中，请耐心等待',
-      icon: 'none',
-      duration: 2000
-    })
-  }
 }
 
 // 去录入样本

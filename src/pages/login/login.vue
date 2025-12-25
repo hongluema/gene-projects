@@ -81,7 +81,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { USE_MOCK, API } from '@/config'
 import { mockSendSmsCode, mockLoginByPhone } from '@/mock/api'
 import { useAuth, STORAGE_KEY_PROFILE_COMPLETED } from '@/composables/useAuth'
@@ -93,6 +93,7 @@ const form = ref({
 
 const countdown = ref(0)
 const isLoading = ref(false)
+const codeSent = ref(false) // 标记是否已发送验证码
 
 const { saveLoginInfo } = useAuth()
 
@@ -103,11 +104,22 @@ const isPhoneValid = computed(() => {
 
 // 是否可以登录
 const canLogin = computed(() => {
-  return isPhoneValid.value && form.value.code.length === 6 && !isLoading.value
+  return isPhoneValid.value && form.value.code.length === 6 && codeSent.value && !isLoading.value
 })
 
 // 倒计时定时器
 let timer = null
+
+// 监听手机号变化，重置验证码状态
+watch(() => form.value.phone, () => {
+  codeSent.value = false
+  form.value.code = ''
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+  countdown.value = 0
+})
 
 // 发送验证码
 const handleSendCode = async () => {
@@ -139,6 +151,8 @@ const handleSendCode = async () => {
         title: res.data.message || '验证码已发送',
         icon: 'success'
       })
+      // 标记已发送验证码
+      codeSent.value = true
     } else {
       throw new Error(res.data?.message || '发送失败')
     }
@@ -186,6 +200,15 @@ const handleLogin = async () => {
     return
   }
 
+  // 检查是否发送过验证码
+  if (!codeSent.value) {
+    uni.showToast({
+      title: '请先获取验证码',
+      icon: 'none'
+    })
+    return
+  }
+
   isLoading.value = true
 
   try {
@@ -203,11 +226,13 @@ const handleLogin = async () => {
       header: { 'Content-Type': 'application/json' }
     });
     console.log('>>>>sms result', result);
-    if (!result.data.data) {
+    if (!result.data || !result.data.data) {
+      isLoading.value = false
       uni.showToast({
         title: '验证码错误',
         icon: 'fail'
       })
+      return;
     }
     const resData = await uni.request({
       url: API.createByPhone,

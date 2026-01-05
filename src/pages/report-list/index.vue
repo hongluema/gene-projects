@@ -13,7 +13,7 @@
           :class="{ active: queryType === 'my' }"
           @click="queryType = 'my'"
         >
-          <text class="tab-icon">📱</text>
+          <!-- <text class="tab-icon">📱</text> -->
           <text>我的报告</text>
         </view>
         <view 
@@ -21,7 +21,7 @@
           :class="{ active: queryType === 'entry' }"
           @click="queryType = 'entry'"
         >
-          <text class="tab-icon">🪪</text>
+          <!-- <text class="tab-icon">🪪</text> -->
           <text>录入报告</text>
         </view>
       </view>
@@ -91,7 +91,7 @@
 
       <!-- 空状态 -->
       <view v-else class="empty-state">
-        <text class="empty-icon">📋</text>
+        <!-- <text class="empty-icon">📋</text> -->
         <text class="empty-text">暂无报告记录</text>
         <button class="empty-btn" @click="goToEntry">
           去录入样本

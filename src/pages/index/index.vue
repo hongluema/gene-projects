@@ -17,18 +17,18 @@
       <view class="entry-grid">
         <!-- 扫码录入 -->
         <view class="entry-item primary" @click="goToSampleEntry">
-          <view class="item-icon-wrap">
+          <!-- <view class="item-icon-wrap">
             <text class="item-icon">📝</text>
-          </view>
+          </view> -->
           <text class="item-name">样本录入</text>
           <text class="item-desc">扫描二维码录入样本</text>
         </view>
 
         <!-- 报告查询 -->
         <view class="entry-item success" @click="goToReportQuery">
-          <view class="item-icon-wrap">
+          <!-- <view class="item-icon-wrap">
             <text class="item-icon">🔍</text>
-          </view>
+          </view> -->
           <text class="item-name">报告查询</text>
           <text class="item-desc">查看检测报告</text>
         </view>
@@ -57,7 +57,7 @@
         <!-- 我录入的报告 -->
         <view class="feature-item" @click="goToMyEntryReports">
           <view class="feature-left">
-            <text class="feature-icon">📊</text>
+            <!-- <text class="feature-icon">📊</text> -->
             <view class="feature-info">
               <text class="feature-name">检测报告</text>
               <text class="feature-desc">查看我的和录入的检测报告</text>
@@ -69,7 +69,7 @@
         <!-- 关于我们 -->
         <view class="feature-item" @click="goToAbout">
           <view class="feature-left">
-            <text class="feature-icon">ℹ️</text>
+            <!-- <text class="feature-icon">ℹ️</text> -->
             <view class="feature-info">
               <text class="feature-name">关于我们</text>
               <text class="feature-desc">了解平台信息</text>
@@ -81,7 +81,7 @@
         <!-- 联系客服 -->
         <view class="feature-item" @click="contactService">
           <view class="feature-left">
-            <text class="feature-icon">📞</text>
+            <!-- <text class="feature-icon">📞</text> -->
             <view class="feature-info">
               <text class="feature-name">联系客服</text>
               <text class="feature-desc">客服热线：400-888-8888</text>

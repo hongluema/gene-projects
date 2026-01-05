@@ -3,7 +3,7 @@
     <view class="card-title">
       <text class="title-icon">👤</text>
       <text class="scan-mini-btn" @click="showIdCardOptions">
-        <text class="mini-icon">📷</text>
+        <!-- <text class="mini-icon">📷</text> -->
         快速识别
       </text>
     </view>

@@ -18,7 +18,7 @@
       <!-- 手机号输入 -->
       <view class="form-item">
         <view class="item-label">
-          <text class="label-icon">📱</text>
+          <!-- <text class="label-icon">📱</text> -->
           <text class="label-text">手机号</text>
         </view>
         <input
@@ -34,7 +34,7 @@
       <!-- 验证码输入 -->
       <view class="form-item">
         <view class="item-label">
-          <text class="label-icon">🔐</text>
+          <!-- <text class="label-icon">🔐</text> -->
           <text class="label-text">验证码</text>
         </view>
         <view class="code-input-wrapper">

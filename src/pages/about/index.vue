@@ -10,7 +10,7 @@
     <!-- 服务介绍 -->
     <view class="section-card">
       <view class="card-title">
-        <text class="title-icon">📖</text>
+        <!-- <text class="title-icon">📖</text> -->
         <text>公司介绍</text>
       </view>
       <view class="card-content">
@@ -23,33 +23,33 @@
     <!-- 功能特点 -->
     <view class="section-card">
       <view class="card-title">
-        <text class="title-icon">✨</text>
+        <!-- <text class="title-icon">✨</text> -->
         <text>功能特点</text>
       </view>
       <view class="features-list">
         <view class="feature-item">
-          <text class="feature-icon">🔍</text>
+          <!-- <text class="feature-icon">🔍</text> -->
           <view class="feature-info">
             <text class="feature-name">便捷录入</text>
             <text class="feature-desc">扫码快速录入样本信息</text>
           </view>
         </view>
         <view class="feature-item">
-          <text class="feature-icon">🧬</text>
+          <!-- <text class="feature-icon">🧬</text> -->
           <view class="feature-info">
             <text class="feature-name">专业检测</text>
             <text class="feature-desc">权威机构专业检测分析</text>
           </view>
         </view>
         <view class="feature-item">
-          <text class="feature-icon">📊</text>
+          <!-- <text class="feature-icon">📊</text> -->
           <view class="feature-info">
             <text class="feature-name">在线查询</text>
             <text class="feature-desc">随时查看检测报告结果</text>
           </view>
         </view>
         <view class="feature-item">
-          <text class="feature-icon">🔒</text>
+          <!-- <text class="feature-icon">🔒</text> -->
           <view class="feature-info">
             <text class="feature-name">隐私保护</text>
             <text class="feature-desc">严格保护个人信息安全</text>
@@ -61,12 +61,12 @@
     <!-- 联系方式 -->
     <view class="section-card">
       <view class="card-title">
-        <text class="title-icon">📞</text>
+        <!-- <text class="title-icon">📞</text> -->
         <text>联系我们</text>
       </view>
       <view class="contact-list">
         <view class="contact-item" @click="callPhone">
-          <text class="contact-icon">☎️</text>
+          <!-- <text class="contact-icon">☎️</text> -->
           <view class="contact-info">
             <text class="contact-label">客服电话</text>
             <text class="contact-value">400-888-8888</text>
@@ -74,14 +74,14 @@
           <text class="contact-arrow">→</text>
         </view>
         <view class="contact-item">
-          <text class="contact-icon">⏰</text>
+          <!-- <text class="contact-icon">⏰</text> -->
           <view class="contact-info">
             <text class="contact-label">服务时间</text>
             <text class="contact-value">周一至周五 9:00-18:00</text>
           </view>
         </view>
         <view class="contact-item">
-          <text class="contact-icon">📧</text>
+          <!-- <text class="contact-icon">📧</text> -->
           <view class="contact-info">
             <text class="contact-label">邮箱地址</text>
             <text class="contact-value">service@example.com</text>
@@ -93,7 +93,7 @@
     <!-- 法律信息 -->
     <view class="section-card">
       <view class="card-title">
-        <text class="title-icon">📜</text>
+        <!-- <text class="title-icon">📜</text> -->
         <text>法律信息</text>
       </view>
       <view class="legal-links">

@@ -14,7 +14,7 @@
           :class="{ active: queryType === 'phone' }"
           @click="queryType = 'phone'"
         >
-          <text class="tab-icon">📱</text>
+          <!-- <text class="tab-icon">📱</text> -->
           <text>手机号查询</text>
         </view>
         <view 
@@ -22,7 +22,7 @@
           :class="{ active: queryType === 'idcard' }"
           @click="queryType = 'idcard'"
         >
-          <text class="tab-icon">🪪</text>
+          <!-- <text class="tab-icon">🪪</text> -->
           <text>身份证查询</text>
         </view>
       </view>
@@ -84,7 +84,7 @@
             />
           </view>
           <view class="form-tip">
-            <text class="tip-icon">ℹ️</text>
+            <!-- <text class="tip-icon">ℹ️</text> -->
             <text class="tip-text">为保护隐私，请确认您是本人或经授权查询</text>
           </view>
           <button class="query-btn" @click="handleIdCardQuery" :disabled="querying">

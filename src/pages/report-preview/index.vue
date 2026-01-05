@@ -7,7 +7,7 @@
 
     <!-- 错误状态 -->
     <view v-else-if="error" class="error-container">
-      <text class="error-icon">❌</text>
+      <!-- <text class="error-icon">❌</text> -->
       <text class="error-text">{{ error }}</text>
       <button class="retry-btn" @click="loadPdf">重试</button>
     </view>
@@ -37,7 +37,7 @@
     <!-- #ifdef MP -->
     <!-- 小程序提示（小程序不支持 renderjs） -->
     <view v-else class="tips-container">
-      <text class="tips-icon">📄</text>
+      <!-- <text class="tips-icon">📄</text> -->
       <text class="tips-text">准备打开PDF报告</text>
       <text class="tips-hint">正在自动打开，请稍候...</text>
     </view>

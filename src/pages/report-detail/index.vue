@@ -9,7 +9,7 @@
       <!-- 报告结果 -->
       <view class="info-card" v-if="isProgressed">
         <view class="card-title">
-          <text class="title-icon">📄</text>
+          <!-- <text class="title-icon">📄</text> -->
           <text>报告结果</text>
         </view>
         <view class="info-list">
@@ -42,7 +42,7 @@
        <!-- PDF预览区域 -->
        <view class="pdf-card" v-if="isProgressed">
         <view class="card-title">
-          <text class="title-icon">📋</text>
+          <!-- <text class="title-icon">📋</text> -->
           <text>报告详情</text>
         </view>
         
@@ -57,11 +57,11 @@
         <!-- 操作按钮 -->
         <view class="pdf-actions">
           <button class="action-btn preview-btn" @click="previewPdf">
-            <text class="btn-icon">👁️</text>
+            <!-- <text class="btn-icon">👁️</text> -->
             <text>预览报告</text>
           </button>
           <button class="action-btn download-btn" @click="downloadPdf">
-            <text class="btn-icon">⬇️</text>
+            <!-- <text class="btn-icon">⬇️</text> -->
             <text>下载报告</text>
           </button>
         </view>
@@ -70,7 +70,7 @@
       <!-- 检测单基本信息 -->
       <view class="info-card">
         <view class="card-title">
-          <text class="title-icon">📄</text>
+          <!-- <text class="title-icon">📄</text> -->
           <text>检测单信息</text>
         </view>
         <view class="info-list">
@@ -114,7 +114,7 @@
       <!-- 温馨提示 -->
       <view class="tips-card">
         <view class="tips-title">
-          <text class="tips-icon">💡</text>
+          <!-- <text class="tips-icon">💡</text> -->
           <text>温馨提示</text>
         </view>
         <view class="tips-content">
@@ -127,16 +127,16 @@
       <!-- 联系客服 -->
       <view class="contact-card">
         <button class="contact-btn" @click="contactService">
-          <text class="contact-icon">📞</text>
+          <!-- <text class="contact-icon">📞</text> -->
           <text>联系客服</text>
         </button>
         <view v-if="isMyEntry">
           <button v-if="applyStatus === 'pending'" class="contact-btn delete-btn" disabled>
-            <text class="contact-icon">🗑️</text>
+            <!-- <text class="contact-icon">🗑️</text> -->
             <text>已申请作废</text>
           </button>
           <button v-if="!isProgressed && applyStatus === ''" class="contact-btn delete-btn" @click="deleteReport">
-            <text class="contact-icon">🗑️</text>
+            <!-- <text class="contact-icon">🗑️</text> -->
             <text>作废</text>
           </button>
         </view>

@@ -9,7 +9,7 @@
       <!-- 项目信息卡片 -->
       <view class="card project-card">
         <view class="card-title">
-          <text class="title-icon">📋</text>
+          <!-- <text class="title-icon">📋</text> -->
           <text>项目信息</text>
         </view>
         <view class="project-info">
@@ -17,11 +17,11 @@
           <view v-if="!projectInfo.projectId" class="input-options">
             <view class="option-buttons">
               <button class="option-btn primary" @click="handleScanProject">
-                <text class="btn-icon">📷</text>
+                <!-- <text class="btn-icon">📷</text> -->
                 扫描二维码
               </button>
               <button class="option-btn secondary" @click="showProjectInput = true">
-                <text class="btn-icon">✏️</text>
+                <!-- <text class="btn-icon">✏️</text> -->
                 手动输入
               </button>
             </view>
@@ -66,14 +66,14 @@
       <!-- 身份信息表单 -->
       <view class="card">
         <view class="card-title">
-          <text class="title-icon">👤</text>
+          <!-- <text class="title-icon">👤</text> -->
           <text>身份信息</text>
           <button v-if="hasUserDataFilled" class="clear-mini-btn" @click="clearUserInfo">
-            <text class="mini-icon">🗑️</text>
+            <!-- <text class="mini-icon">🗑️</text> -->
             清除信息
           </button>
           <button class="scan-mini-btn" @click="showIdCardOptions">
-            <text class="mini-icon">📷</text>
+            <!-- <text class="mini-icon">📷</text> -->
             快速识别
           </button>
         </view>
@@ -165,7 +165,7 @@
       <!-- 样本信息 -->
       <view class="card">
         <view class="card-title">
-          <text class="title-icon">🧪</text>
+          <!-- <text class="title-icon">🧪</text> -->
           <text>样本信息</text>
         </view>
         <view class="sample-info">
@@ -173,11 +173,11 @@
           <view v-if="!formData.sampleId" class="input-options">
             <view class="option-buttons">
               <button class="option-btn primary" @click="handleScanSample">
-                <text class="btn-icon">📷</text>
+                <!-- <text class="btn-icon">📷</text> -->
                 扫描条形码
               </button>
               <button class="option-btn secondary" @click="showSampleInput = true">
-                <text class="btn-icon">✏️</text>
+                <!-- <text class="btn-icon">✏️</text> -->
                 手动输入
               </button>
             </view>

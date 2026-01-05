@@ -38,7 +38,7 @@
       <view class="menu-group">
         <view class="menu-item" @click="goToProfile">
           <view class="menu-left">
-            <text class="menu-icon">👤</text>
+            <!-- <text class="menu-icon">👤</text> -->
             <text class="menu-text">个人信息</text>
           </view>
           <view class="menu-right">
@@ -51,7 +51,7 @@
       <view class="menu-group">
         <view class="menu-item" @click="goToReportQuery(reportList)">
           <view class="menu-left">
-            <text class="menu-icon">📊</text>
+            <!-- <text class="menu-icon">📊</text> -->
             <text class="menu-text">我的报告</text>
           </view>
           <view class="menu-right">
@@ -61,7 +61,7 @@
         
         <view class="menu-item" @click="goToSampleEntry">
           <view class="menu-left">
-            <text class="menu-icon">📝</text>
+            <!-- <text class="menu-icon">📝</text> -->
             <text class="menu-text">样本录入</text>
           </view>
           <view class="menu-right">
@@ -73,7 +73,7 @@
       <view class="menu-group">
         <view class="menu-item" @click="goToAbout">
           <view class="menu-left">
-            <text class="menu-icon">ℹ️</text>
+            <!-- <text class="menu-icon">ℹ️</text> -->
             <text class="menu-text">关于我们</text>
           </view>
           <view class="menu-right">
@@ -83,7 +83,7 @@
 
         <view class="menu-item" @click="contactService">
           <view class="menu-left">
-            <text class="menu-icon">📞</text>
+            <!-- <text class="menu-icon">📞</text> -->
             <text class="menu-text">联系客服</text>
           </view>
           <view class="menu-right">
@@ -96,7 +96,7 @@
       <view v-if="isLogin" class="menu-group">
         <view class="menu-item danger" @click="handleLogout">
           <view class="menu-left">
-            <text class="menu-icon">🚪</text>
+            <!-- <text class="menu-icon">🚪</text> -->
             <text class="menu-text">退出登录</text>
           </view>
         </view>

@@ -19,7 +19,7 @@
           </view>
           <view class="info-item">
             <text class="item-label">阴阳性</text>
-            <text class="item-value">{{ mongoInfo.result }}</text>
+            <text class="item-value">{{ mongoInfo.result || mongoInfo.z_cn }}</text>
           </view>
           <view v-if="mongoInfo.result === '阳性'">
             <view class="info-item">

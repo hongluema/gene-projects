@@ -87,7 +87,7 @@
             <text class="menu-text">联系客服</text>
           </view>
           <view class="menu-right">
-            <text class="menu-value">400-888-8888</text>
+            <text class="menu-value">0571-28183061</text>
             <text class="menu-arrow">→</text>
           </view>
         </view>
@@ -262,7 +262,7 @@ const goToAbout = () => {
 // 联系客服
 const contactService = () => {
   uni.makePhoneCall({
-    phoneNumber: '4008888888'
+    phoneNumber: '0571-28183061'
   })
 }
 </script>

@@ -69,7 +69,7 @@
           <!-- <text class="contact-icon">☎️</text> -->
           <view class="contact-info">
             <text class="contact-label">客服电话</text>
-            <text class="contact-value">400-888-8888</text>
+            <text class="contact-value">0571-28183061</text>
           </view>
           <text class="contact-arrow">→</text>
         </view>
@@ -77,7 +77,7 @@
           <!-- <text class="contact-icon">⏰</text> -->
           <view class="contact-info">
             <text class="contact-label">服务时间</text>
-            <text class="contact-value">周一至周五 9:00-18:00</text>
+            <text class="contact-value">周一至周五 9:00-17:00</text>
           </view>
         </view>
         <view class="contact-item">
@@ -115,7 +115,7 @@
 // 拨打电话
 const callPhone = () => {
   uni.makePhoneCall({
-    phoneNumber: '4008888888'
+    phoneNumber: '0571-28183061'
   })
 }
 

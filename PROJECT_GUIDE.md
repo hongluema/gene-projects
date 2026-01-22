@@ -294,7 +294,7 @@ npm run dev:mp-weixin
 
 如有问题，请联系：
 
-- 客服电话：400-888-8888
+- 客服电话：0571-28183061
 - 邮箱：service@example.com
 
 ---

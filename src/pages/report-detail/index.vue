@@ -329,14 +329,14 @@ const downloadPdf = () => {
 const contactService = () => {
   uni.showModal({
     title: '联系客服',
-    content: '客服电话：400-888-8888\n工作时间：周一至周五 9:00-18:00',
+    content: '客服电话：0571-28183061\n工作时间：周一至周五 9:00-17:00',
     showCancel: true,
     cancelText: '取消',
     confirmText: '拨打电话',
     success: (res) => {
       if (res.confirm) {
         uni.makePhoneCall({
-          phoneNumber: '4008888888'
+          phoneNumber: '0571-28183061'
         })
       }
     }

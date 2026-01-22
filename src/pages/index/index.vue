@@ -150,7 +150,7 @@ const goToMine = () => {
 // 联系客服
 const contactService = () => {
   uni.makePhoneCall({
-    phoneNumber: '4008888888'
+    phoneNumber: '0571-28183061'
   })
 }
 </script>

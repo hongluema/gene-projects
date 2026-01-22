@@ -25,7 +25,7 @@
         </view>
 
         <!-- 报告查询 -->
-        <view class="entry-item success" @click="goToReportQuery">
+        <view class="entry-item success" @click="goToMyEntryReports">
           <!-- <view class="item-icon-wrap">
             <text class="item-icon">🔍</text>
           </view> -->
@@ -55,7 +55,7 @@
         </view> -->
 
         <!-- 我录入的报告 -->
-        <view class="feature-item" @click="goToMyEntryReports">
+        <view class="feature-item" @click="goToReportQuery">
           <view class="feature-left">
             <!-- <text class="feature-icon">📊</text> -->
             <view class="feature-info">
@@ -84,7 +84,7 @@
             <!-- <text class="feature-icon">📞</text> -->
             <view class="feature-info">
               <text class="feature-name">联系客服</text>
-              <text class="feature-desc">客服热线：400-888-8888</text>
+              <text class="feature-desc">客服热线：0571-28183061</text>
             </view>
           </view>
           <text class="feature-arrow">→</text>

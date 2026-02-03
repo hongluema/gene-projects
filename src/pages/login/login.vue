@@ -297,9 +297,9 @@ import { useAuth } from '@/composables/useAuth'
 
 export default {
   // 防止已登录用户访问登录页
-  onLoad() {
+  async onLoad() {
     const { initAuth, isLogin } = useAuth()
-    initAuth()
+    await initAuth()
     
     if (isLogin.value) {
       console.log('[Login] already logged in, redirect to home')

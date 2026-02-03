@@ -99,9 +99,9 @@ import { useAuth } from '@/composables/useAuth'
 
 const { initAuth, userId } = useAuth()
 
-onLoad(() => {
+onLoad(async () => {
   // 初始化登录状态
-  initAuth()
+  await initAuth()
 })
 
 // 跳转到样本录入（扫码）

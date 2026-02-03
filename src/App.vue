@@ -2,12 +2,12 @@
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
 import { useAuth } from "@/composables/useAuth";
 
-onLaunch(() => {
+onLaunch(async () => {
   console.log("App Launch");
   
   // 初始化登录状态
   const { initAuth, isLogin, isProfileComplete } = useAuth();
-  initAuth();
+  await initAuth();
   
   console.log('[App] Auth state:', {
     isLogin: isLogin.value,

@@ -123,15 +123,15 @@ const waitingReportList = ref([])
 const progressingReportList = ref([])
 const progressedReportList = ref([])
 
-onLoad(() => {
+onLoad(async () => {
   console.log('>>>>mine init');
-  initAuth();
+  await initAuth();
   fetchReportList();
 })
 
-onShow(() => {
+onShow(async () => {
   // 每次显示时刷新状态
-  initAuth()
+  await initAuth()
   fetchReportList()
 })
 

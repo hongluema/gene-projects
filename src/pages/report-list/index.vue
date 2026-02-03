@@ -112,7 +112,7 @@ import { API } from '@/config'
 import dayjs from 'dayjs'
 
 // 登录检查
-const { checkAuth, userInfo } = useAuth()
+const { initAuth, checkAuth, userInfo } = useAuth()
 
 // 格式化日期时间
 const formatDateTime = (date) => {
@@ -126,8 +126,10 @@ const reportList = ref([])
 const loading = ref(false)
 const fromQuery = ref(false); // 从查询页面跳转过来 - 那边已经获取好数据了，这里不需要再获取了
 
-onLoad((options) => {
-  // 登录检查（会自动初始化）
+onLoad(async (options) => {
+  // 先初始化登录状态
+  await initAuth()
+  // 登录检查
   if (!checkAuth()) {
     return
   }

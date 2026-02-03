@@ -12,7 +12,11 @@ const userInfo = ref({});
 const STORAGE_KEY_USER_INFO = 'USER_INFO'
 const STORAGE_KEY_USER_ID = 'USER_ID'
 const STORAGE_KEY_USER_PHONE = 'USER_PHONE'
+const STORAGE_KEY_LOGIN_TIMESTAMP = 'LOGIN_TIMESTAMP' // 登录时间戳
 export const STORAGE_KEY_PROFILE_COMPLETED = 'PROFILE_COMPLETED'
+
+// 登录有效期：30天（毫秒）
+const LOGIN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000
 
 // 是否已初始化标识
 let hasInitialized = false
@@ -24,13 +28,66 @@ let hasInitialized = false
 export function useAuth() {
 
   /**
+   * 检查登录是否过期
+   */
+  const isLoginExpired = () => {
+    try {
+      const loginTimestamp = uni.getStorageSync(STORAGE_KEY_LOGIN_TIMESTAMP)
+      if (!loginTimestamp) {
+        return true // 没有登录时间戳，视为过期
+      }
+      const now = Date.now()
+      const elapsed = now - loginTimestamp
+      return elapsed > LOGIN_EXPIRE_TIME
+    } catch (err) {
+      console.warn('[Auth] isLoginExpired error', err)
+      return true // 出错时视为过期
+    }
+  }
+
+  /**
+   * 清除登录信息（内部方法）
+   */
+  const clearLoginInfo = () => {
+    try {
+      uni.removeStorageSync(STORAGE_KEY_TOKEN)
+      uni.removeStorageSync(STORAGE_KEY_USER_ID)
+      uni.removeStorageSync(STORAGE_KEY_USER_PHONE)
+      uni.removeStorageSync(STORAGE_KEY_LOGIN_TIMESTAMP)
+      uni.removeStorageSync(STORAGE_KEY_PROFILE_COMPLETED)
+    } catch (err) {
+      console.warn('[Auth] clearLoginInfo error', err)
+    }
+    token.value = ''
+    userId.value = ''
+    phone.value = ''
+    isLogin.value = false
+    isProfileComplete.value = false
+    userInfo.value = {}
+    hasInitialized = false
+  }
+
+  /**
    * 初始化：从本地恢复登录态（只初始化一次）
    */
   const initAuth = async () => {
     try {
+      // 检查登录是否过期
+      if (isLoginExpired()) {
+        console.log('[Auth] login expired, clearing login info')
+        clearLoginInfo()
+        return
+      }
+
       if (!userId.value) {
         userId.value = uni.getStorageSync(STORAGE_KEY_USER_ID)
       }
+      
+      // 如果本地没有 userId，说明未登录
+      if (!userId.value) {
+        return
+      }
+
       const res = await uni.request({
         url: API.getUserInfo,
         method: 'GET',
@@ -40,7 +97,11 @@ export function useAuth() {
       const info = res.data.data;
       userInfo.value = { ...info };
       isLogin.value = true;
-    } catch {}
+    } catch (err) {
+      console.error('[Auth] initAuth error', err)
+      // 如果获取用户信息失败，清除登录信息
+      clearLoginInfo()
+    }
   }
 
   /**
@@ -54,9 +115,12 @@ export function useAuth() {
     isProfileComplete.value = data.isProfileComplete || false;
     // userInfo.value = { ...data }
     try {
+      const loginTimestamp = Date.now() // 保存当前时间戳
       uni.setStorageSync(STORAGE_KEY_USER_ID, userId.value)
       uni.setStorageSync(STORAGE_KEY_USER_PHONE, phone.value)
+      uni.setStorageSync(STORAGE_KEY_LOGIN_TIMESTAMP, loginTimestamp) // 保存登录时间戳
       // uni.setStorageSync(STORAGE_KEY_USER_INFO, { ...data })
+      console.log('[Auth] login timestamp saved:', loginTimestamp)
     } catch (err) {
       console.warn('[Auth] saveLoginInfo storage error', err)
     }
@@ -82,22 +146,13 @@ export function useAuth() {
    */
   const logout = () => {
     console.log('[Auth] logout')
+    clearLoginInfo()
+    
     try {
-      uni.removeStorageSync(STORAGE_KEY_TOKEN)
-      uni.removeStorageSync(STORAGE_KEY_USER_ID)
-      uni.removeStorageSync(STORAGE_KEY_PHONE)
-      uni.removeStorageSync(STORAGE_KEY_PROFILE_COMPLETED)
       uni.removeStorageSync('USER_PROFILE_FORM') // 清除个人信息缓存
     } catch (err) {
       console.warn('[Auth] logout error', err)
     }
-
-    token.value = ''
-    userId.value = ''
-    phone.value = ''
-    isLogin.value = false
-    isProfileComplete.value = false
-    hasInitialized = false  // 重置初始化标识
 
     uni.showToast({ title: '已退出登录', icon: 'success' })
     
@@ -109,9 +164,23 @@ export function useAuth() {
 
   /**
    * 检查登录态（用于需要登录的页面）
-   * 自动初始化登录状态
+   * 注意：此函数是同步的，但 initAuth 是异步的
+   * 建议在页面 onLoad 中先 await initAuth()，然后再调用 checkAuth()
    */
   const checkAuth = () => {
+    // 先检查登录是否过期
+    if (isLoginExpired()) {
+      console.log('[Auth] checkAuth failed: login expired, redirect to login')
+      clearLoginInfo()
+      uni.showToast({
+        title: '登录已过期，请重新登录',
+        icon: 'none'
+      })
+      setTimeout(() => {
+        uni.redirectTo({ url: '/pages/login/login' })
+      }, 500)
+      return false
+    }
 
     if (!userId.value) {
       console.log('[Auth] checkAuth failed, redirect to login')
@@ -129,14 +198,10 @@ export function useAuth() {
 
   /**
    * 检查是否完善信息
-   * 自动初始化登录状态
+   * 注意：此函数是同步的，但 initAuth 是异步的
+   * 建议在页面 onLoad 中先 await initAuth()，然后再调用 checkProfile()
    */
   const checkProfile = () => {
-    // 如果还没初始化，先初始化
-    if (!hasInitialized) {
-      initAuth()
-    }
-
     if (!isProfileComplete.value) {
       console.log('[Auth] checkProfile failed, redirect to profile')
       uni.showToast({

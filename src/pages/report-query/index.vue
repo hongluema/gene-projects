@@ -148,9 +148,9 @@ const idCardForm = ref({
 const historyList = ref([])
 
 // 页面加载时恢复查询历史
-onMounted(() => {
+onMounted(async () => {
   loadQueryHistory()
-  initAuth();
+  await initAuth();
 })
 
 // onLoad(() => {

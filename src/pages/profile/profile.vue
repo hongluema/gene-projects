@@ -50,6 +50,9 @@
     </van-cell-group>
       <view class="actions">
         <van-button type="primary" block @click="onSubmit">保存</van-button>
+        <view class="skip-btn" @click="onSkip">
+          <text class="skip-text">跳过</text>
+        </view>
       </view>
     </view>
   </view>
@@ -159,6 +162,11 @@ const onSubmit = async () => {
   }
 }
 
+// 跳过完善信息，直接跳转到首页
+const onSkip = () => {
+  uni.switchTab({ url: '/pages/index/index' })
+}
+
 onLoad(async () => {
   // // 加载缓存的表单数据
   try {
@@ -213,6 +221,18 @@ onLoad(async () => {
 }
 .actions {
   padding: 24rpx 32rpx 40rpx;
+}
+
+.skip-btn {
+  margin-top: 24rpx;
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.skip-text {
+  font-size: 28rpx;
+  color: #969799;
+  text-decoration: underline;
 }
 .card-title {
   padding: 16rpx;

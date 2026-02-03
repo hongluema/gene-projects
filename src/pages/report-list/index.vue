@@ -2,8 +2,8 @@
   <view class="report-list-page">
     <!-- 顶部 -->
     <view class="page-header">
-      <text class="page-title">{{ queryType === 'my' ? '我的报告' : queryType === 'entry' ? '录入报告' : '全部报告' }}</text>
-      <text class="page-desc">共 {{ reportList.length }} 份报告</text>
+      <text class="page-title">{{ getPageTitle() }}</text>
+      <text class="page-desc">共 {{ reportList.length }} 份</text>
     </view>
     <view class="query-container" :class="{ 'no-tabs': true }">
     <!-- Tab切换 -->
@@ -121,6 +121,7 @@ const formatDateTime = (date) => {
 }
 
 const queryType = ref('all'); // all: 全部, my: 我的, entry: 录入
+const statusType = ref(''); // waiting: 待送样, progressing: 检测中, progressed: 已完成
 const reportList = ref([])
 const loading = ref(false)
 const fromQuery = ref(false); // 从查询页面跳转过来 - 那边已经获取好数据了，这里不需要再获取了
@@ -133,6 +134,10 @@ onLoad((options) => {
 
   if (options.type) {
     queryType.value = options.type;
+  }
+
+  if (options.status) {
+    statusType.value = options.status;
   }
 
   if (options.data) {
@@ -224,6 +229,23 @@ const getStatusClass = (status) => {
     'my' : 'status-success',
   }
   return classMap[status] || 'status-process'
+}
+
+// 获取页面标题
+const getPageTitle = () => {
+  if (statusType.value === 'waiting') {
+    return '待送样'
+  } else if (statusType.value === 'progressing') {
+    return '检测中'
+  } else if (statusType.value === 'progressed') {
+    return '已完成'
+  } else if (queryType.value === 'my') {
+    return '我的报告'
+  } else if (queryType.value === 'entry') {
+    return '录入报告'
+  } else {
+    return '全部报告'
+  }
 }
 
 // 获取报告类型标签

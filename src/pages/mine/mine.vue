@@ -17,17 +17,17 @@
 
     <!-- 快捷功能 -->
     <view class="quick-stats">
-      <view class="stat-item" @click="goToReportQuery(waitingReportList)">
+      <view class="stat-item" @click="goToReportQuery(waitingReportList, 'waiting')">
         <text class="stat-number">{{ waitingReportList.length }}</text>
         <text class="stat-label">待送样</text>
       </view>
       <view class="stat-divider"></view>
-      <view class="stat-item" @click="goToReportQuery(progressingReportList)">
+      <view class="stat-item" @click="goToReportQuery(progressingReportList, 'progressing')">
         <text class="stat-number">{{ progressingReportList.length }}</text>
         <text class="stat-label">检测中</text>
       </view>
       <view class="stat-divider"></view>
-      <view class="stat-item" @click="goToReportQuery(progressedReportList)">
+      <view class="stat-item" @click="goToReportQuery(progressedReportList, 'progressed')">
         <text class="stat-number">{{ progressedReportList.length }}</text>
         <text class="stat-label">已完成</text>
       </view>
@@ -226,12 +226,12 @@ const fetchReportList = async () => {
 }
   
 // 跳转到报告查询
-const goToReportQuery = (data) => {
+const goToReportQuery = (data, status) => {
   console.log('>>>>data', data);
   const myReport = data;
   if (myReport.length > 0) {
     uni.navigateTo({
-      url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myReport))}&type=my`
+      url: `/pages/report-list/index?data=${encodeURIComponent(JSON.stringify(myReport))}&type=my&status=${status}`
     })
   } else {
     uni.showToast({

@@ -85,7 +85,7 @@
 		{
 			"path": "pages/report-list/index",
 			"style": {
-				"navigationBarTitleText": "报告列表",
+				"navigationBarTitleText": "检测样本",
 				"navigationBarBackgroundColor": "#667eea",
 				"navigationBarTextStyle": "white"
 			}

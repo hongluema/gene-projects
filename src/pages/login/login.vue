@@ -5,7 +5,6 @@
       <view class="header-bg"></view>
       <view class="header-content">
         <text class="app-name">翱锐健康</text>
-        <text class="app-slogan">消化道肿瘤甲基化筛查领先企业</text>
       </view>
     </view>
 

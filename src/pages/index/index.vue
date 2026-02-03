@@ -24,7 +24,7 @@
         </view>
 
         <!-- 报告查询 -->
-        <view class="entry-item success" @click="goToSampleEntry">
+        <view class="entry-item success" @click="goToReportQuery">
           <!-- <view class="item-icon-wrap">
             <text class="item-icon">🔍</text>
           </view> -->
@@ -54,7 +54,7 @@
         </view> -->
 
         <!-- 我录入的报告 -->
-        <view class="feature-item" @click="goToReportQuery">
+        <view class="feature-item" @click="goToSampleEntry">
           <view class="feature-left">
             <!-- <text class="feature-icon">📊</text> -->
             <view class="feature-info">

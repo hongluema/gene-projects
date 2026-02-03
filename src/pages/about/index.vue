@@ -84,7 +84,7 @@
           <!-- <text class="contact-icon">📧</text> -->
           <view class="contact-info">
             <text class="contact-label">邮箱地址</text>
-            <text class="contact-value">service@example.com</text>
+            <text class="contact-value">service@oriomics.com</text>
           </view>
         </view>
       </view>

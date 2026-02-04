@@ -15,7 +15,7 @@
       
       <view class="entry-grid">
         <!-- 扫码录入 -->
-        <view class="entry-item primary" @click="goToMyEntryReports">
+        <view class="entry-item primary" @click="goToSampleEntry">
           <!-- <view class="item-icon-wrap">
             <text class="item-icon">📝</text>
           </view> -->
@@ -24,7 +24,7 @@
         </view>
 
         <!-- 报告查询 -->
-        <view class="entry-item success" @click="goToReportQuery">
+        <view class="entry-item success" @click="goToMyEntryReports">
           <!-- <view class="item-icon-wrap">
             <text class="item-icon">🔍</text>
           </view> -->
@@ -54,7 +54,7 @@
         </view> -->
 
         <!-- 我录入的报告 -->
-        <view class="feature-item" @click="goToSampleEntry">
+        <view class="feature-item" @click="goToReportQuery">
           <view class="feature-left">
             <!-- <text class="feature-icon">📊</text> -->
             <view class="feature-info">

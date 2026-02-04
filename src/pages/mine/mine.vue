@@ -235,7 +235,7 @@ const goToReportQuery = (data, status) => {
     })
   } else {
     uni.showToast({
-      title: '您尚未做任何检查，暂无报告',
+      title: '暂无检测中样本',
       icon: 'none'
     })
   }

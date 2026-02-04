@@ -49,15 +49,7 @@ export function useAuth() {
    * 清除登录信息（内部方法）
    */
   const clearLoginInfo = () => {
-    try {
-      uni.removeStorageSync(STORAGE_KEY_TOKEN)
-      uni.removeStorageSync(STORAGE_KEY_USER_ID)
-      uni.removeStorageSync(STORAGE_KEY_USER_PHONE)
-      uni.removeStorageSync(STORAGE_KEY_LOGIN_TIMESTAMP)
-      uni.removeStorageSync(STORAGE_KEY_PROFILE_COMPLETED)
-    } catch (err) {
-      console.warn('[Auth] clearLoginInfo error', err)
-    }
+    // 先清除状态变量，避免异步问题
     token.value = ''
     userId.value = ''
     phone.value = ''
@@ -65,6 +57,20 @@ export function useAuth() {
     isProfileComplete.value = false
     userInfo.value = {}
     hasInitialized = false
+    
+    // 然后清除本地存储
+    try {
+      uni.removeStorageSync(STORAGE_KEY_TOKEN)
+      uni.removeStorageSync(STORAGE_KEY_USER_ID)
+      uni.removeStorageSync(STORAGE_KEY_USER_PHONE)
+      uni.removeStorageSync(STORAGE_KEY_LOGIN_TIMESTAMP)
+      uni.removeStorageSync(STORAGE_KEY_PROFILE_COMPLETED)
+      uni.removeStorageSync(STORAGE_KEY_USER_INFO) // 清除用户信息缓存
+      uni.removeStorageSync('USER_PROFILE_FORM') // 清除个人信息表单缓存
+      console.log('[Auth] clearLoginInfo: all storage cleared')
+    } catch (err) {
+      console.warn('[Auth] clearLoginInfo error', err)
+    }
   }
 
   /**
@@ -72,6 +78,18 @@ export function useAuth() {
    */
   const initAuth = async () => {
     try {
+      // 先检查本地存储中是否有 userId
+      const localUserId = uni.getStorageSync(STORAGE_KEY_USER_ID)
+      
+      // 如果本地没有 userId，说明未登录，直接返回
+      if (!localUserId) {
+        console.log('[Auth] initAuth: no local userId, user not logged in')
+        // 确保状态是未登录
+        isLogin.value = false
+        userId.value = ''
+        return
+      }
+
       // 检查登录是否过期
       if (isLoginExpired()) {
         console.log('[Auth] login expired, clearing login info')
@@ -79,24 +97,38 @@ export function useAuth() {
         return
       }
 
+      // 设置 userId
       if (!userId.value) {
-        userId.value = uni.getStorageSync(STORAGE_KEY_USER_ID)
-      }
-      
-      // 如果本地没有 userId，说明未登录
-      if (!userId.value) {
-        return
+        userId.value = localUserId
       }
 
+      // 尝试获取用户信息
       const res = await uni.request({
         url: API.getUserInfo,
         method: 'GET',
         data: { user_id: userId.value},
       })
       console.log('>>>>res', res);
-      const info = res.data.data;
-      userInfo.value = { ...info };
-      isLogin.value = true;
+      
+      // 在设置登录状态前，再次验证本地存储是否还存在（防止退出登录后状态被恢复）
+      const verifyUserId = uni.getStorageSync(STORAGE_KEY_USER_ID)
+      const verifyTimestamp = uni.getStorageSync(STORAGE_KEY_LOGIN_TIMESTAMP)
+      
+      if (!verifyUserId || !verifyTimestamp) {
+        console.log('[Auth] initAuth: storage cleared during request, skip login restore')
+        clearLoginInfo()
+        return
+      }
+      
+      if (res.data && res.data.data) {
+        const info = res.data.data;
+        userInfo.value = { ...info };
+        isLogin.value = true;
+      } else {
+        // 如果获取用户信息失败，清除登录信息
+        console.log('[Auth] initAuth: failed to get user info, clearing login')
+        clearLoginInfo()
+      }
     } catch (err) {
       console.error('[Auth] initAuth error', err)
       // 如果获取用户信息失败，清除登录信息
@@ -143,23 +175,23 @@ export function useAuth() {
 
   /**
    * 退出登录
+   * 清除所有本地登录信息并跳转到登录页
    */
   const logout = () => {
     console.log('[Auth] logout')
+    // 先清除所有登录相关的本地存储和状态
     clearLoginInfo()
-    
-    try {
-      uni.removeStorageSync('USER_PROFILE_FORM') // 清除个人信息缓存
-    } catch (err) {
-      console.warn('[Auth] logout error', err)
-    }
 
-    uni.showToast({ title: '已退出登录', icon: 'success' })
-    
-    // 跳转到登录页
-    setTimeout(() => {
-      uni.reLaunch({ url: '/pages/login/login' })
-    }, 500)
+    // 立即跳转到登录页，带上 from=logout 参数，告诉登录页不要尝试恢复登录
+    uni.reLaunch({ 
+      url: '/pages/login/login?from=logout',
+      success: () => {
+        // 跳转成功后再显示提示
+        setTimeout(() => {
+          uni.showToast({ title: '已退出登录', icon: 'success' })
+        }, 300)
+      }
+    })
   }
 
   /**

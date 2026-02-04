@@ -296,12 +296,37 @@ import { onUnload } from '@dcloudio/uni-app'
 import { useAuth } from '@/composables/useAuth'
 
 export default {
-  // 防止已登录用户访问登录页
-  async onLoad() {
-    const { initAuth, isLogin } = useAuth()
+  // 登录页加载时的处理
+  async onLoad(options) {
+    const { initAuth, isLogin, userId } = useAuth()
+    
+    // 检查是否是退出登录后的跳转（通过 options 参数判断）
+    // 如果是退出登录跳转过来的，不执行任何初始化，直接显示登录页
+    if (options && options.from === 'logout') {
+      console.log('[Login] from logout, skip initAuth')
+      return
+    }
+    
+    // 先检查本地是否有 userId，如果没有则不需要初始化
+    const localUserId = uni.getStorageSync('USER_ID')
+    if (!localUserId) {
+      console.log('[Login] no local userId, skip initAuth')
+      return
+    }
+    
+    // 检查登录时间戳是否存在，如果不存在说明已退出登录
+    const loginTimestamp = uni.getStorageSync('LOGIN_TIMESTAMP')
+    if (!loginTimestamp) {
+      console.log('[Login] no login timestamp, user logged out')
+      return
+    }
+    
+    // 如果有本地 userId 和登录时间戳，才尝试初始化
     await initAuth()
     
-    if (isLogin.value) {
+    // 初始化后再次检查登录状态（确保状态和存储一致）
+    const currentUserId = uni.getStorageSync('USER_ID')
+    if (isLogin.value && userId.value && currentUserId === userId.value) {
       console.log('[Login] already logged in, redirect to home')
       uni.switchTab({
         url: '/pages/index/index'

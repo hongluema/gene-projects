@@ -1,8 +1,8 @@
 export const USE_MOCK = true
 // TODO: 测试环境
-export const API_BASE = 'http://localhost:8006'
+// export const API_BASE = 'http://localhost:8006'
 // TODO: 生产环境
-// export const API_BASE = 'https://app.oriomics.cn'
+export const API_BASE = 'https://app.oriomics.cn'
 
 export const API = {
   loginByPhone: `${API_BASE}/api/user/login`,         // 手机验证码登录

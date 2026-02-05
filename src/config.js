@@ -1,8 +1,8 @@
 export const USE_MOCK = true
 // TODO: 测试环境
-// export const API_BASE = 'http://localhost:8006'
+export const API_BASE = 'http://localhost:8006'
 // TODO: 生产环境
-export const API_BASE = 'https://app.oriomics.cn'
+// export const API_BASE = 'https://app.oriomics.cn'
 
 export const API = {
   loginByPhone: `${API_BASE}/api/user/login`,         // 手机验证码登录
@@ -39,5 +39,9 @@ export const API = {
 
   sendCodeByPhone: `${API_BASE}/api/users/send-sms-code`, // 发送验证码
   verifyCodeByPhone: `${API_BASE}/api/users/verify-sms-code`, // 验证验证码
+  
+  // 微信相关
+  wxPhoneLogin: `${API_BASE}/api/wx/phone-login`, // 微信手机号授权登录
+  wxDecryptPhone: `${API_BASE}/api/wx/decrypt-phone`, // 解密微信手机号
 }
 

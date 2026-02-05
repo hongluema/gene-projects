@@ -68,6 +68,26 @@
         </view>
       </view>
 
+      <!-- 微信授权登录 -->
+      <!-- #ifdef MP-WEIXIN -->
+      <view class="wx-login-section">
+        <view class="divider">
+          <view class="divider-line"></view>
+          <text class="divider-text">或</text>
+          <view class="divider-line"></view>
+        </view>
+        <button 
+          class="wx-login-btn" 
+          open-type="getPhoneNumber"
+          @getphonenumber="handleWxPhoneAuth"
+          :disabled="isWxLoading"
+        >
+          <!-- <text class="wx-login-icon">📱</text> -->
+          <text class="wx-login-text">{{ isWxLoading ? '授权中...' : '微信一键登录' }}</text>
+        </button>
+      </view>
+      <!-- #endif -->
+
       <!-- 协议提示 -->
       <view class="agreement">
         <text class="agreement-text">登录即表示同意</text>
@@ -91,6 +111,7 @@ const form = ref({
 
 const countdown = ref(0)
 const isLoading = ref(false)
+const isWxLoading = ref(false) // 微信授权登录加载状态
 const codeSent = ref(false) // 标记是否已发送验证码
 
 const { saveLoginInfo } = useAuth()
@@ -279,6 +300,163 @@ const handleLogin = async () => {
     })
   } finally {
     isLoading.value = false
+  }
+}
+
+// 微信手机号授权登录
+const handleWxPhoneAuth = async (e) => {
+  console.log('[Login] wx phone auth:', e)
+  
+  // 用户拒绝授权
+  if (e.detail.errMsg && e.detail.errMsg.includes('deny')) {
+    uni.showToast({
+      title: '需要授权手机号才能登录',
+      icon: 'none'
+    })
+    return
+  }
+
+  // 获取手机号授权 code（新版本微信小程序只返回 code，不返回 encryptedData 和 iv）
+  const { code } = e.detail
+  
+  if (!code) {
+    uni.showToast({
+      title: '获取手机号失败，请重试',
+      icon: 'none'
+    })
+    return
+  }
+
+  isWxLoading.value = true
+
+  try {
+    // 先获取微信登录 code（用于换取 openId）
+    const wxLoginRes = await new Promise((resolve, reject) => {
+      uni.login({
+        provider: 'weixin',
+        success: resolve,
+        fail: reject
+      })
+    })
+
+    if (!wxLoginRes.code) {
+      throw new Error('获取微信登录凭证失败')
+    }
+
+    // 方案1: 使用专门的微信手机号登录接口（推荐）
+    // 后端应该处理：1. 用 wxLoginRes.code 换取 openId 2. 用 phoneCode 解密手机号 3. 创建/登录用户
+    // try {
+    //   const loginRes = await uni.request({
+    //     url: API.wxPhoneLogin,
+    //     method: 'POST',
+    //     data: {
+    //       code: wxLoginRes.code, // 微信登录 code，用于换取 openId
+    //       phoneCode: code, // 手机号授权 code，用于解密手机号
+    //     },
+    //     header: { 'Content-Type': 'application/json' }
+    //   })
+
+    //   if (loginRes.data && loginRes.data.status_code === 200 && loginRes.data.data) {
+    //     const userInfo = loginRes.data.data
+    //     console.log('[Login] wx phone login success:', userInfo)
+
+    //     // 保存登录信息
+    //     saveLoginInfo({
+    //       userId: userInfo.user_id,
+    //       phone: userInfo.phone || loginRes.data.phone
+    //     })
+
+    //     uni.showToast({
+    //       title: '登录成功',
+    //       icon: 'success'
+    //     })
+
+    //     // 根据是否完善信息跳转
+    //     setTimeout(() => {
+    //       if (userInfo.id_number) {
+    //         uni.switchTab({
+    //           url: '/pages/index/index'
+    //         })
+    //       } else {
+    //         uni.redirectTo({
+    //           url: '/pages/profile/profile'
+    //         })
+    //       }
+    //     }, 500)
+    //     return
+    //   }
+    // } catch (apiErr) {
+    //   console.warn('[Login] wxPhoneLogin API not available, try decrypt phone:', apiErr)
+    // }
+
+    // 方案2: 如果后端没有专门的登录接口，先解密手机号，然后使用 createByPhone
+    const decryptRes = await uni.request({
+      url: API.wxDecryptPhone,
+      method: 'POST',
+      data: {
+        code: wxLoginRes.code,
+        phoneCode: code,
+      },
+      header: { 'Content-Type': 'application/json' }
+    })
+    console.log('>>>>decryptRes', decryptRes);
+    if (!decryptRes.data.data || !decryptRes.data.data.phone) {
+      throw new Error('获取手机号失败')
+    }
+
+    const phone = decryptRes.data.data.phone
+    console.log('[Login] wx phone decrypted:', phone)
+
+    // 使用手机号创建/登录用户
+    const resData = await uni.request({
+      url: API.createByPhone,
+      method: 'POST',
+      data: {
+        phone: phone
+      },
+      header: { 'Content-Type': 'application/json' }
+    })
+
+    if (!resData.data || !resData.data.data) {
+      throw new Error('登录失败')
+    }
+
+    const userInfo = resData.data.data
+    console.log('[Login] wx login success:', userInfo)
+
+    // 保存登录信息
+    saveLoginInfo({
+      userId: userInfo.user_id,
+      phone: phone
+    })
+
+    uni.showToast({
+      title: '登录成功',
+      icon: 'success'
+    })
+
+    // 根据是否完善信息跳转
+    setTimeout(() => {
+      if (userInfo.id_number) {
+        uni.switchTab({
+          url: '/pages/index/index'
+        })
+      } else {
+        uni.redirectTo({
+          url: '/pages/profile/profile'
+        })
+      }
+    }, 500)
+
+  } catch (err) {
+    console.error('[Login] wx phone auth error:', err)
+    uni.showToast({
+      title: err.message || '微信授权登录失败，请使用手机号登录',
+      icon: 'none',
+      duration: 2000
+    })
+  } finally {
+    isWxLoading.value = false
   }
 }
 
@@ -544,6 +722,62 @@ export default {
 
 .agreement-link {
   color: #667eea;
+}
+
+/* 微信授权登录样式 */
+.wx-login-section {
+  margin-top: 40rpx;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 40rpx 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1rpx;
+  background: #e5e5e5;
+}
+
+.divider-text {
+  margin: 0 24rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.wx-login-btn {
+  width: 100%;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #07c160;
+  border-radius: 48rpx;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(7, 193, 96, 0.3);
+}
+
+.wx-login-btn::after {
+  border: none;
+}
+
+.wx-login-btn[disabled] {
+  background: #e5e5e5;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.wx-login-icon {
+  font-size: 36rpx;
+  margin-right: 12rpx;
+}
+
+.wx-login-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #fff;
 }
 </style>
 

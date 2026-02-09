@@ -83,7 +83,7 @@
           :disabled="isWxLoading"
         >
           <!-- <text class="wx-login-icon">📱</text> -->
-          <text class="wx-login-text">{{ isWxLoading ? '授权中...' : '微信一键登录' }}</text>
+          <text class="wx-login-text">{{ isWxLoading ? '登录中...' : '手机号快捷登录' }}</text>
         </button>
       </view>
       <!-- #endif -->
@@ -451,7 +451,7 @@ const handleWxPhoneAuth = async (e) => {
   } catch (err) {
     console.error('[Login] wx phone auth error:', err)
     uni.showToast({
-      title: err.message || '微信授权登录失败，请使用手机号登录',
+      title: err.message || '手机号快捷登录失败，请使用手机号验证码登录',
       icon: 'none',
       duration: 2000
     })
